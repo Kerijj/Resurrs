@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>БУНКЕР-СИГНАЛ: КРИТИЧЕСКИЕ РЕСУРСЫ</title>
+    <title>БУНКЕР-СИГНАЛ: СИСТЕМА КРАФТА И РЕСУРСОВ</title>
     <style>
         /* --- ОСНОВНЫЕ НЕОНОВЫЕ СТИЛИ --- */
         body {
@@ -53,11 +53,6 @@
             border-color: #ffcc00; 
             box-shadow: 0 0 15px #ffcc00, 0 0 20px rgba(255, 204, 0, 0.5);
         }
-        .choice-btn.selected {
-            border-color: #00ffcc;
-            box-shadow: 0 0 15px #00ffcc;
-            background-color: rgba(0, 255, 204, 0.1);
-        }
         .btn.disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -71,35 +66,30 @@
             text-shadow: none;
         }
 
-        /* --- НАВИГАЦИЯ И ТАЙМЕР --- */
-        #timer-display {
-            font-size: 3em;
-            color: #ffcc00; 
-            text-align: center;
-            margin: 20px 0;
-            padding: 10px;
-            border: 3px double #ffcc00;
-            background-color: #331a00;
-            text-shadow: 0 0 10px #ffcc00;
-        }
-        .round-objective {
-            margin-bottom: 15px;
-            padding: 15px;
-            border: 1px solid #00ffcc;
-            text-align: center;
-            background-color: rgba(0, 255, 204, 0.05);
-        }
+        /* --- СТИЛИ РЕСУРСОВ --- */
         .card-list {
             list-style: none;
             padding: 0;
         }
         .card-list li {
-            background-color: #1a1a1a;
-            border-left: 5px solid #00ffcc;
             padding: 10px;
             margin-bottom: 8px;
-            box-shadow: 0 0 5px rgba(0, 255, 204, 0.2);
+            border-radius: 3px;
         }
+        /* Базовые ресурсы (Сырье) */
+        .res-base {
+            background-color: #1a1a1a;
+            border-left: 5px solid #00ffcc;
+            color: #00ffcc;
+        }
+        /* Созданные ресурсы (Крафт/Инструменты) */
+        .res-crafted {
+            background-color: #331a00;
+            border-left: 5px solid #ffcc00;
+            color: #ffcc00;
+            font-weight: bold;
+        }
+        /* Результаты и потери */
         .warning {
             color: #ff004c;
             font-weight: bold;
@@ -113,6 +103,13 @@
             margin-top: 15px;
             border: 1px dashed #ffcc00;
             padding: 10px;
+            text-align: center;
+        }
+        .craft-zone {
+            margin-top: 20px;
+            padding: 15px;
+            border: 2px solid #00ffcc;
+            background-color: rgba(0, 255, 204, 0.1);
             text-align: center;
         }
     </style>
@@ -139,10 +136,10 @@
         </div>
         
         <div id="round-nav" style="display: flex; justify-content: center; margin: 20px 0; flex-wrap: wrap;">
-            <button class="round-btn active" data-round="1" onclick="showRound(1)">РАУНД 1: РЕСУРСЫ 📦</button>
-            <button class="round-btn" data-round="2" onclick="showRound(2)">РАУНД 2: ФИЛЬТР 💧</button>
-            <button class="round-btn" data-round="3" onclick="showRound(3)">РАУНД 3: СВЯЗЬ 📡</button>
-            <button class="round-btn" data-round="4" onclick="showRound(4)">РАУНД 4: ВЫХОД 🌲</button>
+            <button class="round-btn active" data-round="1" onclick="showRound(1)">РАУНД 1: СБОР 🌲</button>
+            <button class="round-btn" data-round="2" onclick="showRound(2)">РАУНД 2: КРАФТ I 💧</button>
+            <button class="round-btn" data-round="3" onclick="showRound(3)">РАУНД 3: КРАФТ II 📡</button>
+            <button class="round-btn" data-round="4" onclick="showRound(4)">РАУНД 4: РЕШЕНИЕ 🧭</button>
             <button class="round-btn" data-round="5" onclick="showRound(5)">РАУНД 5: ФИНАЛ 🤝</button>
         </div>
 
@@ -159,62 +156,58 @@
         // Отслеживание прогресса команды
         let teamProgress = {
             "Group 1": { 
-                resources: ["💧 Вода (10л)", "💊 Обезболивающее", "🥫 Консервы (10 шт)"], // Стартовые ресурсы
-                filterAssembled: false, 
-                antennaAssembled: false, 
+                resources: ["💧 Вода (10л)", "💊 Аптечка", "📝 Схема (Фильтр)"], // Стартовые ресурсы
+                crafted: [],
                 lostResources: 0, 
                 routeChosen: false,
                 routeResult: null 
             },
             "Group 2": { 
-                resources: ["💧 Вода (10л)", "🔌 Провода", "🪓 Топор"], 
-                filterAssembled: false, 
-                antennaAssembled: false, 
+                resources: ["💧 Вода (10л)", "🔌 Провода", "💡 Лампа"], 
+                crafted: [],
                 lostResources: 0, 
                 routeChosen: false,
                 routeResult: null 
             },
             "Group 3": { 
-                resources: ["💧 Вода (10л)", "🥫 Еда (сухпай)", "💊 Жгут"], 
-                filterAssembled: false, 
-                antennaAssembled: false, 
+                resources: ["💧 Вода (10л)", "🔥 Топливо", "🗺️ Карта"], 
+                crafted: [],
                 lostResources: 0, 
                 routeChosen: false,
                 routeResult: null 
             }
         };
 
-        // --- ДАННЫЕ ИГРЫ ---
+        // --- ДАННЫЕ ИГРЫ С КРАФТОМ ---
         const gameData = {
             "Group 1": {
                 name: "ГРУППА 1: СЕКЦИЯ АЛЬФА",
                 1: { // СБОР РЕСУРСОВ
-                    objective: "СБОР РЕСУРСОВ. Локация: Кухня. Цель: Выбрать КРИТИЧЕСКИЙ бонусный ресурс (1 из 3).",
-                    choices: ["💡 Острый нож", "🛠️ Набор отверток", "📜 План этажа"],
-                    dependency: null,
-                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 2"
+                    objective: "СБОР РЕСУРСОВ. Локация: Кухня. Цель: Получить два недостающих Базовых ресурса.",
+                    choices: ["🔪 Нож", "🛠️ Отвертка", "📚 Учебник"],
+                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 2 (КРАФТ I)"
                 },
-                2: { // ФИЛЬТР
-                    objective: "РЕМОНТ ФИЛЬТРА. Цель: Получить ВЕРХНЮЮ часть схемы фильтра (🔺).",
-                    puzzle_text: "ЗАГАДКА: Что всегда течет, но никогда не движется с места? (Ответ 4 буквы)",
+                2: { // КРАФТ I: ФИЛЬТР (Требует: 📝 Схема (Фильтр) и 🛠️ Отвертка)
+                    objective: "КРАФТ ФИЛЬТРА. Цель: Собрать **💧 ФИЛЬТР для воды** из сырья.",
+                    puzzle_text: "ЗАГАДКА (ВОДА): Что всегда течет, но никогда не движется с места? (Ответ 4 буквы)",
                     answer: "ВОДА",
-                    part: "🔹 Верхняя часть схемы фильтра (🔺)",
-                    dependency: "🛠️ Набор отверток", 
-                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 3"
+                    dependency: ["📝 Схема (Фильтр)", "🛠️ Отвертка"],
+                    crafted_item: "💧 ФИЛЬТР для воды",
+                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 3 (КРАФТ II)"
                 },
-                3: { // СВЯЗЬ
-                    objective: "СБОР СВЯЗИ. Цель: Собрать АНТЕННУ 📡.",
-                    puzzle_text: "РЕБУС: Нужно слово 'СВЯЗЬ'. Введите синоним к слову 'СООБЩЕНИЕ'. (Ответ 5 букв)",
+                3: { // КРАФТ II: АНТЕННА (Требует: 🔌 Провода и 🛠️ Отвертка)
+                    objective: "КРАФТ АНТЕННЫ. Цель: Собрать **📡 АНТЕННА** для связи.",
+                    puzzle_text: "РЕБУС (СВЯЗЬ): Введите синоним к слову 'СООБЩЕНИЕ'. (Ответ 5 букв)",
                     answer: "СИГНАЛ",
-                    part: "📡 Антенна для связи",
-                    dependency: "🔌 Провода", 
-                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 4"
+                    dependency: ["🔌 Провода", "🛠️ Отвертка"],
+                    crafted_item: "📡 АНТЕННА",
+                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 4 (РЕШЕНИЕ)"
                 },
                 4: { // ВЫХОД НА ПОВЕРХНОСТЬ
-                    objective: "КРИТИЧЕСКИЙ ВЫХОД. Анализ: Ваши запасы и состояние связи. Выберите маршрут.",
+                    objective: "ВЫХОД НА ПОВЕРХНОСТЬ. Анализ: Готовность к выходу.",
                     routes: [
-                        { name: "МАРШРУТ А: Короткий и Опасный", risk: 2, reward: "Быстрый выход", dependency: "💡 Острый нож" },
-                        { name: "МАРШРУТ Б: Длинный и Безопасный", risk: 0, reward: "Безопасность", dependency: "🗺️ Карта местности" }
+                        { name: "МАРШРУТ А: Короткий и Опасный", risk: 2, reward: "Быстрый выход", dependency: "🔪 Нож" },
+                        { name: "МАРШРУТ Б: Длинный и Безопасный", risk: 0, reward: "Безопасность", dependency: "🗺️ Карта" }
                     ],
                     next_round_btn: "ПЕРЕЙТИ К ФИНАЛУ"
                 },
@@ -223,32 +216,31 @@
             "Group 2": {
                 name: "ГРУППА 2: СЕКЦИЯ БЕТА",
                 1: { 
-                    objective: "СБОР РЕСУРСОВ. Локация: Мастерская. Цель: Выбрать КРИТИЧЕСКИЙ бонусный ресурс (1 из 3).",
-                    choices: ["🛠️ Мощная дрель", "🔋 Доп. батарея", "🐟 Сетка для рыбы"],
-                    dependency: null,
-                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 2"
+                    objective: "СБОР РЕСУРСОВ. Локация: Мастерская. Цель: Получить два недостающих Базовых ресурса.",
+                    choices: ["🛠️ Отвертка", "🔋 Батарея", "📜 Схема (Антенна)"],
+                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 2 (КРАФТ I)"
                 },
                 2: { 
-                    objective: "РЕМОНТ ФИЛЬТРА. Цель: Получить СРЕДНЮЮ часть схемы фильтра (🟦).",
-                    puzzle_text: "ЗАДАЧКА: Сколько литров в одном кубическом метре? (Ответ цифрами)",
+                    objective: "КРАФТ ФИЛЬТРА. Цель: Собрать **💧 ФИЛЬТР для воды** из сырья.",
+                    puzzle_text: "ЗАДАЧКА (ВОДА): Сколько литров в одном кубическом метре? (Ответ цифрами)",
                     answer: "1000",
-                    part: "🔹 Средняя часть схемы фильтра (🟦)",
-                    dependency: "🪓 Топор", 
-                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 3"
+                    dependency: ["📝 Схема (Фильтр)", "💡 Лампа"],
+                    crafted_item: "💧 ФИЛЬТР для воды",
+                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 3 (КРАФТ II)"
                 },
                 3: { 
-                    objective: "СБОР СВЯЗИ. Цель: Собрать КАБЕЛЬ ПИТАНИЯ 🔌.",
-                    puzzle_text: "РЕБУС: К слову 'ТОК' добавьте слово 'ЕСТЬ'. Введите результат (Ответ 6 букв)",
-                    answer: "КАБЕЛЬ",
-                    part: "🔌 Кабель питания",
-                    dependency: "🔋 Доп. батарея", 
-                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 4"
+                    objective: "КРАФТ СЕТКИ. Цель: Собрать **🎣 СЕТКА для рыбы** (для пропитания).",
+                    puzzle_text: "РЕБУС (ЕДА): Назовите животное, которое дает человеку молоко и мясо. (Ответ 4 буквы)",
+                    answer: "КОЗА",
+                    dependency: ["🔌 Провода", "🛠️ Отвертка"],
+                    crafted_item: "🎣 СЕТКА для рыбы",
+                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 4 (РЕШЕНИЕ)"
                 },
                 4: { // ВЫХОД НА ПОВЕРХНОСТЬ
-                    objective: "КРИТИЧЕСКИЙ ВЫХОД. Анализ: Ваши запасы и состояние связи. Выберите маршрут.",
+                    objective: "ВЫХОД НА ПОВЕРХНОСТЬ. Анализ: Готовность к выходу.",
                     routes: [
-                        { name: "МАРШРУТ Б: Длинный и Безопасный", risk: 0, reward: "Безопасность", dependency: "🐟 Сетка для рыбы" },
-                        { name: "МАРШРУТ В: Средний, с обвалом", risk: 1, reward: "Нейтральный выход", dependency: "🛠️ Мощная дрель" }
+                        { name: "МАРШРУТ Б: Длинный и Безопасный", risk: 0, reward: "Безопасность", dependency: "🎣 СЕТКА для рыбы" },
+                        { name: "МАРШРУТ В: Средний, с обвалом", risk: 1, reward: "Нейтральный выход", dependency: "🔋 Батарея" }
                     ],
                     next_round_btn: "ПЕРЕЙТИ К ФИНАЛУ"
                 },
@@ -257,45 +249,50 @@
             "Group 3": {
                 name: "ГРУППА 3: СЕКЦИЯ ГАММА",
                 1: { 
-                    objective: "СБОР РЕСУРСОВ. Локация: Склад. Цель: Выбрать КРИТИЧЕСКИЙ бонусный ресурс (1 из 3).",
-                    choices: ["💊 Расширенная аптечка", "🔥 Запас топлива", "🗺️ Карта местности"],
-                    dependency: null,
-                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 2"
+                    objective: "СБОР РЕСУРСОВ. Локация: Склад. Цель: Получить два недостающих Базовых ресурса.",
+                    choices: ["🔪 Нож", "🛠️ Отвертка", "🎣 Леска"],
+                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 2 (КРАФТ I)"
                 },
                 2: { 
-                    objective: "РЕМОНТ ФИЛЬТРА. Цель: Получить НИЖНЮЮ часть схемы фильтра (🔻).",
-                    puzzle_text: "ЗАГАДКА: 'Я не живу, но расту. У меня нет легких, но мне нужен воздух'. (Ответ 6 букв)",
+                    objective: "КРАФТ ФИЛЬТРА. Цель: Собрать **💧 ФИЛЬТР для воды** из сырья.",
+                    puzzle_text: "ЗАГАДКА (ОГОНЬ): 'Я не живу, но расту. У меня нет легких, но мне нужен воздух'. (Ответ 6 букв)",
                     answer: "ОГОНЬ",
-                    part: "🔹 Нижняя часть схемы фильтра (🔻)",
-                    dependency: "💊 Жгут", 
-                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 3"
+                    dependency: ["📝 Схема (Фильтр)", "🔥 Топливо"],
+                    crafted_item: "💧 ФИЛЬТР для воды",
+                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 3 (КРАФТ II)"
                 },
                 3: { 
-                    objective: "СБОР СВЯЗИ. Цель: Собрать РЕЗЕРВНОЕ ПИТАНИЕ 🔋.",
-                    puzzle_text: "РЕБУС: К слову 'ЭНЕРГИЯ' подберите слово, обозначающее 'ЗАПАС'. (Ответ 7 букв)",
+                    objective: "КРАФТ СИГНАЛИЗАЦИИ. Цель: Собрать **🚨 СИГНАЛИЗАЦИЯ** (для защиты от монстров).",
+                    puzzle_text: "РЕБУС (ЗАЩИТА): Введите синоним к слову 'ЗАПАС'. (Ответ 7 букв)",
                     answer: "РЕЗЕРВ",
-                    part: "🔋 Резервное питание",
-                    dependency: "🔥 Запас топлива", 
-                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 4"
+                    dependency: ["🔥 Топливо", "💡 Лампа"],
+                    crafted_item: "🚨 СИГНАЛИЗАЦИЯ",
+                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 4 (РЕШЕНИЕ)"
                 },
                 4: { // ВЫХОД НА ПОВЕРХНОСТЬ
-                    objective: "КРИТИЧЕСКИЙ ВЫХОД. Анализ: Ваши запасы и состояние связи. Выберите маршрут.",
+                    objective: "ВЫХОД НА ПОВЕРХНОСТЬ. Анализ: Готовность к выходу.",
                     routes: [
-                        { name: "МАРШРУТ А: Короткий и Опасный", risk: 2, reward: "Быстрый выход", dependency: "💊 Расширенная аптечка" },
-                        { name: "МАРШРУТ В: Средний, с обвалом", risk: 1, reward: "Нейтральный выход", dependency: "📜 План этажа" }
+                        { name: "МАРШРУТ А: Короткий и Опасный", risk: 2, reward: "Быстрый выход", dependency: "🔪 Нож" },
+                        { name: "МАРШРУТ В: Средний, с обвалом", risk: 1, reward: "Нейтральный выход", dependency: "🚨 СИГНАЛИЗАЦИЯ" }
                     ],
                     next_round_btn: "ПЕРЕЙТИ К ФИНАЛУ"
                 },
                 5: { objective: "ФИНАЛ: СТРАТЕГИЯ СПАСЕНИЯ", next_round_btn: "ЗАВЕРШИТЬ" }
             }
         };
-
+        
         // --- ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ ДЛЯ ПРОВЕРКИ РЕСУРСОВ ---
         function hasResource(resourceName) {
             const progress = teamProgress[currentTeam];
-            // Ищем ресурс, игнорируя префиксы вроде '⭐ Бонус: ' или '⭐ Обсуждение: '
+            // Ищем ресурс, игнорируя префиксы и смайлы для более гибкого поиска
             const searchName = resourceName.replace(/[\⭐\s\w]+:\s?/g, '').trim(); 
-            return progress.resources.some(res => res.includes(searchName));
+            
+            // Проверяем в Базовых ресурсах
+            const inResources = progress.resources.some(res => res.includes(searchName));
+            // Проверяем в Созданных ресурсах
+            const inCrafted = progress.crafted.some(res => res.includes(searchName));
+            
+            return inResources || inCrafted;
         }
 
         // --- ОСНОВНЫЕ ФУНКЦИИ ИГРЫ ---
@@ -361,63 +358,75 @@
             let isBlocked = false;
             let blockMessage = '';
             
-            // --- РАУНД 1: ВЫБОР РЕСУРСА ---
+            // --- РАУНД 1: СБОР РЕСУРСОВ ---
             if (roundNum === 1) {
-                const initialResourceCount = 3; // Количество стартовых ресурсов
+                const initialResourceCount = 3; 
                 
-                html += '<h4 style="color:#00ffcc;">✅ ВЫБОР КРИТИЧЕСКОГО РЕСУРСА:</h4>';
+                html += '<h4 style="color:#00ffcc;">✅ ВЫБОР ДВУХ БАЗОВЫХ РЕСУРСОВ:</h4>';
                 
                 // Проверяем, был ли сделан выбор.
                 if (progress.resources.length > initialResourceCount) { 
-                    const bonusIndex = progress.resources.findIndex((res, index) => index >= initialResourceCount);
-                    const bonusResource = progress.resources[bonusIndex];
-                    html += `<p class='success' style="text-align: center;">БОНУСНЫЙ РЕСУРС ВЗЯТ: **${bonusResource}**</p>`;
+                    html += `<p class='success' style="text-align: center;">Базовые ресурсы собраны (${progress.resources.slice(initialResourceCount).join(', ')}).</p>`;
                 } else {
                     html += '<div style="text-align: center;">';
                     data.choices.forEach(choice => {
                         html += `<button class="choice-btn" onclick="selectResource('${choice}')">${choice}</button>`;
                     });
                     html += `</div>`;
-                    isBlocked = true;
-                    blockMessage = '*Сначала выберите бонусный ресурс.*';
+                    // Блокируем, если не выбраны 2 ресурса. 
+                    if (progress.resources.length < initialResourceCount + 2) { 
+                        isBlocked = true;
+                        blockMessage = `*Выберите ${initialResourceCount + 2 - progress.resources.length} ресурс(а).*`;
+                    }
                 }
             }
 
-            // --- РАУНД 2 & 3: СБОР ЧАСТИ (Решение загадки) ---
+            // --- РАУНД 2 & 3: КРАФТ (Создание) ---
             if (roundNum === 2 || roundNum === 3) {
-                const isAssembled = roundNum === 2 ? progress.filterAssembled : progress.antennaAssembled;
-                const dependency = data.dependency;
+                const craftedItem = data.crafted_item;
+                const isCrafted = progress.crafted.includes(craftedItem);
+                const dependency1 = data.dependency[0];
+                const dependency2 = data.dependency[1];
                 
-                html += `<h4 style="color:#ffcc00;">🔑 ИСПЫТАНИЕ НА СБОРКУ:</h4>`;
+                html += `<h4 style="color:#ffcc00;">🔧 ЗОНА КРАФТА: Сборка ${craftedItem}</h4>`;
                 
-                if (!hasResource(dependency)) {
-                    isBlocked = true;
-                    blockMessage = `❌ НЕОБХОДИМ РЕСУРС **${dependency}** ДЛЯ НАЧАЛА. Обсудите с другими группами!`;
-                    html += `<div class="resource-status warning">${blockMessage}</div>
-                            <div style="text-align: center; margin-top: 15px;">
-                                <button class="btn" onclick="requestResource('${dependency}', ${roundNum})">НАРИСОВАТЬ/ОБСУДИТЬ СДЕЛКУ</button>
-                            </div>
-                    `;
-                } else if (isAssembled) {
-                    html += `<p class='success' style="text-align: center;">✅ **${data.part}** СОБРАНА.</p>`;
+                if (isCrafted) {
+                    html += `<p class='success' style="text-align: center;">✅ **${craftedItem}** СОБРАН.</p>`;
                 } else {
-                     html += `
-                        <p class='resource-status success'>✅ РЕСУРС **${dependency}** НАЙДЕН. НАЧИНАЙТЕ РАБОТУ!</p>
-                        <h4 style="color:#ffcc00; text-align: center;">${data.puzzle_text}</h4>
-                        <div class="input-area" style="text-align: center; margin-top: 15px;">
-                            <strong>ВВЕДИТЕ КЛЮЧЕВОЕ СЛОВО:</strong>
-                            <input type="text" id="puzzle-input" placeholder="Ответ">
-                            <button class="btn" onclick="checkPuzzleAnswer(${roundNum}, '${data.answer}', '${data.part}')">ПРОВЕРИТЬ И СОБРАТЬ</button>
-                            <p id="puzzle-feedback" style="margin-top: 10px;"></p>
-                        </div>
-                    `;
-                    isBlocked = true; 
+                    const hasDep1 = hasResource(dependency1);
+                    const hasDep2 = hasResource(dependency2);
+                    
+                    if (!hasDep1 || !hasDep2) {
+                        isBlocked = true;
+                        const missing = [];
+                        if (!hasDep1) missing.push(dependency1);
+                        if (!hasDep2) missing.push(dependency2);
+                        
+                        blockMessage = `❌ НЕДОСТАЮЩИЕ РЕСУРСЫ: **${missing.join(' и ')}**. Обсудите с другими группами!`;
+                        html += `<div class="resource-status warning">${blockMessage}</div>
+                                <div style="text-align: center; margin-top: 15px;">
+                                    <button class="btn" onclick="requestResource('${missing.join(', ')}', ${roundNum})">НАРИСОВАТЬ/ОБСУДИТЬ СДЕЛКУ</button>
+                                </div>
+                        `;
+                    } else {
+                         html += `
+                            <p class='resource-status success'>✅ ВСЕ РЕСУРСЫ НАЙДЕНЫ: **${dependency1}** и **${dependency2}**.</p>
+                            <div class="craft-zone">
+                                <strong>${data.puzzle_text}</strong>
+                                <input type="text" id="puzzle-input" placeholder="Ответ" style="margin: 10px; padding: 8px;">
+                                <button class="btn" onclick="craftItem(${roundNum}, '${data.answer}', '${craftedItem}', '${dependency1}', '${dependency2}')">ПРОВЕРИТЬ И КРАФТИТЬ</button>
+                                <p id="puzzle-feedback" style="margin-top: 10px;"></p>
+                            </div>
+                        `;
+                        isBlocked = true; 
+                    }
                 }
             }
             
             // --- РАУНД 4: ВЫБОР МАРШРУТА ---
             if (roundNum === 4) {
-                const status = progress.antennaAssembled ? '🟢 СВЯЗЬ УСТАНОВЛЕНА' : '🔴 СВЯЗЬ ПОТЕРЯНА';
+                const antenna = progress.crafted.includes("📡 АНТЕННА");
+                const status = antenna ? '🟢 АНТЕННА РАБОТАЕТ' : '🔴 АНТЕННА НЕТ';
                 
                 if (progress.routeChosen) {
                      html += `<p class='success' style="text-align: center;">✅ РЕШЕНИЕ ПРИНЯТО: **${progress.routeResult}**</p>`;
@@ -432,7 +441,7 @@
 
                          html += `
                             <button class="choice-btn ${isRouteLocked ? 'disabled' : ''}" 
-                                onclick="${isRouteLocked ? 'alert(\'Маршрут заблокирован! Нет ключевого ресурса.\')' : `selectRoute('${route.name}', ${route.risk})`}">
+                                onclick="${isRouteLocked ? 'alert(\'Маршрут заблокирован! Нет ключевого ресурса.\')' : `selectRoute('${route.name}', ${route.risk}, ${antenna})`}">
                                 ${route.name} ${routeStatus}
                             </button>
                          `;
@@ -446,21 +455,21 @@
             // --- КАРТОЧКИ И КНОПКА ПЕРЕХОДА ---
             
             html += `
-                <h4 style="color:#00ffcc; margin-top: 30px;">📦 ВАШИ КАРТОЧКИ (ТЕКУЩИЙ ИНВЕНТАРЬ):</h4>
+                <h4 style="color:#00ffcc; margin-top: 30px;">📦 ВАШ ИНВЕНТАРЬ:</h4>
                 <ul class="card-list">
             `;
-            // Перечисляем все ресурсы
+            // Перечисляем Базовые ресурсы
             progress.resources.forEach((card) => {
-                html += `<li>${card}</li>`;
+                html += `<li class="res-base">${card}</li>`;
             });
-            
-            // Добавляем собранные части (НЕ ресурсы, а выполненные задания)
-            if (progress.filterAssembled) { html += `<li>${gameData[currentTeam][2].part}</li>`; }
-            if (progress.antennaAssembled) { html += `<li>${gameData[currentTeam][3].part}</li>`; }
+            // Перечисляем Созданные ресурсы
+            progress.crafted.forEach((card) => {
+                html += `<li class="res-crafted">${card}</li>`;
+            });
             
             // Информация о потерях
             if (progress.lostResources > 0) {
-                 html += `<li><span class="warning">❌ ПОТЕРЯНО: ${progress.lostResources} единиц ресурсов из-за маршрута.</span></li>`;
+                 html += `<li><span class="warning">❌ ПОТЕРЯНО: ${progress.lostResources} единиц ресурсов (Вода/Еда) из-за маршрута.</span></li>`;
             }
 
             html += `</ul>`;
@@ -469,7 +478,7 @@
             html += `
                 <div style="text-align: center; margin-top: 15px;">
                     <button class="btn resource-transfer-btn" onclick="transferResource()">
-                        ПЕРЕДАТЬ/ПОЛУЧИТЬ РЕСУРС
+                        ПЕРЕДАТЬ/ПОЛУЧИТЬ РЕСУРС (МОДЕРАТОР)
                     </button>
                 </div>
             `;
@@ -477,7 +486,7 @@
             // Кнопка перехода
             if (roundNum < 5) {
                 if (isBlocked) {
-                    if (blockMessage && roundNum === 1) html += `<p class="warning" style="text-align: center;">${blockMessage}</p>`;
+                    if (blockMessage) html += `<p class="warning" style="text-align: center; margin-top: 15px;">${blockMessage}</p>`;
                 } else {
                     html += `
                         <div style="text-align: center; margin-top: 30px;">
@@ -490,7 +499,7 @@
             } else {
                  html += `
                     <div style="text-align: center; margin-top: 30px;">
-                         <p class="warning">ФИНАЛ! ИГРА ЗАВЕРШЕНА. Время: ${progress.antennaAssembled ? '🟢 СВЯЗЬ (Бонус +10 мин)' : '🔴 НЕТ СВЯЗИ (Штраф -5 мин)'}.</p>
+                         <p class="warning">ФИНАЛ! ИГРА ЗАВЕРШЕНА. Удачи на поверхности!</p>
                     </div>
                 `;
                  clearInterval(timerInterval);
@@ -504,30 +513,46 @@
         // РАУНД 1: Выбор ресурса
         function selectResource(choice) {
             const progress = teamProgress[currentTeam];
-            if (progress.resources.length > 3) return; 
+            const initialResourceCount = 3;
+            
+            if (progress.resources.length >= initialResourceCount + 2) return; 
 
-            progress.resources.push(`⭐ Бонус: ${choice}`);
-            alert(`✅ Вы выбрали: ${choice}. Ресурс добавлен в ваш инвентарь!`);
+            progress.resources.push(choice);
+            alert(`✅ Выбран: ${choice}. Выберите еще ${initialResourceCount + 2 - progress.resources.length} ресурс(а).`);
             
             showRound(1); 
         }
 
-        // РАУНД 2 & 3: Проверка ответа и сбор части
-        function checkPuzzleAnswer(roundNum, correctAnswer, partName) {
+        // РАУНД 2 & 3: КРАФТ (Создание)
+        function craftItem(roundNum, correctAnswer, craftedItem, dep1, dep2) {
             const input = document.getElementById('puzzle-input');
             const feedback = document.getElementById('puzzle-feedback');
             const userInput = (input.value || '').trim().toUpperCase();
             const correct = correctAnswer.toUpperCase();
-            
+            const progress = teamProgress[currentTeam];
+
             if (userInput === correct) {
-                if (roundNum === 2) {
-                    teamProgress[currentTeam].filterAssembled = true;
-                } else if (roundNum === 3) {
-                    teamProgress[currentTeam].antennaAssembled = true;
+                
+                // Проверяем наличие ресурсов еще раз перед крафтом
+                if (!hasResource(dep1) || !hasResource(dep2)) {
+                    feedback.innerHTML = '<span class="warning">❌ ОШИБКА КРАФТА. Ресурсы исчезли? Проверьте инвентарь!</span>';
+                    return;
                 }
+
+                // 1. Успешный крафт: добавляем созданный предмет
+                progress.crafted.push(craftedItem);
+                
+                // 2. Удаляем использованные базовые ресурсы (удаляем первое совпадение)
+                const dep1Index = progress.resources.findIndex(res => res.includes(dep1.replace(/[\⭐\s\w]+:\s?/g, '').trim()));
+                if (dep1Index > -1) progress.resources.splice(dep1Index, 1);
+                
+                const dep2Index = progress.resources.findIndex(res => res.includes(dep2.replace(/[\⭐\s\w]+:\s?/g, '').trim()));
+                if (dep2Index > -1) progress.resources.splice(dep2Index, 1);
+
+                
                 clearInterval(timerInterval);
-                feedback.innerHTML = `<span class="success">✅ КОД ПРИНЯТ. **${partName}** СОБРАНА.</span>`;
-                alert(`УСПЕХ! Часть собрана. Переходите к следующему этапу.`);
+                feedback.innerHTML = `<span class="success">✅ КОД ПРИНЯТ. **${craftedItem}** УСПЕШНО СОЗДАН.</span>`;
+                alert(`УСПЕХ! ${craftedItem} создан. Ресурсы ${dep1} и ${dep2} использованы.`);
 
                 showRound(roundNum); 
             } else {
@@ -537,16 +562,22 @@
         }
         
         // --- РАУНД 4 - Выбор маршрута ---
-        function selectRoute(routeName, baseRisk) {
+        function selectRoute(routeName, baseRisk, hasAntenna) {
             const progress = teamProgress[currentTeam];
             if (progress.routeChosen) return;
 
             let finalRisk = baseRisk;
             let resultMessage = `Вы выбрали **${routeName}**.`;
 
-            if (!progress.antennaAssembled && baseRisk > 0) {
+            // Влияние Антенны на риск
+            if (!hasAntenna && baseRisk > 0) {
+                // Если нет Антенны, риск опасного маршрута удваивается
                 finalRisk += baseRisk; 
-                resultMessage += " **(⚠️ СВЯЗЬ ПОТЕРЯНА: Риск удвоен!)**";
+                resultMessage += " **(⚠️ НЕТ АНТЕННЫ: Риск удвоен!)**";
+            } else if (hasAntenna && baseRisk > 0) {
+                // Если Антенна есть, риск уменьшается
+                finalRisk = Math.max(0, finalRisk - 1);
+                resultMessage += " **(📡 АНТЕННА: Риск снижен!)**";
             }
             
             if (finalRisk > 0) {
@@ -572,21 +603,28 @@
 
         // --- ФУНКЦИЯ ДЛЯ МОДЕРАТОРА: ВЫДАЧА РЕСУРСА (Обсуждение/Рисунок) ---
         function requestResource(dependency, roundNum) {
-            const newResource = prompt(`МОДЕРАТОР: Чтобы получить ресурс "${dependency}", нарисуйте его или договоритесь. После выполнения введите "ДА" для получения:`);
+            const newResource = prompt(`МОДЕРАТОР: Чтобы получить ресурс "${dependency}", нарисуйте его или договоритесь. После выполнения введите точное название ресурса (например, 'Провода'), который вы получаете:`);
             
-            if (newResource && newResource.toUpperCase() === 'ДА') {
-                teamProgress[currentTeam].resources.push(`⭐ Обсуждение: ${dependency}`);
-                alert(`✅ Ресурс "${dependency}" получен! Теперь можно продолжить.`);
+            if (newResource) {
+                teamProgress[currentTeam].resources.push(`⭐ Обсуждение: ${newResource}`);
+                alert(`✅ Ресурс "${newResource}" получен! Теперь можно продолжить.`);
                 showRound(roundNum);
             } else {
-                alert('Ресурс не получен. Необходимость выполнения задания остается.');
+                alert('Ресурс не получен.');
             }
         }
 
-        // --- НОВАЯ ФУНКЦИЯ: ПЕРЕДАЧА РЕСУРСА МЕЖДУ КОМАНДАМИ ---
+        // --- ФУНКЦИЯ: ПЕРЕДАЧА РЕСУРСА МЕЖДУ КОМАНДАМИ ---
         function transferResource() {
             const progress = teamProgress[currentTeam];
-            const resourcesList = progress.resources.map((res, index) => `${index + 1}. ${res}`).join('\n');
+            const allResources = [...progress.resources, ...progress.crafted];
+            
+            if (allResources.length === 0) {
+                alert("У вашей группы нет ресурсов для передачи!");
+                return;
+            }
+
+            const resourcesList = allResources.map((res, index) => `${index + 1}. ${res}`).join('\n');
             
             const resourceIndexStr = prompt(`--- ПЕРЕДАЧА РЕСУРСА ОТ ГРУППЫ ${currentTeam} ---\n\nВыберите номер ресурса, который хотите передать:\n${resourcesList}\n\n(Введите номер или отмените)`);
             
@@ -594,12 +632,12 @@
 
             const resourceIndex = parseInt(resourceIndexStr) - 1;
             
-            if (resourceIndex < 0 || resourceIndex >= progress.resources.length) {
+            if (resourceIndex < 0 || resourceIndex >= allResources.length) {
                 alert('Неверный номер ресурса!');
                 return;
             }
 
-            const resourceToTransfer = progress.resources[resourceIndex];
+            const resourceToTransfer = allResources[resourceIndex];
 
             const recipientGroup = prompt(`Введите номер группы-получателя (1, 2 или 3):`);
 
@@ -610,16 +648,35 @@
 
             const recipientTeamId = `Group ${recipientGroup}`;
             
-            // 1. Удаляем ресурс у текущей команды
-            progress.resources.splice(resourceIndex, 1);
+            let isCraftedTransfer = false;
             
-            // 2. Добавляем ресурс команде-получателю, помечая его как переданный
-            const transferredResource = `🤝 Передано: ${resourceToTransfer.replace(/[\⭐\s\w]+:\s?/g, '')}`;
-            teamProgress[recipientTeamId].resources.push(transferredResource);
+            // 1. Удаляем ресурс у текущей команды
+            const resIndex = progress.resources.indexOf(resourceToTransfer);
+            const craftIndex = progress.crafted.indexOf(resourceToTransfer);
+
+            if (resIndex > -1) {
+                progress.resources.splice(resIndex, 1);
+            } else if (craftIndex > -1) {
+                progress.crafted.splice(craftIndex, 1);
+                isCraftedTransfer = true;
+            } else {
+                alert('Ошибка: Ресурс не найден в инвентаре.');
+                return;
+            }
+            
+            // 2. Добавляем ресурс команде-получателю
+            const transferredResource = `🤝 Передано: ${resourceToTransfer}`;
+            
+            if (isCraftedTransfer) {
+                // Если передаем созданный предмет, добавляем в список созданных
+                 teamProgress[recipientTeamId].crafted.push(transferredResource);
+            } else {
+                // Если передаем базовый предмет, добавляем в список базовых
+                teamProgress[recipientTeamId].resources.push(transferredResource);
+            }
             
             alert(`✅ УСПЕХ: Ресурс "${resourceToTransfer}" передан ГРУППЕ ${recipientGroup} (${recipientTeamId}).`);
 
-            // Перезагрузка текущего раунда для обновления инвентаря
             showRound(currentRound);
         }
 
