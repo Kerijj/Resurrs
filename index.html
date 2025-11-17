@@ -3,690 +3,323 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>БУНКЕР-СИГНАЛ: СИСТЕМА КРАФТА И РЕСУРСОВ</title>
+    <title>Игра "Выживи": Симулятор Сбора Ресурсов</title>
     <style>
-        /* --- ОСНОВНЫЕ НЕОНОВЫЕ СТИЛИ --- */
         body {
-            font-family: 'Consolas', 'Courier New', monospace;
-            background-color: #0d0d0d;
-            color: #00ff41; 
-            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background: #2c3e50;
+            color: #ecf0f1;
             padding: 20px;
-            text-shadow: 0 0 5px #00ff41, 0 0 10px rgba(0, 255, 65, 0.5);
-            line-height: 1.6;
+            margin: 0;
         }
-        h1, h2, h3, h4 {
-            color: #00ffcc; 
-            text-align: center;
-            border-bottom: 2px solid #00ffcc;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            text-shadow: 0 0 8px #00ffcc, 0 0 15px rgba(0, 255, 204, 0.4);
-        }
-        #team-select, #game-container {
-            max-width: 900px;
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
-            border: 2px solid #00ff41;
-            padding: 30px;
-            box-shadow: 0 0 20px #00ff41, 0 0 30px rgba(0, 255, 65, 0.3);
-            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
         }
-        
-        /* --- СТИЛИ КНОПОК --- */
-        .btn, .choice-btn {
-            background-color: transparent;
-            color: #00ff41;
-            border: 2px solid #00ff41;
-            padding: 12px 25px;
-            margin: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: inherit;
-            font-size: 1.1em;
-            text-shadow: 0 0 5px #00ff41;
-            box-shadow: 0 0 5px #00ff41 inset, 0 0 5px #00ff41;
-            text-transform: uppercase;
+        .faction-card {
+            flex: 1 1 300px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
         }
-        .btn:hover, .choice-btn:hover:not(.disabled) {
-            background-color: rgba(0, 255, 65, 0.2);
-            color: #0d0d0d;
-            border-color: #ffcc00; 
-            box-shadow: 0 0 15px #ffcc00, 0 0 20px rgba(255, 204, 0, 0.5);
-        }
-        .btn.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .resource-transfer-btn {
-            background-color: #ffcc00;
-            color: #0d0d0d;
-            border: 2px solid #ffcc00;
-            padding: 8px 15px;
-            margin-top: 15px;
-            text-shadow: none;
-        }
+        #group1 { background: #3498db; } /* Синий */
+        #group2 { background: #2ecc71; } /* Зеленый */
+        #group3 { background: #e74c3c; } /* Красный */
 
-        /* --- СТИЛИ РЕСУРСОВ --- */
-        .card-list {
+        .resources-list {
             list-style: none;
             padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 40px; /* Чтобы списки не "прыгали" */
         }
-        .card-list li {
-            padding: 10px;
-            margin-bottom: 8px;
-            border-radius: 3px;
-        }
-        /* Базовые ресурсы (Сырье) */
-        .res-base {
-            background-color: #1a1a1a;
-            border-left: 5px solid #00ffcc;
-            color: #00ffcc;
-        }
-        /* Созданные ресурсы (Крафт/Инструменты) */
-        .res-crafted {
-            background-color: #331a00;
-            border-left: 5px solid #ffcc00;
-            color: #ffcc00;
+        .resource-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
             font-weight: bold;
         }
-        /* Результаты и потери */
-        .warning {
-            color: #ff004c;
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 5px;
             font-weight: bold;
+            transition: background 0.2s;
+            background: #f39c12;
+            color: white;
+            margin-right: 5px;
         }
-        .success {
-            color: #00ff41;
-            font-weight: bold;
-        }
-        .resource-status {
-            color: #ffcc00;
-            margin-top: 15px;
-            border: 1px dashed #ffcc00;
-            padding: 10px;
-            text-align: center;
-        }
-        .craft-zone {
+        button:hover { background: #e67e22; }
+        .action-area { margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.3); }
+
+        .log-box {
+            width: 100%;
             margin-top: 20px;
+            padding: 10px;
+            background: #34495e;
+            border-radius: 8px;
+            height: 150px;
+            overflow-y: scroll;
+        }
+
+        /* Стили для формы обмена */
+        .trade-form {
+            background: rgba(0, 0, 0, 0.15);
             padding: 15px;
-            border: 2px solid #00ffcc;
-            background-color: rgba(0, 255, 204, 0.1);
-            text-align: center;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .trade-form select, .trade-form input {
+            padding: 8px;
+            margin-right: 5px;
+            border-radius: 4px;
+            border: 1px solid #7f8c8d;
+            background: #ecf0f1;
+            color: #333;
         }
     </style>
 </head>
 <body>
 
-    <div id="team-select">
-        <h1>[ СИСТЕМА ВЫЖИВАНИЯ БУНКЕРА ]</h1>
-        <h2>ИНИЦИАЛИЗАЦИЯ СВЯЗИ</h2>
-        <div style="text-align: center; margin-top: 40px;">
-            <button class="btn" onclick="selectTeam('Group 1')">ГРУППА 1: СЕКЦИЯ АЛЬФА</button>
-            <button class="btn" onclick="selectTeam('Group 2')">ГРУППА 2: СЕКЦИЯ БЕТА</button>
-            <button class="btn" onclick="selectTeam('Group 3')">ГРУППА 3: СЕКЦИЯ ГАММА</button>
-        </div>
-    </div>
+    <h1>🚨 Игра "Выживи": Раунд 1 - Сбор Ресурсов</h1>
 
-    <div id="game-container" style="display:none;">
-        <h1>БУНКЕР: КРИТИЧЕСКИЙ РЕЖИМ</h1>
-        <h2 id="team-display" style="color: #ffcc00;"></h2>
-
-        <div id="timer-display">
-            <span id="timer-label">ВРЕМЯ НА РАУНД</span>
-            <span id="time-left">05:00</span>
-        </div>
-        
-        <div id="round-nav" style="display: flex; justify-content: center; margin: 20px 0; flex-wrap: wrap;">
-            <button class="round-btn active" data-round="1" onclick="showRound(1)">РАУНД 1: СБОР 🌲</button>
-            <button class="round-btn" data-round="2" onclick="showRound(2)">РАУНД 2: КРАФТ I 💧</button>
-            <button class="round-btn" data-round="3" onclick="showRound(3)">РАУНД 3: КРАФТ II 📡</button>
-            <button class="round-btn" data-round="4" onclick="showRound(4)">РАУНД 4: РЕШЕНИЕ 🧭</button>
-            <button class="round-btn" data-round="5" onclick="showRound(5)">РАУНД 5: ФИНАЛ 🤝</button>
-        </div>
-
-        <div id="round-content">
+    <div class="container">
+        <div class="faction-card" id="group1">
+            <h3>Группа 1: Технократы/Охотники</h3>
+            <p>Текущие ресурсы (Карточки):</p>
+            <ul class="resources-list" id="group1-resources"></ul>
+            
+            <div class="action-area">
+                <h4>Сбор ресурсов (Р1):</h4>
+                <button onclick="collectResource('group1', 'Еда')">Кухня (Еда)</button>
+                <button onclick="collectResource('group1', 'Вода')">Кухня (Вода)</button>
+                <button onclick="collectResource('group1', 'Материалы')">Мастерская (Материалы)</button>
+                
+                <div class="trade-form">
+                    <h4>🤝 Обмен (Intra):</h4>
+                    <select id="group1-give-res"></select>
+                    <button onclick="openTradeModal('group1')">Обменяться с другой группой</button>
+                </div>
             </div>
+        </div>
+
+        <div class="faction-card" id="group2">
+            <h3>Группа 2: Биоинженеры/Строители</h3>
+            <p>Текущие ресурсы (Карточки):</p>
+            <ul class="resources-list" id="group2-resources"></ul>
+            
+            <div class="action-area">
+                <h4>Сбор ресурсов (Р1):</h4>
+                <button onclick="collectResource('group2', 'Инструменты')">Склад (Инструменты)</button>
+                <button onclick="collectResource('group2', 'Провода')">Мастерская (Провода)</button>
+                <button onclick="collectResource('group2', 'Панель')">Мастерская (Панель)</button>
+
+                <div class="trade-form">
+                    <h4>🤝 Обмен (Intra):</h4>
+                    <select id="group2-give-res"></select>
+                    <button onclick="openTradeModal('group2')">Обменяться с другой группой</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="faction-card" id="group3">
+            <h3>Группа 3: Конструкторы/Исследователи</h3>
+            <p>Текущие ресурсы (Карточки):</p>
+            <ul class="resources-list" id="group3-resources"></ul>
+            
+            <div class="action-area">
+                <h4>Сбор ресурсов (Р1):</h4>
+                <button onclick="collectResource('group3', 'Топливо')">Склад (Топливо)</button>
+                <button onclick="collectResource('group3', 'Микросхема')">Мастерская (Микросхема)</button>
+                <button onclick="collectResource('group3', 'Еда')">Кухня (Еда)</button>
+
+                <div class="trade-form">
+                    <h4>🤝 Обмен (Intra):</h4>
+                    <select id="group3-give-res"></select>
+                    <button onclick="openTradeModal('group3')">Обменяться с другой группой</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="log-box">
+            <h2>📢 Журнал Событий</h2>
+            <div id="game-log"></div>
+        </div>
     </div>
 
+    <div id="trade-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000;">
+        <div style="background:#fff; color:#333; width:90%; max-width:450px; margin:80px auto; padding:25px; border-radius:8px;">
+            <h3>Запрос на Обмен</h3>
+            <p>Отправитель: <span id="trading-from" style="font-weight:bold;"></span></p>
+            
+            <label>Отдать:</label>
+            <select id="trade-give-res-modal"></select>
+            
+            <label style="margin-top: 10px;">Получить от:</label>
+            <select id="trade-target-faction"></select>
+
+            <label style="margin-top: 10px;">Желаемый ресурс:</label>
+            <input type="text" id="trade-get-res-input" placeholder="Например, Инструменты" style="width: 95%; padding: 8px; margin-top: 5px;">
+            
+            <p style="margin-top: 15px; font-size: 0.9em; color: #e74c3c;">
+                ⚠️ **Модерация Ведущим:** Обмен состоится, если Ведущий объявит его успешным!
+            </p>
+            
+            <button onclick="submitTradeOffer()" style="background: #27ae60; color: white;">Отправить Предложение</button>
+            <button onclick="closeTradeModal()" style="background:#bdc3c7; color: #333;">Закрыть</button>
+        </div>
+    </div>
+    
     <script>
-        // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ИГРЫ ---
-        let currentTeam = null;
-        let currentRound = 1;
-        let timerInterval = null;
+        // --- JS Логика ---
 
-        // Отслеживание прогресса команды
-        let teamProgress = {
-            "Group 1": { 
-                resources: ["💧 Вода (10л)", "💊 Аптечка", "📝 Схема (Фильтр)"], // Стартовые ресурсы
-                crafted: [],
-                lostResources: 0, 
-                routeChosen: false,
-                routeResult: null 
-            },
-            "Group 2": { 
-                resources: ["💧 Вода (10л)", "🔌 Провода", "💡 Лампа"], 
-                crafted: [],
-                lostResources: 0, 
-                routeChosen: false,
-                routeResult: null 
-            },
-            "Group 3": { 
-                resources: ["💧 Вода (10л)", "🔥 Топливо", "🗺️ Карта"], 
-                crafted: [],
-                lostResources: 0, 
-                routeChosen: false,
-                routeResult: null 
-            }
+        const GAME_STATE = {
+            group1: { name: "Группа 1", resources: [], bonuses: 0, penalties: 0 },
+            group2: { name: "Группа 2", resources: [], bonuses: 0, penalties: 0 },
+            group3: { name: "Группа 3", resources: [], bonuses: 0, penalties: 0 }
         };
 
-        // --- ДАННЫЕ ИГРЫ С КРАФТОМ ---
-        const gameData = {
-            "Group 1": {
-                name: "ГРУППА 1: СЕКЦИЯ АЛЬФА",
-                1: { // СБОР РЕСУРСОВ
-                    objective: "СБОР РЕСУРСОВ. Локация: Кухня. Цель: Получить два недостающих Базовых ресурса.",
-                    choices: ["🔪 Нож", "🛠️ Отвертка", "📚 Учебник"],
-                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 2 (КРАФТ I)"
-                },
-                2: { // КРАФТ I: ФИЛЬТР (Требует: 📝 Схема (Фильтр) и 🛠️ Отвертка)
-                    objective: "КРАФТ ФИЛЬТРА. Цель: Собрать **💧 ФИЛЬТР для воды** из сырья.",
-                    puzzle_text: "ЗАГАДКА (ВОДА): Что всегда течет, но никогда не движется с места? (Ответ 4 буквы)",
-                    answer: "ВОДА",
-                    dependency: ["📝 Схема (Фильтр)", "🛠️ Отвертка"],
-                    crafted_item: "💧 ФИЛЬТР для воды",
-                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 3 (КРАФТ II)"
-                },
-                3: { // КРАФТ II: АНТЕННА (Требует: 🔌 Провода и 🛠️ Отвертка)
-                    objective: "КРАФТ АНТЕННЫ. Цель: Собрать **📡 АНТЕННА** для связи.",
-                    puzzle_text: "РЕБУС (СВЯЗЬ): Введите синоним к слову 'СООБЩЕНИЕ'. (Ответ 5 букв)",
-                    answer: "СИГНАЛ",
-                    dependency: ["🔌 Провода", "🛠️ Отвертка"],
-                    crafted_item: "📡 АНТЕННА",
-                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 4 (РЕШЕНИЕ)"
-                },
-                4: { // ВЫХОД НА ПОВЕРХНОСТЬ
-                    objective: "ВЫХОД НА ПОВЕРХНОСТЬ. Анализ: Готовность к выходу.",
-                    routes: [
-                        { name: "МАРШРУТ А: Короткий и Опасный", risk: 2, reward: "Быстрый выход", dependency: "🔪 Нож" },
-                        { name: "МАРШРУТ Б: Длинный и Безопасный", risk: 0, reward: "Безопасность", dependency: "🗺️ Карта" }
-                    ],
-                    next_round_btn: "ПЕРЕЙТИ К ФИНАЛУ"
-                },
-                5: { objective: "ФИНАЛ: СТРАТЕГИЯ СПАСЕНИЯ", next_round_btn: "ЗАВЕРШИТЬ" }
-            },
-            "Group 2": {
-                name: "ГРУППА 2: СЕКЦИЯ БЕТА",
-                1: { 
-                    objective: "СБОР РЕСУРСОВ. Локация: Мастерская. Цель: Получить два недостающих Базовых ресурса.",
-                    choices: ["🛠️ Отвертка", "🔋 Батарея", "📜 Схема (Антенна)"],
-                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 2 (КРАФТ I)"
-                },
-                2: { 
-                    objective: "КРАФТ ФИЛЬТРА. Цель: Собрать **💧 ФИЛЬТР для воды** из сырья.",
-                    puzzle_text: "ЗАДАЧКА (ВОДА): Сколько литров в одном кубическом метре? (Ответ цифрами)",
-                    answer: "1000",
-                    dependency: ["📝 Схема (Фильтр)", "💡 Лампа"],
-                    crafted_item: "💧 ФИЛЬТР для воды",
-                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 3 (КРАФТ II)"
-                },
-                3: { 
-                    objective: "КРАФТ СЕТКИ. Цель: Собрать **🎣 СЕТКА для рыбы** (для пропитания).",
-                    puzzle_text: "РЕБУС (ЕДА): Назовите животное, которое дает человеку молоко и мясо. (Ответ 4 буквы)",
-                    answer: "КОЗА",
-                    dependency: ["🔌 Провода", "🛠️ Отвертка"],
-                    crafted_item: "🎣 СЕТКА для рыбы",
-                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 4 (РЕШЕНИЕ)"
-                },
-                4: { // ВЫХОД НА ПОВЕРХНОСТЬ
-                    objective: "ВЫХОД НА ПОВЕРХНОСТЬ. Анализ: Готовность к выходу.",
-                    routes: [
-                        { name: "МАРШРУТ Б: Длинный и Безопасный", risk: 0, reward: "Безопасность", dependency: "🎣 СЕТКА для рыбы" },
-                        { name: "МАРШРУТ В: Средний, с обвалом", risk: 1, reward: "Нейтральный выход", dependency: "🔋 Батарея" }
-                    ],
-                    next_round_btn: "ПЕРЕЙТИ К ФИНАЛУ"
-                },
-                5: { objective: "ФИНАЛ: СТРАТЕГИЯ СПАСЕНИЯ", next_round_btn: "ЗАВЕРШИТЬ" }
-            },
-            "Group 3": {
-                name: "ГРУППА 3: СЕКЦИЯ ГАММА",
-                1: { 
-                    objective: "СБОР РЕСУРСОВ. Локация: Склад. Цель: Получить два недостающих Базовых ресурса.",
-                    choices: ["🔪 Нож", "🛠️ Отвертка", "🎣 Леска"],
-                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 2 (КРАФТ I)"
-                },
-                2: { 
-                    objective: "КРАФТ ФИЛЬТРА. Цель: Собрать **💧 ФИЛЬТР для воды** из сырья.",
-                    puzzle_text: "ЗАГАДКА (ОГОНЬ): 'Я не живу, но расту. У меня нет легких, но мне нужен воздух'. (Ответ 6 букв)",
-                    answer: "ОГОНЬ",
-                    dependency: ["📝 Схема (Фильтр)", "🔥 Топливо"],
-                    crafted_item: "💧 ФИЛЬТР для воды",
-                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 3 (КРАФТ II)"
-                },
-                3: { 
-                    objective: "КРАФТ СИГНАЛИЗАЦИИ. Цель: Собрать **🚨 СИГНАЛИЗАЦИЯ** (для защиты от монстров).",
-                    puzzle_text: "РЕБУС (ЗАЩИТА): Введите синоним к слову 'ЗАПАС'. (Ответ 7 букв)",
-                    answer: "РЕЗЕРВ",
-                    dependency: ["🔥 Топливо", "💡 Лампа"],
-                    crafted_item: "🚨 СИГНАЛИЗАЦИЯ",
-                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 4 (РЕШЕНИЕ)"
-                },
-                4: { // ВЫХОД НА ПОВЕРХНОСТЬ
-                    objective: "ВЫХОД НА ПОВЕРХНОСТЬ. Анализ: Готовность к выходу.",
-                    routes: [
-                        { name: "МАРШРУТ А: Короткий и Опасный", risk: 2, reward: "Быстрый выход", dependency: "🔪 Нож" },
-                        { name: "МАРШРУТ В: Средний, с обвалом", risk: 1, reward: "Нейтральный выход", dependency: "🚨 СИГНАЛИЗАЦИЯ" }
-                    ],
-                    next_round_btn: "ПЕРЕЙТИ К ФИНАЛУ"
-                },
-                5: { objective: "ФИНАЛ: СТРАТЕГИЯ СПАСЕНИЯ", next_round_btn: "ЗАВЕРШИТЬ" }
+        let activeTraderId = null; // Для модального окна обмена
+
+        // Функция для обновления Журнала Событий
+        function updateLog(message) {
+            const logBox = document.getElementById('game-log');
+            const now = new Date().toLocaleTimeString('ru-RU');
+            logBox.innerHTML = `<p style="margin: 2px 0;">[${now}] ${message}</p>` + logBox.innerHTML;
+            // Ограничение размера журнала для производительности
+            if (logBox.children.length > 50) {
+                logBox.removeChild(logBox.lastChild);
             }
-        };
-        
-        // --- ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ ДЛЯ ПРОВЕРКИ РЕСУРСОВ ---
-        function hasResource(resourceName) {
-            const progress = teamProgress[currentTeam];
-            // Ищем ресурс, игнорируя префиксы и смайлы для более гибкого поиска
-            const searchName = resourceName.replace(/[\⭐\s\w]+:\s?/g, '').trim(); 
-            
-            // Проверяем в Базовых ресурсах
-            const inResources = progress.resources.some(res => res.includes(searchName));
-            // Проверяем в Созданных ресурсах
-            const inCrafted = progress.crafted.some(res => res.includes(searchName));
-            
-            return inResources || inCrafted;
         }
 
-        // --- ОСНОВНЫЕ ФУНКЦИИ ИГРЫ ---
-
-        function selectTeam(teamId) {
-            currentTeam = teamId;
-            document.getElementById('team-select').style.display = 'none';
-            document.getElementById('game-container').style.display = 'block';
-            document.getElementById('team-display').textContent = `[ СВЯЗЬ УСТАНОВЛЕНА: ${gameData[teamId].name} ]`;
-            showRound(1); 
+        // Функция для обновления интерфейса (ресурсов)
+        function updateUI() {
+            for (const groupId in GAME_STATE) {
+                const group = GAME_STATE[groupId];
+                const listElement = document.getElementById(groupId + '-resources');
+                const giveSelect = document.getElementById(groupId + '-give-res');
+                
+                // 1. Обновление списка ресурсов в карточке
+                listElement.innerHTML = group.resources.map(res => 
+                    `<li class="resource-item">${res}</li>`
+                ).join('');
+                
+                // 2. Обновление списка "Отдать" в форме обмена
+                giveSelect.innerHTML = group.resources.map(res => 
+                    `<option value="${res}">${res}</option>`
+                ).join('') || '<option>Нет ресурсов</option>';
+            }
         }
 
-        function startTimer(durationInSeconds) {
-            if (timerInterval) {
-                clearInterval(timerInterval);
-            }
-            let timer = durationInSeconds;
-            const display = document.getElementById('time-left');
-            const timerDiv = document.getElementById('timer-display');
-            
-            timerInterval = setInterval(function () {
-                let minutes = parseInt(timer / 60, 10);
-                let seconds = parseInt(timer % 60, 10);
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-                display.textContent = minutes + ":" + seconds;
+        // --- РАУНД 1: СБОР РЕСУРСОВ ---
 
-                if (--timer < 0) {
-                    clearInterval(timerInterval);
-                    display.textContent = "ВРЕМЯ ИСТЕКЛО! 💀";
-                    timerDiv.style.color = '#ff004c'; 
-                } else if (timer <= 60 && timer > 0) {
-                     timerDiv.style.color = '#ffcc00'; 
-                } else {
-                     timerDiv.style.color = '#00ffcc';
+        function collectResource(groupId, resourceName) {
+            const group = GAME_STATE[groupId];
+            
+            // Проверка на уникальность для карточек
+            if (group.resources.includes(resourceName)) {
+                updateLog(`❌ ${group.name} уже имеет карточку: ${resourceName}.`);
+                return;
+            }
+            
+            group.resources.push(resourceName);
+            updateLog(`✅ ${group.name} успешно собрала карточку: **${resourceName}**.`);
+            updateUI();
+        }
+
+        // --- ВЗАИМОДЕЙСТВИЕ: ОБМЕН (INTRA) ---
+
+        function openTradeModal(traderId) {
+            activeTraderId = traderId;
+            const traderGroup = GAME_STATE[traderId];
+            const giveSelect = document.getElementById('trade-give-res-modal');
+            const targetSelect = document.getElementById('trade-target-faction');
+            
+            document.getElementById('trading-from').textContent = traderGroup.name;
+
+            // Заполнение списка "Отдать" в модальном окне
+            giveSelect.innerHTML = traderGroup.resources.map(res => 
+                `<option value="${res}">${res}</option>`
+            ).join('');
+
+            // Заполнение списка получателей
+            targetSelect.innerHTML = '';
+            for (const id in GAME_STATE) {
+                if (id !== traderId) {
+                    targetSelect.innerHTML += `<option value="${id}">${GAME_STATE[id].name}</option>`;
                 }
-            }, 1000);
+            }
+
+            document.getElementById('trade-modal').style.display = 'block';
+        }
+
+        function closeTradeModal() {
+            document.getElementById('trade-modal').style.display = 'none';
+            activeTraderId = null;
+        }
+
+        function submitTradeOffer() {
+            const fromId = activeTraderId;
+            const toId = document.getElementById('trade-target-faction').value;
+            const giveRes = document.getElementById('trade-give-res-modal').value;
+            const getRes = document.getElementById('trade-get-res-input').value.trim();
+            
+            if (!giveRes || !getRes) {
+                alert("Укажите оба ресурса для обмена.");
+                return;
+            }
+
+            const fromGroup = GAME_STATE[fromId];
+            const toGroup = GAME_STATE[toId];
+
+            const consoleCommand = `executeTrade('${fromId}', '${toId}', '${giveRes}', '${getRes}')`;
+            
+            updateLog(`🤝 **ЗАПРОС НА ОБМЕН:** ${fromGroup.name} предлагает **${giveRes}** за **${getRes}** у ${toGroup.name}.`);
+            
+            alert(`Предложение отправлено. Ведущий должен проверить наличие ресурса '${getRes}' у ${toGroup.name} и выполнить команду в консоли (F12): ${consoleCommand}`);
+
+            closeTradeModal();
         }
         
-        // --- ФУНКЦИЯ ОТОБРАЖЕНИЯ КОНТЕНТА РАУНДА ---
-        function showRound(roundNum) {
-            if (!currentTeam || !gameData[currentTeam]) return; 
+        // Эта функция выполняется ВЕДУЩИМ в консоли (имитация модерации)
+        window.executeTrade = function(fromId, toId, giveRes, getRes) {
+            const fromGroup = GAME_STATE[fromId];
+            const toGroup = GAME_STATE[toId];
 
-            currentRound = roundNum; 
-            
-            const duration = (roundNum === 1 || roundNum === 4) ? 300 : 600;
-            startTimer(duration); 
+            const giveIndex = fromGroup.resources.indexOf(giveRes);
+            const getIndex = toGroup.resources.indexOf(getRes);
 
-            document.querySelectorAll('.round-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.round-btn[data-round="${roundNum}"]`).classList.add('active');
-
-            const data = gameData[currentTeam][roundNum];
-            const progress = teamProgress[currentTeam];
-            const contentDiv = document.getElementById('round-content');
-            
-            let html = `
-                <h3 style="color:#ffcc00;">[ ЦЕЛЬ РАУНДА ${roundNum} ]</h3>
-                
-                <div class="round-objective">
-                    ${data.objective}
-                </div>
-            `;
-            let isBlocked = false;
-            let blockMessage = '';
-            
-            // --- РАУНД 1: СБОР РЕСУРСОВ ---
-            if (roundNum === 1) {
-                const initialResourceCount = 3; 
-                
-                html += '<h4 style="color:#00ffcc;">✅ ВЫБОР ДВУХ БАЗОВЫХ РЕСУРСОВ:</h4>';
-                
-                // Проверяем, был ли сделан выбор.
-                if (progress.resources.length > initialResourceCount) { 
-                    html += `<p class='success' style="text-align: center;">Базовые ресурсы собраны (${progress.resources.slice(initialResourceCount).join(', ')}).</p>`;
-                } else {
-                    html += '<div style="text-align: center;">';
-                    data.choices.forEach(choice => {
-                        html += `<button class="choice-btn" onclick="selectResource('${choice}')">${choice}</button>`;
-                    });
-                    html += `</div>`;
-                    // Блокируем, если не выбраны 2 ресурса. 
-                    if (progress.resources.length < initialResourceCount + 2) { 
-                        isBlocked = true;
-                        blockMessage = `*Выберите ${initialResourceCount + 2 - progress.resources.length} ресурс(а).*`;
-                    }
-                }
-            }
-
-            // --- РАУНД 2 & 3: КРАФТ (Создание) ---
-            if (roundNum === 2 || roundNum === 3) {
-                const craftedItem = data.crafted_item;
-                const isCrafted = progress.crafted.includes(craftedItem);
-                const dependency1 = data.dependency[0];
-                const dependency2 = data.dependency[1];
-                
-                html += `<h4 style="color:#ffcc00;">🔧 ЗОНА КРАФТА: Сборка ${craftedItem}</h4>`;
-                
-                if (isCrafted) {
-                    html += `<p class='success' style="text-align: center;">✅ **${craftedItem}** СОБРАН.</p>`;
-                } else {
-                    const hasDep1 = hasResource(dependency1);
-                    const hasDep2 = hasResource(dependency2);
-                    
-                    if (!hasDep1 || !hasDep2) {
-                        isBlocked = true;
-                        const missing = [];
-                        if (!hasDep1) missing.push(dependency1);
-                        if (!hasDep2) missing.push(dependency2);
-                        
-                        blockMessage = `❌ НЕДОСТАЮЩИЕ РЕСУРСЫ: **${missing.join(' и ')}**. Обсудите с другими группами!`;
-                        html += `<div class="resource-status warning">${blockMessage}</div>
-                                <div style="text-align: center; margin-top: 15px;">
-                                    <button class="btn" onclick="requestResource('${missing.join(', ')}', ${roundNum})">НАРИСОВАТЬ/ОБСУДИТЬ СДЕЛКУ</button>
-                                </div>
-                        `;
-                    } else {
-                         html += `
-                            <p class='resource-status success'>✅ ВСЕ РЕСУРСЫ НАЙДЕНЫ: **${dependency1}** и **${dependency2}**.</p>
-                            <div class="craft-zone">
-                                <strong>${data.puzzle_text}</strong>
-                                <input type="text" id="puzzle-input" placeholder="Ответ" style="margin: 10px; padding: 8px;">
-                                <button class="btn" onclick="craftItem(${roundNum}, '${data.answer}', '${craftedItem}', '${dependency1}', '${dependency2}')">ПРОВЕРИТЬ И КРАФТИТЬ</button>
-                                <p id="puzzle-feedback" style="margin-top: 10px;"></p>
-                            </div>
-                        `;
-                        isBlocked = true; 
-                    }
-                }
-            }
-            
-            // --- РАУНД 4: ВЫБОР МАРШРУТА ---
-            if (roundNum === 4) {
-                const antenna = progress.crafted.includes("📡 АНТЕННА");
-                const status = antenna ? '🟢 АНТЕННА РАБОТАЕТ' : '🔴 АНТЕННА НЕТ';
-                
-                if (progress.routeChosen) {
-                     html += `<p class='success' style="text-align: center;">✅ РЕШЕНИЕ ПРИНЯТО: **${progress.routeResult}**</p>`;
-                } else {
-                    html += `<h4 style="color:#ffcc00;">📡 СТАТУС СВЯЗИ: ${status}</h4>`;
-                    html += '<h4 style="color:#00ffcc;">🗺️ ВЫБЕРИТЕ МАРШРУТ:</h4>';
-                    html += '<div style="text-align: center;">';
-                    
-                    data.routes.forEach((route, index) => {
-                         let routeStatus = hasResource(route.dependency) ? " (✔️ ЕСТЬ КЛЮЧ)" : ` (❌ НУЖЕН: ${route.dependency})`;
-                         let isRouteLocked = !hasResource(route.dependency);
-
-                         html += `
-                            <button class="choice-btn ${isRouteLocked ? 'disabled' : ''}" 
-                                onclick="${isRouteLocked ? 'alert(\'Маршрут заблокирован! Нет ключевого ресурса.\')' : `selectRoute('${route.name}', ${route.risk}, ${antenna})`}">
-                                ${route.name} ${routeStatus}
-                            </button>
-                         `;
-                    });
-                    html += '</div>';
-                    isBlocked = true; 
-                }
-            }
-
-
-            // --- КАРТОЧКИ И КНОПКА ПЕРЕХОДА ---
-            
-            html += `
-                <h4 style="color:#00ffcc; margin-top: 30px;">📦 ВАШ ИНВЕНТАРЬ:</h4>
-                <ul class="card-list">
-            `;
-            // Перечисляем Базовые ресурсы
-            progress.resources.forEach((card) => {
-                html += `<li class="res-base">${card}</li>`;
-            });
-            // Перечисляем Созданные ресурсы
-            progress.crafted.forEach((card) => {
-                html += `<li class="res-crafted">${card}</li>`;
-            });
-            
-            // Информация о потерях
-            if (progress.lostResources > 0) {
-                 html += `<li><span class="warning">❌ ПОТЕРЯНО: ${progress.lostResources} единиц ресурсов (Вода/Еда) из-за маршрута.</span></li>`;
-            }
-
-            html += `</ul>`;
-
-            // --- КНОПКА ПЕРЕДАЧИ РЕСУРСА ---
-            html += `
-                <div style="text-align: center; margin-top: 15px;">
-                    <button class="btn resource-transfer-btn" onclick="transferResource()">
-                        ПЕРЕДАТЬ/ПОЛУЧИТЬ РЕСУРС (МОДЕРАТОР)
-                    </button>
-                </div>
-            `;
-            
-            // Кнопка перехода
-            if (roundNum < 5) {
-                if (isBlocked) {
-                    if (blockMessage) html += `<p class="warning" style="text-align: center; margin-top: 15px;">${blockMessage}</p>`;
-                } else {
-                    html += `
-                        <div style="text-align: center; margin-top: 30px;">
-                            <button class="btn" onclick="nextRound()">
-                                ${data.next_round_btn} (${roundNum + 1})
-                            </button>
-                        </div>
-                    `;
-                }
-            } else {
-                 html += `
-                    <div style="text-align: center; margin-top: 30px;">
-                         <p class="warning">ФИНАЛ! ИГРА ЗАВЕРШЕНА. Удачи на поверхности!</p>
-                    </div>
-                `;
-                 clearInterval(timerInterval);
-            }
-            
-            contentDiv.innerHTML = html;
-        }
-
-        // --- ФУНКЦИИ ИНТЕРАКТИВА ---
-
-        // РАУНД 1: Выбор ресурса
-        function selectResource(choice) {
-            const progress = teamProgress[currentTeam];
-            const initialResourceCount = 3;
-            
-            if (progress.resources.length >= initialResourceCount + 2) return; 
-
-            progress.resources.push(choice);
-            alert(`✅ Выбран: ${choice}. Выберите еще ${initialResourceCount + 2 - progress.resources.length} ресурс(а).`);
-            
-            showRound(1); 
-        }
-
-        // РАУНД 2 & 3: КРАФТ (Создание)
-        function craftItem(roundNum, correctAnswer, craftedItem, dep1, dep2) {
-            const input = document.getElementById('puzzle-input');
-            const feedback = document.getElementById('puzzle-feedback');
-            const userInput = (input.value || '').trim().toUpperCase();
-            const correct = correctAnswer.toUpperCase();
-            const progress = teamProgress[currentTeam];
-
-            if (userInput === correct) {
-                
-                // Проверяем наличие ресурсов еще раз перед крафтом
-                if (!hasResource(dep1) || !hasResource(dep2)) {
-                    feedback.innerHTML = '<span class="warning">❌ ОШИБКА КРАФТА. Ресурсы исчезли? Проверьте инвентарь!</span>';
-                    return;
-                }
-
-                // 1. Успешный крафт: добавляем созданный предмет
-                progress.crafted.push(craftedItem);
-                
-                // 2. Удаляем использованные базовые ресурсы (удаляем первое совпадение)
-                const dep1Index = progress.resources.findIndex(res => res.includes(dep1.replace(/[\⭐\s\w]+:\s?/g, '').trim()));
-                if (dep1Index > -1) progress.resources.splice(dep1Index, 1);
-                
-                const dep2Index = progress.resources.findIndex(res => res.includes(dep2.replace(/[\⭐\s\w]+:\s?/g, '').trim()));
-                if (dep2Index > -1) progress.resources.splice(dep2Index, 1);
-
-                
-                clearInterval(timerInterval);
-                feedback.innerHTML = `<span class="success">✅ КОД ПРИНЯТ. **${craftedItem}** УСПЕШНО СОЗДАН.</span>`;
-                alert(`УСПЕХ! ${craftedItem} создан. Ресурсы ${dep1} и ${dep2} использованы.`);
-
-                showRound(roundNum); 
-            } else {
-                feedback.innerHTML = '<span class="warning">❌ ОШИБКА АВТОРИЗАЦИИ. Повторите ввод.</span>';
-                input.value = ''; 
-            }
-        }
-        
-        // --- РАУНД 4 - Выбор маршрута ---
-        function selectRoute(routeName, baseRisk, hasAntenna) {
-            const progress = teamProgress[currentTeam];
-            if (progress.routeChosen) return;
-
-            let finalRisk = baseRisk;
-            let resultMessage = `Вы выбрали **${routeName}**.`;
-
-            // Влияние Антенны на риск
-            if (!hasAntenna && baseRisk > 0) {
-                // Если нет Антенны, риск опасного маршрута удваивается
-                finalRisk += baseRisk; 
-                resultMessage += " **(⚠️ НЕТ АНТЕННЫ: Риск удвоен!)**";
-            } else if (hasAntenna && baseRisk > 0) {
-                // Если Антенна есть, риск уменьшается
-                finalRisk = Math.max(0, finalRisk - 1);
-                resultMessage += " **(📡 АНТЕННА: Риск снижен!)**";
-            }
-            
-            if (finalRisk > 0) {
-                const lostCount = Math.floor(Math.random() * (finalRisk + 1)); 
-                progress.lostResources = lostCount;
-                
-                if (lostCount > 0) {
-                    resultMessage += ` В пути из-за опасности/помех вы **потеряли ${lostCount} единиц** ресурсов (Вода/Еда).`;
-                } else {
-                    resultMessage += " Вы прошли **без потерь**, но риск был высок.";
-                }
-            } else {
-                resultMessage += " Маршрут оказался **полностью безопасным**, потерь нет.";
-            }
-
-            progress.routeChosen = true;
-            progress.routeResult = routeName;
-            
-            alert(`✅ РЕШЕНИЕ ПРИНЯТО. ${resultMessage}`);
-            
-            showRound(4);
-        }
-
-        // --- ФУНКЦИЯ ДЛЯ МОДЕРАТОРА: ВЫДАЧА РЕСУРСА (Обсуждение/Рисунок) ---
-        function requestResource(dependency, roundNum) {
-            const newResource = prompt(`МОДЕРАТОР: Чтобы получить ресурс "${dependency}", нарисуйте его или договоритесь. После выполнения введите точное название ресурса (например, 'Провода'), который вы получаете:`);
-            
-            if (newResource) {
-                teamProgress[currentTeam].resources.push(`⭐ Обсуждение: ${newResource}`);
-                alert(`✅ Ресурс "${newResource}" получен! Теперь можно продолжить.`);
-                showRound(roundNum);
-            } else {
-                alert('Ресурс не получен.');
-            }
-        }
-
-        // --- ФУНКЦИЯ: ПЕРЕДАЧА РЕСУРСА МЕЖДУ КОМАНДАМИ ---
-        function transferResource() {
-            const progress = teamProgress[currentTeam];
-            const allResources = [...progress.resources, ...progress.crafted];
-            
-            if (allResources.length === 0) {
-                alert("У вашей группы нет ресурсов для передачи!");
-                return;
-            }
-
-            const resourcesList = allResources.map((res, index) => `${index + 1}. ${res}`).join('\n');
-            
-            const resourceIndexStr = prompt(`--- ПЕРЕДАЧА РЕСУРСА ОТ ГРУППЫ ${currentTeam} ---\n\nВыберите номер ресурса, который хотите передать:\n${resourcesList}\n\n(Введите номер или отмените)`);
-            
-            if (!resourceIndexStr) return;
-
-            const resourceIndex = parseInt(resourceIndexStr) - 1;
-            
-            if (resourceIndex < 0 || resourceIndex >= allResources.length) {
-                alert('Неверный номер ресурса!');
-                return;
-            }
-
-            const resourceToTransfer = allResources[resourceIndex];
-
-            const recipientGroup = prompt(`Введите номер группы-получателя (1, 2 или 3):`);
-
-            if (!['1', '2', '3'].includes(recipientGroup)) {
-                alert('Неверный номер группы-получателя (должен быть 1, 2 или 3).');
-                return;
-            }
-
-            const recipientTeamId = `Group ${recipientGroup}`;
-            
-            let isCraftedTransfer = false;
-            
-            // 1. Удаляем ресурс у текущей команды
-            const resIndex = progress.resources.indexOf(resourceToTransfer);
-            const craftIndex = progress.crafted.indexOf(resourceToTransfer);
-
-            if (resIndex > -1) {
-                progress.resources.splice(resIndex, 1);
-            } else if (craftIndex > -1) {
-                progress.crafted.splice(craftIndex, 1);
-                isCraftedTransfer = true;
-            } else {
-                alert('Ошибка: Ресурс не найден в инвентаре.');
+            // Проверка, что обе группы имеют заявленные ресурсы
+            if (giveIndex === -1 || getIndex === -1) {
+                updateLog(`🛑 **ОБМЕН ОТМЕНЕН!** У одной из групп нет заявленного ресурса ('${giveRes}' или '${getRes}').`);
                 return;
             }
             
-            // 2. Добавляем ресурс команде-получателю
-            const transferredResource = `🤝 Передано: ${resourceToTransfer}`;
+            // Выполнение обмена
+            fromGroup.resources.splice(giveIndex, 1);
+            toGroup.resources.splice(getIndex, 1);
             
-            if (isCraftedTransfer) {
-                // Если передаем созданный предмет, добавляем в список созданных
-                 teamProgress[recipientTeamId].crafted.push(transferredResource);
-            } else {
-                // Если передаем базовый предмет, добавляем в список базовых
-                teamProgress[recipientTeamId].resources.push(transferredResource);
-            }
-            
-            alert(`✅ УСПЕХ: Ресурс "${resourceToTransfer}" передан ГРУППЕ ${recipientGroup} (${recipientTeamId}).`);
+            fromGroup.resources.push(getRes);
+            toGroup.resources.push(giveRes);
 
-            showRound(currentRound);
+            updateLog(`✅ **ОБМЕН ПОДТВЕРЖДЕН!** ${fromGroup.name} получила **${getRes}**, отдав **${giveRes}** группе ${toGroup.name}.`);
+            updateUI();
         }
 
 
-        // ФУНКЦИЯ ДЛЯ ПЕРЕХОДА НА СЛЕДУЮЩИЙ РАУНД
-        function nextRound() {
-            if (currentRound < 5) {
-                showRound(currentRound + 1);
-            }
-        }
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+             updateLog('Система активирована. Начните Раунд 1: Сбор Ресурсов.');
+             updateUI();
+        });
     </script>
 </body>
 </html>
