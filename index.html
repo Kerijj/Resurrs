@@ -63,7 +63,7 @@
             transition: all 0.2s;
             font-family: inherit;
         }
-        .round-btn:hover, .round-btn.active {
+        .round-btn:hover:not(.locked), .round-btn.active:not(.locked) {
             background-color: #003311;
             border: 1px solid #00ff41;
             box-shadow: 0 0 5px #00ff41;
@@ -186,7 +186,7 @@
     <script>
         // JS: ДАННЫЕ ИГРЫ
         
-        // ВОПРОСЫ ДЛЯ ИСПЫТАНИЯ (Ведущий должен озвучить ответы!)
+        // ВОПРОСЫ ДЛЯ ИСПЫТАНИЯ
         const challengeQuestions = {
             "Group 1": [
                 { q: "Вопрос 1: Как называется израильская лепёшка, которая часто подается с хумусом?", a: "ПИТА" },
@@ -335,7 +335,8 @@
         let timerInterval = null;
         let currentQuestionIndex = 0;
         let correctAnswers = 0;
-        // НОВЫЙ ОБЪЕКТ ДЛЯ ХРАНЕНИЯ ПРОГРЕССА КОМАНДЫ
+        
+        // ХРАНЕНИЕ ПРОГРЕССА КОМАНДЫ (Round 1 Completed Status)
         let teamProgress = {
             "Group 1": { completed: false, hasBonusResource: false },
             "Group 2": { completed: false, hasBonusResource: false },
@@ -343,7 +344,6 @@
         };
 
         function startTimer(durationInSeconds) {
-            // ... (Функция таймера) ...
             if (timerInterval) {
                 clearInterval(timerInterval);
             }
@@ -351,7 +351,6 @@
             const display = document.getElementById('time-left');
             const timerDiv = document.getElementById('timer-display');
             
-            // Сброс стиля
             timerDiv.style.color = '#00ff41'; 
             timerDiv.style.textShadow = '0 0 5px #00ff41';
 
@@ -379,7 +378,7 @@
             }, 1000);
         }
 
-        // КОРРЕКТНАЯ ФУНКЦИЯ ВЫБОРА КОМАНДЫ
+        // КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: ПРАВИЛЬНАЯ ИНИЦИАЛИЗАЦИЯ И ЗАПУСК
         function selectTeam(teamId) {
             currentTeam = teamId;
             document.getElementById('team-select').style.display = 'none';
@@ -387,8 +386,9 @@
             
             document.getElementById('team-display').textContent = `[ СВЯЗЬ УСТАНОВЛЕНА: ${gameData[teamId].name} ]`;
 
-            // Обновляем навигацию и показываем Раунд 1
+            // Убеждаемся, что навигация и контент отображаются корректно
             updateRoundNavigation(1);
+            // Прямой вызов showRound для активации контента Раунда 1
             showRound(1, document.querySelector(`.round-btn[data-round="1"]`));
         }
         
@@ -408,10 +408,14 @@
                 </div>
                 <p style="margin-top: 10px;">Счет: Верно <span id="correct-count">0</span> / Ошибки <span id="incorrect-count">0</span></p>
             `;
-            document.getElementById('start-challenge-btn').style.display = 'none';
+            // Скрываем кнопку "Начать испытание"
+            const startBtn = document.getElementById('start-challenge-btn');
+            if (startBtn) startBtn.style.display = 'none';
         }
         
         function nextQuestion(action) {
+            if (!currentTeam) return; // Защита на случай, если команда не выбрана
+
             const questions = challengeQuestions[currentTeam];
             const challengeSection = document.getElementById('challenge-section');
             const questionDisplay = document.getElementById('challenge-question');
@@ -424,6 +428,7 @@
                 const lastQuestion = questions[currentQuestionIndex - 1];
                 const userAnswer = (document.getElementById('user-answer-input').value || '').trim().toUpperCase();
                 
+                // ВАЖНО: Ведущий должен проверить ответ и ввести его в поле для ответа
                 const isCorrect = userAnswer === lastQuestion.a.toUpperCase();
 
                 if (isCorrect) {
@@ -434,7 +439,11 @@
             // Обновление счетчика
             const incorrect = currentQuestionIndex - correctAnswers;
             correctCount.textContent = correctAnswers;
-            incorrectCount.textContent = incorrect;
+            incorrectCount.textContent = (currentQuestionIndex + 1) - correctAnswers; // Обновлено для корректного отображения ошибок
+            if (currentQuestionIndex > 0) {
+                 incorrectCount.textContent = currentQuestionIndex - correctAnswers;
+            }
+
 
             if (currentQuestionIndex < questions.length) {
                 // Показать следующий вопрос
@@ -460,23 +469,19 @@
                     const resourceName = gameData[currentTeam].Round 1.challenge_resource;
                     const bonusCard = `<span class='success'>✅ Получен критический ресурс: ${resourceName}</span>`;
                     
-                    // ДОБАВЛЯЕМ РЕСУРС И АКТИВИРУЕМ ПРОГРЕСС
                     if (!teamProgress[currentTeam].hasBonusResource) {
                         gameData[currentTeam].Round 1.cards.push(bonusCard); 
                         teamProgress[currentTeam].hasBonusResource = true;
                     }
 
-                    // АКТИВАЦИЯ ДОСТУПА К РАУНДУ 2
-                    teamProgress[currentTeam].completed = true;
-                    
                     resultMessage = `<span class='success'>✅ УСПЕХ! ${correctAnswers} из 5. Вы получаете ${resourceName}.</span>`;
                 } else {
-                    resultMessage = `<span class='warning'>❌ ПРОВАЛ! ${correctAnswers} из 5. Вы не получаете ресурс и должны договориться об обмене.</span>`;
-                    
-                    // АКТИВАЦИЯ ДОСТУПА К РАУНДУ 2 (Даже при провале, Раунд 1 считается завершенным)
-                    teamProgress[currentTeam].completed = true; 
+                    resultMessage = `<span class='warning'>❌ ПРОВАЛ! ${correctAnswers} из 5. Вы не получаете ресурс.</span>`;
                 }
                 
+                // АКТИВАЦИЯ ДОСТУПА К РАУНДУ 2
+                teamProgress[currentTeam].completed = true; 
+
                 // Финальный экран
                 challengeSection.innerHTML = `
                     <h4>🔥 ИСПЫТАНИЕ ЗАВЕРШЕНО 🔥</h4>
@@ -486,13 +491,15 @@
                     <p style="font-size: 1.5em; margin-bottom: 20px;">
                         ${resultMessage}
                     </p>
-                    <button class="btn" onclick="updateRoundNavigation(); showRound(1, document.querySelector('.round-btn[data-round=\"1\"]'))">ОБНОВИТЬ КАРТОЧКИ И ПРОДОЛЖИТЬ</button>
+                    <button class="btn" onclick="updateRoundNavigation(1); showRound(1, document.querySelector('.round-btn[data-round=\"1\"]'))">ОБНОВИТЬ КАРТОЧКИ И ПРОДОЛЖИТЬ</button>
                 `;
             }
         }
         
         // НОВАЯ ФУНКЦИЯ: ОБНОВЛЕНИЕ КНОПОК НАВИГАЦИИ
         function updateRoundNavigation(activeRound = 1) {
+            if (!currentTeam) return;
+
             const navButtons = document.querySelectorAll('.round-btn');
             const isCompleted = teamProgress[currentTeam].completed;
 
@@ -520,16 +527,16 @@
 
 
         function showRound(roundNum, btn) {
-            if (btn.classList.contains('locked')) return; // Заблокированный раунд
-
             if (!currentTeam) return;
+
+            if (btn && btn.classList.contains('locked')) return; // Заблокированный раунд
 
             // Запуск таймера
             startTimer(ROUND_DURATION); 
 
             // Стилизация активной кнопки
             document.querySelectorAll('.round-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            if (btn) btn.classList.add('active');
 
             const roundKey = `Round ${roundNum}`;
             const data = gameData[currentTeam][roundKey];
@@ -546,13 +553,21 @@
 
             // Специальная секция для Раунда 1 с кнопкой вызова испытания
             if (roundNum === 1) {
-                html += `
-                    <div id="challenge-section">
+                const isBonusResourceAcquired = teamProgress[currentTeam].hasBonusResource;
+                
+                let challengeContent = '';
+                if (isBonusResourceAcquired) {
+                    challengeContent = `<p class='success'>✅ КРИТИЧЕСКИЙ РЕСУРС УЖЕ ПОЛУЧЕН.</p>`;
+                } else {
+                    challengeContent = `
                         <h4 style="color:#ffcc00;">🚨 ШАНС НА КРИТИЧЕСКИЙ РЕСУРС: ${data.challenge_resource}</h4>
                         <p>Нажмите, чтобы начать испытание из 5 вопросов (3 верных для успеха).</p>
-                        <button class="btn" id="start-challenge-btn" onclick="startResourceChallenge()" style="${teamProgress[currentTeam].hasBonusResource ? 'display: none;' : ''}">НАЧАТЬ ИСПЫТАНИЕ</button>
-                    </div>
-                `;
+                        <button class="btn" id="start-challenge-btn" onclick="startResourceChallenge()">НАЧАТЬ ИСПЫТАНИЕ</button>
+                    `;
+                }
+
+                html += `<div id="challenge-section">${challengeContent}</div>`;
+
             } else if (roundNum === 2) {
                  html += `
                     <div class="input-area">
@@ -586,6 +601,8 @@
 
         document.addEventListener('DOMContentLoaded', () => {
              document.getElementById('time-left').textContent = "10:00";
+             // На старте отключаем все, пока не выбран класс
+             document.getElementById('game-container').style.display = 'none';
         });
     </script>
 </body>
