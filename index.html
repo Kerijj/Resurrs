@@ -399,9 +399,10 @@
 
         /**
          * КРИТИЧЕСКАЯ ФУНКЦИЯ: ЗАПУСК ИГРЫ И ПЕРЕХОД К РАУНДУ 1
-         * Здесь была основная ошибка с некликабельностью, теперь исправлено.
+         * ЭТО ТА САМАЯ ФУНКЦИЯ, КОТОРАЯ НЕ РАБОТАЛА!
          */
         function selectTeam(teamId) {
+             console.log("Выбрана команда:", teamId); // Проверочный лог
             // 1. Устанавливаем текущую команду
             currentTeam = teamId;
             document.getElementById('team-select').style.display = 'none';
@@ -414,7 +415,19 @@
             // 3. Отображаем контент Раунда 1 (Запуск игры)
             showRound(1); 
         }
-        
+
+        // --- ДОБАВЛЕНИЕ ФУНКЦИЙ В ГЛОБАЛЬНУЮ ОБЛАСТЬ ВИДИМОСТИ ---
+        // Это необходимо, чтобы HTML мог вызвать функцию selectTeam по onclick
+        window.selectTeam = selectTeam;
+        window.showRound = showRound; // Также убедимся, что showRound доступна
+        window.startResourceChallenge = startResourceChallenge;
+        window.completeRound1SkipChallenge = completeRound1SkipChallenge;
+        window.completeRound3 = completeRound3;
+        window.checkSecretWord = checkSecretWord;
+        window.nextQuestion = nextQuestion;
+        window.finalizeChoice = finalizeChoice;
+
+
         // ОБНОВЛЕНИЕ КНОПОК НАВИГАЦИИ
         function updateRoundNavigation(activeRound = 1) {
             if (!currentTeam) return;
@@ -761,7 +774,10 @@
              document.getElementById('time-left').textContent = "10:00";
              document.getElementById('game-container').style.display = 'none';
              // Дополнительно: Снимаем активный класс с первого раунда, чтобы он установился в showRound
-             document.querySelector(`.round-btn[data-round="1"]`).classList.remove('active');
+             const round1Btn = document.querySelector(`.round-btn[data-round="1"]`);
+             if (round1Btn) {
+                 round1Btn.classList.remove('active');
+             }
         });
     </script>
 </body>
