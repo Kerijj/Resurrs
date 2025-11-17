@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>БУНКЕР-СИГНАЛ: ВЫЖИВАНИЕ</title>
     <style>
-        /* CSS: СТИЛЬ ТЕРМИНАЛА */
+        /* CSS: СТИЛЬ ТЕРМИНАЛА (оставлен без изменений) */
         body {
             font-family: 'Consolas', 'Courier New', monospace;
             background-color: #0d0d0d;
@@ -42,7 +42,7 @@
             font-size: 1.1em;
             text-shadow: 0 0 5px #00ff41;
         }
-        .btn:hover {
+        .btn:hover:not(.locked) {
             background-color: #00ff41;
             color: #0d0d0d;
             box-shadow: 0 0 10px #00ff41;
@@ -173,10 +173,10 @@
         
         <div id="round-nav">
             <button class="round-btn active" data-round="1" onclick="showRound(1, this)">РАУНД 1: РЕСУРСЫ 📦</button>
-            <button class="round-btn locked" data-round="2" onclick="showRound(2, this)">РАУНД 2: ФИЛЬТР 💧</button>
-            <button class="round-btn locked" data-round="3" onclick="showRound(3, this)">РАУНД 3: СВЯЗЬ 📡</button>
-            <button class="round-btn locked" data-round="4" onclick="showRound(4, this)">РАУНД 4: ВЫХОД 🌲</button>
-            <button class="round-btn locked" data-round="5" onclick="showRound(5, this)">РАУНД 5: ФИНАЛ 🤝</button>
+            <button class="round-btn locked" data-round="2">РАУНД 2: ФИЛЬТР 💧</button>
+            <button class="round-btn locked" data-round="3">РАУНД 3: СВЯЗЬ 📡</button>
+            <button class="round-btn locked" data-round="4">РАУНД 4: ВЫХОД 🌲</button>
+            <button class="round-btn locked" data-round="5">РАУНД 5: ФИНАЛ 🤝</button>
         </div>
 
         <div id="round-content">
@@ -378,7 +378,7 @@
             }, 1000);
         }
 
-        // КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: ПРАВИЛЬНАЯ ИНИЦИАЛИЗАЦИЯ И ЗАПУСК
+        // КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ 1: Правильная инициализация после выбора команды
         function selectTeam(teamId) {
             currentTeam = teamId;
             document.getElementById('team-select').style.display = 'none';
@@ -386,15 +386,15 @@
             
             document.getElementById('team-display').textContent = `[ СВЯЗЬ УСТАНОВЛЕНА: ${gameData[teamId].name} ]`;
 
-            // Убеждаемся, что навигация и контент отображаются корректно
-            updateRoundNavigation(1);
-            // Прямой вызов showRound для активации контента Раунда 1
+            // Сначала обновляем навигацию (включая активацию Раунда 1)
+            updateRoundNavigation(1); 
+            // Затем показываем контент Раунда 1
             showRound(1, document.querySelector(`.round-btn[data-round="1"]`));
         }
         
         // НОВАЯ ФУНКЦИЯ: УПРАВЛЕНИЕ ИСПЫТАНИЕМ В РАУНДЕ 1
         function startResourceChallenge() {
-            if (teamProgress[currentTeam].hasBonusResource) return; 
+            if (teamProgress[currentTeam].hasBonusResource || teamProgress[currentTeam].completed) return; 
 
             currentQuestionIndex = 0;
             correctAnswers = 0;
@@ -408,13 +408,12 @@
                 </div>
                 <p style="margin-top: 10px;">Счет: Верно <span id="correct-count">0</span> / Ошибки <span id="incorrect-count">0</span></p>
             `;
-            // Скрываем кнопку "Начать испытание"
             const startBtn = document.getElementById('start-challenge-btn');
             if (startBtn) startBtn.style.display = 'none';
         }
         
         function nextQuestion(action) {
-            if (!currentTeam) return; // Защита на случай, если команда не выбрана
+            if (!currentTeam) return;
 
             const questions = challengeQuestions[currentTeam];
             const challengeSection = document.getElementById('challenge-section');
@@ -425,10 +424,10 @@
 
             if (action !== 'start' && currentQuestionIndex > 0) {
                 // Логика подсчета ответов
+                // ВАЖНО: Ведущий должен проверить ответ и ввести его в поле для ответа
                 const lastQuestion = questions[currentQuestionIndex - 1];
                 const userAnswer = (document.getElementById('user-answer-input').value || '').trim().toUpperCase();
                 
-                // ВАЖНО: Ведущий должен проверить ответ и ввести его в поле для ответа
                 const isCorrect = userAnswer === lastQuestion.a.toUpperCase();
 
                 if (isCorrect) {
@@ -439,9 +438,10 @@
             // Обновление счетчика
             const incorrect = currentQuestionIndex - correctAnswers;
             correctCount.textContent = correctAnswers;
-            incorrectCount.textContent = (currentQuestionIndex + 1) - correctAnswers; // Обновлено для корректного отображения ошибок
             if (currentQuestionIndex > 0) {
                  incorrectCount.textContent = currentQuestionIndex - correctAnswers;
+            } else {
+                 incorrectCount.textContent = '0';
             }
 
 
@@ -496,7 +496,7 @@
             }
         }
         
-        // НОВАЯ ФУНКЦИЯ: ОБНОВЛЕНИЕ КНОПОК НАВИГАЦИИ
+        // КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ 2: Динамическая установка обработчиков клика
         function updateRoundNavigation(activeRound = 1) {
             if (!currentTeam) return;
 
@@ -506,15 +506,15 @@
             navButtons.forEach(btn => {
                 const roundNum = parseInt(btn.getAttribute('data-round'));
                 
-                // Раунды 2 и далее блокируются, пока не пройден Раунд 1
-                if (roundNum > 1) {
-                    if (isCompleted) {
-                        btn.classList.remove('locked');
-                        btn.onclick = function() { showRound(roundNum, this); };
-                    } else {
-                        btn.classList.add('locked');
-                        btn.onclick = function() {}; // Отключение клика
-                    }
+                // Установка/Снятие блокировки
+                if (roundNum === 1 || (roundNum > 1 && isCompleted)) {
+                    btn.classList.remove('locked');
+                    // Активируем клик
+                    btn.onclick = function() { showRound(roundNum, this); };
+                } else {
+                    btn.classList.add('locked');
+                    // Отключаем клик
+                    btn.onclick = null; 
                 }
 
                 // Сброс активного класса и установка нового
@@ -529,7 +529,8 @@
         function showRound(roundNum, btn) {
             if (!currentTeam) return;
 
-            if (btn && btn.classList.contains('locked')) return; // Заблокированный раунд
+            // Проверка на блокировку перед выполнением
+            if (btn && btn.classList.contains('locked')) return; 
 
             // Запуск таймера
             startTimer(ROUND_DURATION); 
@@ -551,14 +552,17 @@
                 </div>
             `;
 
-            // Специальная секция для Раунда 1 с кнопкой вызова испытания
+            // Секция для Раунда 1
             if (roundNum === 1) {
                 const isBonusResourceAcquired = teamProgress[currentTeam].hasBonusResource;
                 
                 let challengeContent = '';
                 if (isBonusResourceAcquired) {
-                    challengeContent = `<p class='success'>✅ КРИТИЧЕСКИЙ РЕСУРС УЖЕ ПОЛУЧЕН.</p>`;
-                } else {
+                    challengeContent = `<p class='success'>✅ КРИТИЧЕСКИЙ РЕСУРС **${data.challenge_resource}** УЖЕ ПОЛУЧЕН.</p>`;
+                } else if (teamProgress[currentTeam].completed) {
+                     challengeContent = `<p class='warning'>❌ ИСПЫТАНИЕ ПРОВАЛЕНО. КРИТИЧЕСКИЙ РЕСУРС **${data.challenge_resource}** НЕ ПОЛУЧЕН. ПЕРЕХОДИТЕ К РАУНДУ 2.</p>`;
+                }
+                else {
                     challengeContent = `
                         <h4 style="color:#ffcc00;">🚨 ШАНС НА КРИТИЧЕСКИЙ РЕСУРС: ${data.challenge_resource}</h4>
                         <p>Нажмите, чтобы начать испытание из 5 вопросов (3 верных для успеха).</p>
@@ -567,6 +571,15 @@
                 }
 
                 html += `<div id="challenge-section">${challengeContent}</div>`;
+                
+                // Добавляем кнопку "Продолжить" только если раунд еще не завершен
+                if (!teamProgress[currentTeam].completed) {
+                     html += `
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button class="btn" onclick="completeRound1SkipChallenge()">ПРОДОЛЖИТЬ (ПРОПУСТИТЬ ИСПЫТАНИЕ)</button>
+                        </div>
+                    `;
+                }
 
             } else if (roundNum === 2) {
                  html += `
@@ -599,9 +612,19 @@
             contentDiv.innerHTML = html;
         }
 
+        // Функция для принудительного завершения Раунда 1 (если нажата кнопка "Продолжить")
+        function completeRound1SkipChallenge() {
+            if (!currentTeam) return;
+
+            teamProgress[currentTeam].completed = true;
+            alert('Раунд 1 завершен. Вы не получили критический ресурс. Теперь вам доступен Раунд 2.');
+            
+            updateRoundNavigation(2);
+            showRound(2, document.querySelector('.round-btn[data-round="2"]'));
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
              document.getElementById('time-left').textContent = "10:00";
-             // На старте отключаем все, пока не выбран класс
              document.getElementById('game-container').style.display = 'none';
         });
     </script>
