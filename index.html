@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>БУНКЕР-СИГНАЛ: ПРОСТОЙ РЕЖИМ</title>
+    <title>БУНКЕР-СИГНАЛ: СБОР И АНАЛИЗ</title>
     <style>
         /* --- ОСНОВНЫЕ НЕОНОВЫЕ СТИЛИ --- */
         body {
@@ -33,7 +33,7 @@
         }
         
         /* --- СТИЛИ КНОПОК --- */
-        .btn {
+        .btn, .choice-btn {
             background-color: transparent;
             color: #00ff41;
             border: 2px solid #00ff41;
@@ -42,19 +42,24 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-family: inherit;
-            font-size: 1.2em;
+            font-size: 1.1em;
             text-shadow: 0 0 5px #00ff41;
             box-shadow: 0 0 5px #00ff41 inset, 0 0 5px #00ff41;
             text-transform: uppercase;
         }
-        .btn:hover {
+        .btn:hover, .choice-btn:hover {
             background-color: rgba(0, 255, 65, 0.2);
             color: #0d0d0d;
             border-color: #ffcc00; 
             box-shadow: 0 0 15px #ffcc00, 0 0 20px rgba(255, 204, 0, 0.5);
         }
+        .choice-btn.selected {
+            border-color: #00ffcc;
+            box-shadow: 0 0 15px #00ffcc;
+            background-color: rgba(0, 255, 204, 0.1);
+        }
 
-        /* --- НАВИГАЦИЯ И КОНТЕНТ --- */
+        /* --- НАВИГАЦИЯ И ТАЙМЕР --- */
         #round-nav {
             display: flex;
             justify-content: center;
@@ -71,20 +76,12 @@
             transition: all 0.2s;
             font-family: inherit;
             text-shadow: 0 0 3px #00ff41;
-            box-shadow: 0 0 5px rgba(0, 255, 65, 0.1);
         }
         .round-btn.active {
             color: #ffcc00;
             border-color: #ffcc00;
             box-shadow: 0 0 10px #ffcc00;
         }
-        .round-btn:hover {
-            background-color: rgba(0, 255, 204, 0.1);
-            border: 2px solid #00ffcc;
-            box-shadow: 0 0 10px #00ffcc;
-        }
-
-        /* --- ТАЙМЕР --- */
         #timer-display {
             font-size: 3em;
             color: #ffcc00; 
@@ -94,11 +91,6 @@
             border: 3px double #ffcc00;
             background-color: #331a00;
             text-shadow: 0 0 10px #ffcc00;
-        }
-        #timer-label {
-            font-size: 0.4em;
-            color: #00ffcc;
-            display: block;
         }
         .round-objective {
             margin-bottom: 15px;
@@ -122,6 +114,26 @@
             color: #ff004c;
             font-weight: bold;
         }
+        .success {
+            color: #00ff41;
+            font-weight: bold;
+        }
+        /* --- ПОЛЯ ВВОДА --- */
+        .input-area input[type="text"] {
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #0d0d0d;
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            font-family: inherit;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            box-shadow: 0 0 5px #00ff41;
+            width: 70%;
+            max-width: 300px;
+            box-sizing: border-box; 
+        }
+
     </style>
 </head>
 <body>
@@ -159,36 +171,141 @@
 
     <script>
         // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ИГРЫ ---
-        const ROUND_DURATION_SEC = 300; // 5 минут на каждый раунд
         let currentTeam = null;
         let currentRound = 1;
         let timerInterval = null;
 
-        // --- ДАННЫЕ ИГРЫ (Упрощенные для легкого перехода) ---
+        // Отслеживание прогресса команды
+        let teamProgress = {
+            "Group 1": { 
+                bonusResource: null, 
+                filterAssembled: false, 
+                antennaAssembled: false, 
+                lostResources: 0, 
+                routeChosen: false,
+                routeResult: null 
+            },
+            "Group 2": { 
+                bonusResource: null, 
+                filterAssembled: false, 
+                antennaAssembled: false, 
+                lostResources: 0, 
+                routeChosen: false,
+                routeResult: null 
+            },
+            "Group 3": { 
+                bonusResource: null, 
+                filterAssembled: false, 
+                antennaAssembled: false, 
+                lostResources: 0, 
+                routeChosen: false,
+                routeResult: null 
+            }
+        };
+
+        // --- ДАННЫЕ ИГРЫ (ОБНОВЛЕННЫЙ РАУНД 4) ---
         const gameData = {
             "Group 1": {
-                name: "ГРУППА 1: СЕКЦИЯ АЛЬФА (Кухня)",
-                1: { objective: "СБОР РЕСУРСОВ: ЕДА 🍞 (5 мин)", cards: ["💧 Вода", "💊 Медикаменты", "💡 Острый нож"] },
-                2: { objective: "РЕМОНТ ФИЛЬТРА: СХЕМА 🔺 (10 мин)", cards: ["🔹 Схема Фильтра (ВЕРХНЯЯ ЧАСТЬ)"] },
-                3: { objective: "СБОР СВЯЗИ: АНТЕННА 📡 (10 мин)", cards: ["📡 Антенна", "🛠️ Инструменты"] },
-                4: { objective: "ВЫХОД НА ПОВЕРХНОСТЬ: МАРШРУТ (5 мин)", cards: ["🌲 Маршрут А (Опасный)", "🛤️ Маршрут Б (Безопасный)"] },
-                5: { objective: "ФИНАЛ: СТРАТЕГИЯ СПАСЕНИЯ (10 мин)", cards: ["🤝 Объединиться", "🏃‍♂️ Идти отдельно"] }
+                name: "ГРУППА 1: СЕКЦИЯ АЛЬФА",
+                1: { // СБОР РЕСУРСОВ
+                    objective: "СБОР РЕСУРСОВ. Локация: Кухня. Цель: Выбрать КРИТИЧЕСКИЙ бонусный ресурс (1 из 3).",
+                    choices: ["💡 Острый нож (для защиты)", "🥫 Доп. сухпай (для энергии)", "🛠️ Набор отверток (для ремонта)"],
+                    base_cards: ["💧 Вода (10л)", "💊 Обезболивающее"],
+                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 2"
+                },
+                2: { // ФИЛЬТР
+                    objective: "СБОР ФИЛЬТРА. Цель: Получить ВЕРХНЮЮ часть схемы фильтра (🔺).",
+                    puzzle_text: "ЗАГАДКА: Что всегда течет, но никогда не движется с места? (Ответ 4 буквы)",
+                    answer: "ВОДА",
+                    part: "🔹 Верхняя часть схемы фильтра (🔺)",
+                    base_cards: ["📝 Инструкция по сборке"],
+                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 3"
+                },
+                3: { // СВЯЗЬ
+                    objective: "СБОР СВЯЗИ. Цель: Собрать АНТЕННУ 📡.",
+                    puzzle_text: "РЕБУС: Нужно слово 'СВЯЗЬ'. Введите синоним к слову 'СООБЩЕНИЕ'. (Ответ 5 букв)",
+                    answer: "СИГНАЛ",
+                    part: "📡 Антенна для связи",
+                    base_cards: ["🎛️ Панель управления", "🛠️ Инструменты (Гр. 1)"],
+                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 4"
+                },
+                4: { // ВЫХОД НА ПОВЕРХНОСТЬ
+                    objective: "КРИТИЧЕСКИЙ ВЫХОД. Анализ: Ваши запасы и состояние связи (Раунд 3). Выберите маршрут.",
+                    routes: [
+                        { name: "МАРШРУТ А: Короткий и Опасный ⚡", risk: 2, reward: "Быстрый выход (+5 мин в Раунде 5)" },
+                        { name: "МАРШРУТ Б: Длинный и Безопасный 🛡️", risk: 0, reward: "Безопасность (-10 мин в Раунде 5)" }
+                    ],
+                    next_round_btn: "ПЕРЕЙТИ К ФИНАЛУ"
+                },
+                5: { objective: "ФИНАЛ: СТРАТЕГИЯ СПАСЕНИЯ", base_cards: ["🤝 Объединиться", "🏃‍♂️ Идти отдельно"], next_round_btn: "ЗАВЕРШИТЬ" }
             },
             "Group 2": {
-                name: "ГРУППА 2: СЕКЦИЯ БЕТА (Мастерская)",
-                1: { objective: "СБОР РЕСУРСОВ: ИНСТРУМЕНТЫ 🛠️ (5 мин)", cards: ["💧 Вода", "🔌 Провода", "💡 Набор проводов"] },
-                2: { objective: "РЕМОНТ ФИЛЬТРА: СХЕМА 🟦 (10 мин)", cards: ["🔹 Схема Фильтра (СРЕДНЯЯ ЧАСТЬ)"] },
-                3: { objective: "СБОР СВЯЗИ: КАБЕЛЬ ПИТАНИЯ 🔌 (10 мин)", cards: ["🔌 Кабель питания", "🎛️ Панель управления"] },
-                4: { objective: "ВЫХОД НА ПОВЕРХНОСТЬ: МАРШРУТ (5 мин)", cards: ["🛤️ Маршрут Б (Длинный)", "🕳️ Маршрут В (Альтернативный)"] },
-                5: { objective: "ФИНАЛ: СТРАТЕГИЯ СПАСЕНИЯ (10 мин)", cards: ["🤝 Объединиться", "🏃‍♀️ Идти отдельно"] }
+                name: "ГРУППА 2: СЕКЦИЯ БЕТА",
+                1: { 
+                    objective: "СБОР РЕСУРСОВ. Локация: Мастерская. Цель: Выбрать КРИТИЧЕСКИЙ бонусный ресурс (1 из 3).",
+                    choices: ["🛠️ Мощная дрель (для прохода)", "🔋 Доп. батарея (для питания)", "🐟 Сетка для рыбы (для пропитания)"],
+                    base_cards: ["💧 Вода (10л)", "🔌 Провода"],
+                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 2"
+                },
+                2: { 
+                    objective: "СБОР ФИЛЬТРА. Цель: Получить СРЕДНЮЮ часть схемы фильтра (🟦).",
+                    puzzle_text: "ЗАДАЧКА: Сколько литров в одном кубическом метре? (Ответ цифрами)",
+                    answer: "1000",
+                    part: "🔹 Средняя часть схемы фильтра (🟦)",
+                    base_cards: ["📝 Схема насоса"],
+                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 3"
+                },
+                3: { 
+                    objective: "СБОР СВЯЗИ. Цель: Собрать КАБЕЛЬ ПИТАНИЯ 🔌.",
+                    puzzle_text: "РЕБУС: К слову 'ТОК' добавьте слово 'ЕСТЬ'. Введите результат (Ответ 6 букв)",
+                    answer: "КАБЕЛЬ",
+                    part: "🔌 Кабель питания",
+                    base_cards: ["⚙️ Механизм натяжения", "🛠️ Инструменты (Гр. 2)"],
+                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 4"
+                },
+                4: { // ВЫХОД НА ПОВЕРХНОСТЬ
+                    objective: "КРИТИЧЕСКИЙ ВЫХОД. Анализ: Ваши запасы и состояние связи (Раунд 3). Выберите маршрут.",
+                    routes: [
+                        { name: "МАРШРУТ Б: Длинный и Безопасный 🛡️", risk: 0, reward: "Безопасность (+10 мин в Раунде 5)" },
+                        { name: "МАРШРУТ В: Средний, с обвалом 🚧", risk: 1, reward: "Нейтральный выход" }
+                    ],
+                    next_round_btn: "ПЕРЕЙТИ К ФИНАЛУ"
+                },
+                5: { objective: "ФИНАЛ: СТРАТЕГИЯ СПАСЕНИЯ", base_cards: ["🤝 Объединиться", "🏃‍♀️ Идти отдельно"], next_round_btn: "ЗАВЕРШИТЬ" }
             },
             "Group 3": {
-                name: "ГРУППА 3: СЕКЦИЯ ГАММА (Склад)",
-                1: { objective: "СБОР РЕСУРСОВ: МЕДИКАМЕНТЫ 💊 (5 мин)", cards: ["🥫 Еда (Сухпай)", "⛽ Топливо", "💾 Микросхема"] },
-                2: { objective: "РЕМОНТ ФИЛЬТРА: СХЕМА 🔻 (10 мин)", cards: ["🔹 Схема Фильтра (НИЖНЯЯ ЧАСТЬ)"] },
-                3: { objective: "СБОР СВЯЗИ: РЕЗЕРВНОЕ ПИТАНИЕ 🔋 (10 мин)", cards: ["🔋 Резервное питание", "💾 Микросхема"] },
-                4: { objective: "ВЫХОД НА ПОВЕРХНОСТЬ: МАРШРУТ (5 мин)", cards: ["🌲 Маршрут А (Короткий)", "🕳️ Маршрут В (Длинный)"] },
-                5: { objective: "ФИНАЛ: СТРАТЕГИЯ СПАСЕНИЯ (10 мин)", cards: ["🤝 Объединиться", "🏃‍♂️ Идти отдельно"] }
+                name: "ГРУППА 3: СЕКЦИЯ ГАММА",
+                1: { 
+                    objective: "СБОР РЕСУРСОВ. Локация: Склад. Цель: Выбрать КРИТИЧЕСКИЙ бонусный ресурс (1 из 3).",
+                    choices: ["💊 Расширенная аптечка (для первой помощи)", "🔥 Запас топлива (для генератора)", "🗺️ Карта местности (для ориентации)"],
+                    base_cards: ["💧 Вода (10л)", "🥫 Еда (сухпай)"],
+                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 2"
+                },
+                2: { 
+                    objective: "СБОР ФИЛЬТРА. Цель: Получить НИЖНЮЮ часть схемы фильтра (🔻).",
+                    puzzle_text: "ЗАГАДКА: 'Я не живу, но расту. У меня нет легких, но мне нужен воздух'. (Ответ 6 букв)",
+                    answer: "ОГОНЬ",
+                    part: "🔹 Нижняя часть схемы фильтра (🔻)",
+                    base_cards: ["📝 Схема трубопровода"],
+                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 3"
+                },
+                3: { 
+                    objective: "СБОР СВЯЗИ. Цель: Собрать РЕЗЕРВНОЕ ПИТАНИЕ 🔋.",
+                    puzzle_text: "РЕБУС: К слову 'ЭНЕРГИЯ' подберите слово, обозначающее 'ЗАПАС'. (Ответ 7 букв)",
+                    answer: "РЕЗЕРВ",
+                    part: "🔋 Резервное питание",
+                    base_cards: ["💾 Микросхема", "🛠️ Инструменты (Гр. 3)"],
+                    next_round_btn: "ПЕРЕЙТИ К РАУНДУ 4"
+                },
+                4: { // ВЫХОД НА ПОВЕРХНОСТЬ
+                    objective: "КРИТИЧЕСКИЙ ВЫХОД. Анализ: Ваши запасы и состояние связи (Раунд 3). Выберите маршрут.",
+                    routes: [
+                        { name: "МАРШРУТ А: Короткий и Опасный ⚡", risk: 2, reward: "Быстрый выход (-10 мин в Раунде 5)" },
+                        { name: "МАРШРУТ В: Средний, с обвалом 🚧", risk: 1, reward: "Нейтральный выход" }
+                    ],
+                    next_round_btn: "ПЕРЕЙТИ К ФИНАЛУ"
+                },
+                5: { objective: "ФИНАЛ: СТРАТЕГИЯ СПАСЕНИЯ", base_cards: ["🤝 Объединиться", "🏃‍♂️ Идти отдельно"], next_round_btn: "ЗАВЕРШИТЬ" }
             }
         };
 
@@ -198,10 +315,7 @@
             currentTeam = teamId;
             document.getElementById('team-select').style.display = 'none';
             document.getElementById('game-container').style.display = 'block';
-            
             document.getElementById('team-display').textContent = `[ СВЯЗЬ УСТАНОВЛЕНА: ${gameData[teamId].name} ]`;
-            
-            // Начинаем игру с Раунда 1
             showRound(1); 
         }
 
@@ -213,31 +327,26 @@
             const display = document.getElementById('time-left');
             const timerDiv = document.getElementById('timer-display');
             
-            timerDiv.style.color = '#00ff41'; 
-            timerDiv.style.textShadow = '0 0 5px #00ff41';
-
             timerInterval = setInterval(function () {
                 let minutes = parseInt(timer / 60, 10);
                 let seconds = parseInt(timer % 60, 10);
-
                 minutes = minutes < 10 ? "0" + minutes : minutes;
                 seconds = seconds < 10 ? "0" + seconds : seconds;
-
                 display.textContent = minutes + ":" + seconds;
 
                 if (--timer < 0) {
                     clearInterval(timerInterval);
                     display.textContent = "ВРЕМЯ ИСТЕКЛО! 💀";
                     timerDiv.style.color = '#ff004c'; 
-                    timerDiv.style.textShadow = '0 0 8px #ff004c'; 
                 } else if (timer <= 60 && timer > 0) {
                      timerDiv.style.color = '#ffcc00'; 
-                     timerDiv.style.textShadow = '0 0 8px #ffcc00'; 
+                } else {
+                     timerDiv.style.color = '#00ffcc';
                 }
             }, 1000);
         }
         
-        // ОТОБРАЖЕНИЕ КОНТЕНТА РАУНДА
+        // --- ФУНКЦИЯ ОТОБРАЖЕНИЯ КОНТЕНТА РАУНДА ---
         function showRound(roundNum) {
             if (!currentTeam || !gameData[currentTeam]) return; 
 
@@ -252,6 +361,7 @@
             document.querySelector(`.round-btn[data-round="${roundNum}"]`).classList.add('active');
 
             const data = gameData[currentTeam][roundNum];
+            const progress = teamProgress[currentTeam];
             const contentDiv = document.getElementById('round-content');
             
             let html = `
@@ -260,37 +370,199 @@
                 <div class="round-objective">
                     ${data.objective}
                 </div>
-                
-                <h4 style="color:#00ffcc;">📦 ВАШИ КАРТОЧКИ:</h4>
-                <ul class="card-list">
             `;
 
-            // Карточки ресурсов
-            data.cards.forEach((card) => {
+            // --- РАУНД 1: ВЫБОР РЕСУРСА ---
+            if (roundNum === 1) {
+                html += '<h4 style="color:#00ffcc;">✅ ВЫБОР БОНУСНОГО РЕСУРСА:</h4>';
+                if (progress.bonusResource) {
+                    html += `<p class='success' style="text-align: center;">БОНУСНЫЙ РЕСУРС ВЗЯТ: **${progress.bonusResource}**</p>`;
+                } else {
+                    html += '<div style="text-align: center;">';
+                    data.choices.forEach(choice => {
+                        html += `<button class="choice-btn" onclick="selectResource('${choice}')">${choice}</button>`;
+                    });
+                    html += `</div>`;
+                }
+            }
+
+            // --- РАУНД 2 & 3: СБОР ЧАСТИ (Решение загадки) ---
+            if (roundNum === 2 || roundNum === 3) {
+                const isAssembled = roundNum === 2 ? progress.filterAssembled : progress.antennaAssembled;
+                
+                html += `<h4 style="color:#ffcc00;">🔑 ИСПЫТАНИЕ НА СБОРКУ: ${data.puzzle_text}</h4>`;
+                
+                if (isAssembled) {
+                    html += `<p class='success' style="text-align: center;">✅ **${data.part}** СОБРАНА.</p>`;
+                } else {
+                     html += `
+                        <div class="input-area" style="text-align: center; margin-top: 15px;">
+                            <strong>ВВЕДИТЕ КЛЮЧЕВОЕ СЛОВО:</strong>
+                            <input type="text" id="puzzle-input" placeholder="Ответ">
+                            <button class="btn" onclick="checkPuzzleAnswer(${roundNum}, '${data.answer}', '${data.part}')">ПРОВЕРИТЬ И СОБРАТЬ</button>
+                            <p id="puzzle-feedback" style="margin-top: 10px;"></p>
+                        </div>
+                    `;
+                }
+            }
+            
+            // --- РАУНД 4: ВЫБОР МАРШРУТА ---
+            if (roundNum === 4) {
+                if (progress.routeChosen) {
+                     html += `<p class='success' style="text-align: center;">✅ РЕШЕНИЕ ПРИНЯТО: **${progress.routeResult}**</p>`;
+                } else {
+                    const status = progress.antennaAssembled ? '🟢 СВЯЗЬ УСТАНОВЛЕНА (Шанс на успех выше).' : '🔴 СВЯЗЬ ПОТЕРЯНА (Риск выше).';
+                    
+                    html += `<h4 style="color:#ffcc00;">📡 СТАТУС СВЯЗИ: ${status}</h4>`;
+                    html += '<h4 style="color:#00ffcc;">🗺️ ВЫБЕРИТЕ МАРШРУТ:</h4>';
+                    html += '<div style="text-align: center;">';
+                    
+                    data.routes.forEach((route, index) => {
+                         html += `<button class="choice-btn" onclick="selectRoute('${route.name}', ${route.risk})">${route.name} (${route.reward})</button>`;
+                    });
+                    html += '</div>';
+                }
+            }
+
+
+            // --- КАРТОЧКИ И КНОПКА ПЕРЕХОДА ---
+
+            let currentCards = [...data.base_cards];
+            // Добавляем собранные части в список карточек
+            if (progress.bonusResource && roundNum !== 1) { currentCards.push(`⭐ Бонус: ${progress.bonusResource}`); }
+            if (progress.filterAssembled) { currentCards.push(gameData[currentTeam][2].part); }
+            if (progress.antennaAssembled) { currentCards.push(gameData[currentTeam][3].part); }
+            // Добавляем результат прохождения 4 раунда
+            if (progress.routeResult && roundNum !== 4) { currentCards.push(`🗺️ Маршрут: ${progress.routeResult} (Потеряно: ${progress.lostResources} 💧/🥫)`); }
+
+            html += `
+                <h4 style="color:#00ffcc; margin-top: 30px;">📦 ВАШИ КАРТОЧКИ:</h4>
+                <ul class="card-list">
+            `;
+            currentCards.forEach((card) => {
                 html += `<li>${card}</li>`;
             });
+            
+            // Информация о потерях
+            if (progress.lostResources > 0) {
+                 html += `<li><span class="warning">❌ ПОТЕРЯНО: ${progress.lostResources} единиц ресурсов из-за маршрута.</span></li>`;
+            }
+
             html += `</ul>`;
             
-            // Секция для кнопки перехода
+            // Кнопка перехода
             if (roundNum < 5) {
-                html += `
-                    <div style="text-align: center; margin-top: 30px;">
-                        <button class="btn" onclick="nextRound()">
-                            ПЕРЕЙТИ К СЛЕДУЮЩЕМУ РАУНДУ (${roundNum + 1})
-                        </button>
-                    </div>
-                `;
+                // Условия блокировки кнопки
+                let isBlocked = false;
+                if (roundNum === 1 && !progress.bonusResource) { isBlocked = true; }
+                if (roundNum === 2 && !progress.filterAssembled) { isBlocked = true; }
+                if (roundNum === 3 && !progress.antennaAssembled) { isBlocked = true; }
+                if (roundNum === 4 && !progress.routeChosen) { isBlocked = true; }
+
+
+                if (isBlocked) {
+                    let message = '';
+                    if (roundNum === 1) message = '*Сначала выберите бонусный ресурс.*';
+                    if (roundNum === 2) message = `*Сначала соберите критическую часть (Фильтр).*`;
+                    if (roundNum === 3) message = `*Сначала соберите критическую часть (Связь).*`;
+                    if (roundNum === 4) message = `*Сначала выберите маршрут.*`;
+
+                    html += `<p class="warning" style="text-align: center;">${message}</p>`;
+                } else {
+                    html += `
+                        <div style="text-align: center; margin-top: 30px;">
+                            <button class="btn" onclick="nextRound()">
+                                ${data.next_round_btn} (${roundNum + 1})
+                            </button>
+                        </div>
+                    `;
+                }
             } else {
                  html += `
                     <div style="text-align: center; margin-top: 30px;">
-                         <p class="warning">ФИНАЛ! ИГРА ЗАВЕРШЕНА. ПОДСЧЕТ РЕЗУЛЬТАТОВ.</p>
+                         <p class="warning">ФИНАЛ! ИГРА ЗАВЕРШЕНА. **${data.base_cards[0].includes('Объединиться') ? 'ОБЪЕДИНЕНИЕ' : 'АВТОНОМНЫЙ ВЫХОД'}**.</p>
                     </div>
                 `;
-                 // Останавливаем таймер на финальном экране
                  clearInterval(timerInterval);
             }
             
             contentDiv.innerHTML = html;
+        }
+
+        // --- ФУНКЦИИ ИНТЕРАКТИВА ---
+
+        // РАУНД 1: Выбор ресурса
+        function selectResource(choice) {
+            if (!currentTeam || teamProgress[currentTeam].bonusResource) return;
+            
+            teamProgress[currentTeam].bonusResource = choice;
+            alert(`✅ Вы выбрали: ${choice}. Ресурс добавлен в ваш инвентарь!`);
+            
+            // Перезагрузка контента, чтобы показать кнопку перехода
+            showRound(1); 
+        }
+
+        // РАУНД 2 & 3: Проверка ответа и сбор части
+        function checkPuzzleAnswer(roundNum, correctAnswer, partName) {
+            const input = document.getElementById('puzzle-input');
+            const feedback = document.getElementById('puzzle-feedback');
+            const userInput = (input.value || '').trim().toUpperCase();
+            const correct = correctAnswer.toUpperCase();
+            
+            if (userInput === correct) {
+                if (roundNum === 2) {
+                    teamProgress[currentTeam].filterAssembled = true;
+                } else if (roundNum === 3) {
+                    teamProgress[currentTeam].antennaAssembled = true;
+                }
+                clearInterval(timerInterval);
+                feedback.innerHTML = `<span class="success">✅ КОД ПРИНЯТ. **${partName}** СОБРАНА.</span>`;
+                alert(`УСПЕХ! Часть собрана. Переходите к следующему этапу.`);
+
+                showRound(roundNum); 
+            } else {
+                feedback.innerHTML = '<span class="warning">❌ ОШИБКА АВТОРИЗАЦИИ. Повторите ввод.</span>';
+                input.value = ''; 
+            }
+        }
+        
+        // --- НОВАЯ ФУНКЦИЯ: РАУНД 4 - Выбор маршрута ---
+        function selectRoute(routeName, baseRisk) {
+            if (teamProgress[currentTeam].routeChosen) return;
+
+            const progress = teamProgress[currentTeam];
+            let finalRisk = baseRisk;
+            let resultMessage = `Вы выбрали **${routeName}**.`;
+
+            // Модификация риска на основе СВЯЗИ (Раунд 3)
+            if (!progress.antennaAssembled && baseRisk > 0) {
+                // Если нет связи, риск опасного маршрута удваивается
+                finalRisk += baseRisk; 
+                resultMessage += " **(⚠️ СВЯЗЬ ПОТЕРЯНА: Риск удвоен!)**";
+            }
+            
+            // Определяем потери ресурсов
+            if (finalRisk > 0) {
+                // Шанс потери ресурса (1 единица за 1 риск)
+                const lostCount = Math.floor(Math.random() * (finalRisk + 1)); 
+                progress.lostResources = lostCount;
+                
+                if (lostCount > 0) {
+                    resultMessage += ` В пути из-за опасности/помех вы **потеряли ${lostCount} единиц** ресурсов (Вода/Еда).`;
+                } else {
+                    resultMessage += " Вы прошли **без потерь**, но риск был высок.";
+                }
+            } else {
+                resultMessage += " Маршрут оказался **полностью безопасным**, потерь нет.";
+            }
+
+            progress.routeChosen = true;
+            progress.routeResult = routeName;
+            
+            alert(`✅ РЕШЕНИЕ ПРИНЯТО. ${resultMessage}`);
+            
+            // Перезагрузка контента, чтобы показать результат и кнопку перехода
+            showRound(4);
         }
 
         // ФУНКЦИЯ ДЛЯ ПЕРЕХОДА НА СЛЕДУЮЩИЙ РАУНД
