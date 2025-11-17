@@ -203,7 +203,38 @@
     </div>
 
     <script>
-        // --- ДАННЫЕ ИГРЫ (Оставлены без изменений по вашей просьбе) ---
+        // --- ДЕКЛАРАЦИЯ КЛЮЧЕВЫХ ГЛОБАЛЬНЫХ ФУНКЦИЙ (Для гарантированной доступности) ---
+        // Объявляем их здесь, чтобы HTML мог их найти по "onclick"
+        function selectTeam(teamId) {
+            // 1. Устанавливаем текущую команду
+            currentTeam = teamId;
+            document.getElementById('team-select').style.display = 'none';
+            document.getElementById('game-container').style.display = 'block';
+            
+            document.getElementById('team-display').textContent = `[ СВЯЗЬ УСТАНОВЛЕНА: ${gameData[teamId].name} ]`;
+
+            // 2. Устанавливаем навигацию
+            updateRoundNavigation(1);
+            // 3. Отображаем контент Раунда 1 (Запуск игры)
+            showRound(1); 
+        }
+
+        // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ИГРЫ ---
+        const ROUND_DURATION_SEC = 600; // 10 минут
+        const ROUND_1_DURATION_SEC = 300; // 5 минут для 1 раунда
+        let currentTeam = null;
+        let timerInterval = null;
+        let currentQuestionIndex = 0;
+        let correctAnswers = 0;
+
+        // Хранение прогресса команды
+        let teamProgress = {
+            "Group 1": { completed: false, hasBonusResource: false, round2Completed: false, round3Completed: false },
+            "Group 2": { completed: false, hasBonusResource: false, round2Completed: false, round3Completed: false },
+            "Group 3": { completed: false, hasBonusResource: false, round2Completed: false, round3Completed: false }
+        };
+
+        // --- ДАННЫЕ ИГРЫ (Оставлены без изменений) ---
         const challengeQuestions = {
             "Group 1": [
                 { q: "Вопрос 1: Как называется израильская лепёшка, которая часто подается с хумусом?", a: "ПИТА" },
@@ -345,22 +376,18 @@
             }
         };
 
-        // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ИГРЫ ---
-        const ROUND_DURATION_SEC = 600; // 10 минут
-        const ROUND_1_DURATION_SEC = 300; // 5 минут для 1 раунда
-        let currentTeam = null;
-        let timerInterval = null;
-        let currentQuestionIndex = 0;
-        let correctAnswers = 0;
-        
-        // Хранение прогресса команды
-        let teamProgress = {
-            "Group 1": { completed: false, hasBonusResource: false, round2Completed: false, round3Completed: false },
-            "Group 2": { completed: false, hasBonusResource: false, round2Completed: false, round3Completed: false },
-            "Group 3": { completed: false, hasBonusResource: false, round2Completed: false, round3Completed: false }
-        };
-
         // --- ФУНКЦИИ ИГРЫ ---
+        // Объявляем остальные функции в глобальной области видимости для надежности
+        window.startTimer = startTimer;
+        window.updateRoundNavigation = updateRoundNavigation;
+        window.showRound = showRound;
+        window.completeRound1SkipChallenge = completeRound1SkipChallenge;
+        window.completeRound3 = completeRound3;
+        window.checkSecretWord = checkSecretWord;
+        window.startResourceChallenge = startResourceChallenge;
+        window.nextQuestion = nextQuestion;
+        window.finalizeChoice = finalizeChoice;
+
 
         function startTimer(durationInSeconds) {
             if (timerInterval) {
@@ -396,38 +423,7 @@
                 }
             }, 1000);
         }
-
-        /**
-         * КРИТИЧЕСКАЯ ФУНКЦИЯ: ЗАПУСК ИГРЫ И ПЕРЕХОД К РАУНДУ 1
-         * ЭТО ТА САМАЯ ФУНКЦИЯ, КОТОРАЯ НЕ РАБОТАЛА!
-         */
-        function selectTeam(teamId) {
-             console.log("Выбрана команда:", teamId); // Проверочный лог
-            // 1. Устанавливаем текущую команду
-            currentTeam = teamId;
-            document.getElementById('team-select').style.display = 'none';
-            document.getElementById('game-container').style.display = 'block';
-            
-            document.getElementById('team-display').textContent = `[ СВЯЗЬ УСТАНОВЛЕНА: ${gameData[teamId].name} ]`;
-
-            // 2. Устанавливаем навигацию
-            updateRoundNavigation(1);
-            // 3. Отображаем контент Раунда 1 (Запуск игры)
-            showRound(1); 
-        }
-
-        // --- ДОБАВЛЕНИЕ ФУНКЦИЙ В ГЛОБАЛЬНУЮ ОБЛАСТЬ ВИДИМОСТИ ---
-        // Это необходимо, чтобы HTML мог вызвать функцию selectTeam по onclick
-        window.selectTeam = selectTeam;
-        window.showRound = showRound; // Также убедимся, что showRound доступна
-        window.startResourceChallenge = startResourceChallenge;
-        window.completeRound1SkipChallenge = completeRound1SkipChallenge;
-        window.completeRound3 = completeRound3;
-        window.checkSecretWord = checkSecretWord;
-        window.nextQuestion = nextQuestion;
-        window.finalizeChoice = finalizeChoice;
-
-
+        
         // ОБНОВЛЕНИЕ КНОПОК НАВИГАЦИИ
         function updateRoundNavigation(activeRound = 1) {
             if (!currentTeam) return;
@@ -727,10 +723,9 @@
                 
             if (correctAnswers >= 3) {
                 const resourceName = gameData[currentTeam].Round 1.challenge_resource;
-                const bonusCard = `💡 Бонус: Острый нож (доп. ресурс)`; // ИЛИ другой бонусный ресурс
+                const bonusCard = `💡 Бонус: Острый нож (доп. ресурс)`; 
 
                 if (!teamProgress[currentTeam].hasBonusResource) {
-                    // Проверяем, существует ли уже карточка "Бонус: Острый нож" (если да, то не добавляем)
                     if (gameData[currentTeam].Round 1.cards.filter(c => c.includes('Бонус:')).length > 0) {
                         gameData[currentTeam].Round 1.cards = gameData[currentTeam].Round 1.cards.map(card => 
                             card.includes('💡 Бонус:') ? `<span class='success'>${card} (ПОЛУЧЕН)</span>` : card
@@ -765,7 +760,6 @@
         
         function finalizeChoice(roundNum, choice) {
             alert(`Ваше финальное решение для Раунда ${roundNum}: ${choice}`);
-            // Здесь может быть добавлена логика записи выбора в историю игры или переход к следующему раунду
         }
 
 
@@ -773,7 +767,7 @@
             // Установка начального состояния
              document.getElementById('time-left').textContent = "10:00";
              document.getElementById('game-container').style.display = 'none';
-             // Дополнительно: Снимаем активный класс с первого раунда, чтобы он установился в showRound
+             // Снимаем активный класс с первого раунда, чтобы он установился в showRound
              const round1Btn = document.querySelector(`.round-btn[data-round="1"]`);
              if (round1Btn) {
                  round1Btn.classList.remove('active');
