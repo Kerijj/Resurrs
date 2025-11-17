@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-width=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>БУНКЕР-СИГНАЛ: ВЫЖИВАНИЕ</title>
     <style>
         /* --- ОСНОВНЫЕ НЕОНОВЫЕ СТИЛИ --- */
@@ -158,6 +158,7 @@
             box-shadow: 0 0 5px #00ff41;
             width: 70%;
             max-width: 300px;
+            box-sizing: border-box; /* Для корректного подсчета ширины */
         }
         #challenge-section {
             border: 2px solid #ffcc00;
@@ -199,12 +200,11 @@
         </div>
 
         <div id="round-content">
-        </div>
+            </div>
     </div>
 
     <script>
-        // --- ДЕКЛАРАЦИЯ КЛЮЧЕВЫХ ГЛОБАЛЬНЫХ ФУНКЦИЙ (Для гарантированной доступности) ---
-        // Объявляем их здесь, чтобы HTML мог их найти по "onclick"
+        // --- ДЕКЛАРАЦИЯ КЛЮЧЕВЫХ ГЛОБАЛЬНЫХ ФУНКЦИЙ ---
         function selectTeam(teamId) {
             // 1. Устанавливаем текущую команду
             currentTeam = teamId;
@@ -216,7 +216,7 @@
             // 2. Устанавливаем навигацию
             updateRoundNavigation(1);
             // 3. Отображаем контент Раунда 1 (Запуск игры)
-            showRound(1); 
+            showRound(1); 
         }
 
         // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ИГРЫ ---
@@ -226,6 +226,7 @@
         let timerInterval = null;
         let currentQuestionIndex = 0;
         let correctAnswers = 0;
+        let incorrectAnswers = 0; // Добавлена переменная для подсчета ошибок
 
         // Хранение прогресса команды
         let teamProgress = {
@@ -234,7 +235,7 @@
             "Group 3": { completed: false, hasBonusResource: false, round2Completed: false, round3Completed: false }
         };
 
-        // --- ДАННЫЕ ИГРЫ (Оставлены без изменений) ---
+        // --- ДАННЫЕ ИГРЫ ---
         const challengeQuestions = {
             "Group 1": [
                 { q: "Вопрос 1: Как называется израильская лепёшка, которая часто подается с хумусом?", a: "ПИТА" },
@@ -397,7 +398,7 @@
             const display = document.getElementById('time-left');
             const timerDiv = document.getElementById('timer-display');
             
-            timerDiv.style.color = '#00ff41'; 
+            timerDiv.style.color = '#00ff41'; 
             timerDiv.style.textShadow = '0 0 5px #00ff41';
 
             timerInterval = setInterval(function () {
@@ -412,13 +413,13 @@
                 if (--timer < 0) {
                     clearInterval(timerInterval);
                     display.textContent = "ВРЕМЯ ИСТЕКЛО! 💀";
-                    timerDiv.style.color = '#ff004c'; 
-                    timerDiv.style.textShadow = '0 0 8px #ff004c'; 
+                    timerDiv.style.color = '#ff004c'; 
+                    timerDiv.style.textShadow = '0 0 8px #ff004c'; 
                 } else if (timer <= 60 && timer > 0) {
-                     timerDiv.style.color = '#ffcc00'; 
-                     timerDiv.style.textShadow = '0 0 8px #ffcc00'; 
+                     timerDiv.style.color = '#ffcc00'; 
+                     timerDiv.style.textShadow = '0 0 8px #ffcc00'; 
                 } else {
-                     timerDiv.style.color = '#00ffcc'; 
+                     timerDiv.style.color = '#00ffcc'; 
                      timerDiv.style.textShadow = '0 0 8px #00ffcc';
                 }
             }, 1000);
@@ -462,10 +463,10 @@
 
         // ОТОБРАЖЕНИЕ КОНТЕНТА РАУНДА
         function showRound(roundNum) {
-            if (!currentTeam || !gameData[currentTeam]) return; 
+            if (!currentTeam || !gameData[currentTeam]) return; 
 
             const btn = document.querySelector(`.round-btn[data-round="${roundNum}"]`);
-            if (btn && btn.classList.contains('locked')) return; 
+            if (btn && btn.classList.contains('locked')) return; 
 
             // Стилизация активной кнопки и разблокировка/блокировка
             updateRoundNavigation(roundNum);
@@ -494,7 +495,8 @@
                 if (progress.hasBonusResource) {
                     challengeContent = `<p class='success'>✅ КРИТИЧЕСКИЙ РЕСУРС **${data.challenge_resource}** ПОЛУЧЕН.</p>`;
                 } else if (progress.completed) {
-                    challengeContent = `<p class='warning'>❌ ИСПЫТАНИЕ ПРОВАЛЕНО ИЛИ ПРОПУЩЕНО.</p>`;
+                    // Если раунд завершен, но без бонуса (пропуск)
+                    challengeContent = `<p class='warning'>❌ ИСПЫТАНИЕ ПРОВАЛЕНО ИЛИ ПРОПУЩЕНО. **${data.challenge_resource}** НЕ ПОЛУЧЕН.</p>`;
                 }
                 else {
                     challengeContent = `
@@ -509,18 +511,18 @@
                 // Кнопка перехода к Раунду 2
                 if (progress.completed) {
                     // Кнопка для перехода на следующий раунд
-                     html += `
-                        <div style="text-align: center; margin-top: 20px;">
-                            <button class="btn" onclick="updateRoundNavigation(2); showRound(2);">ПЕРЕЙТИ К РАУНДУ 2</button>
-                        </div>
-                    `;
+                       html += `
+                            <div style="text-align: center; margin-top: 20px;">
+                                <button class="btn" onclick="updateRoundNavigation(2); showRound(2);">ПЕРЕЙТИ К РАУНДУ 2</button>
+                            </div>
+                        `;
                 } else {
                     // Кнопка для завершения раунда без испытания (и получения штрафа)
-                     html += `
-                        <div style="text-align: center; margin-top: 20px;">
-                            <button class="btn" onclick="completeRound1SkipChallenge()">ПРОДОЛЖИТЬ (ПРОПУСТИТЬ ИСПЫТАНИЕ)</button>
-                        </div>
-                    `;
+                       html += `
+                            <div style="text-align: center; margin-top: 20px;">
+                                <button class="btn" onclick="completeRound1SkipChallenge()">ПРОДОЛЖИТЬ (ПРОПУСТИТЬ ИСПЫТАНИЕ)</button>
+                            </div>
+                        `;
                 }
             } 
             
@@ -539,11 +541,11 @@
                     `;
                 }
                 if (progress.round2Completed) {
-                     html += `
-                        <div style="text-align: center; margin-top: 20px;">
-                            <button class="btn" onclick="updateRoundNavigation(3); showRound(3);">ПЕРЕЙТИ К РАУНДУ 3</button>
-                        </div>
-                    `;
+                       html += `
+                            <div style="text-align: center; margin-top: 20px;">
+                                <button class="btn" onclick="updateRoundNavigation(3); showRound(3);">ПЕРЕЙТИ К РАУНДУ 3</button>
+                            </div>
+                        `;
                 }
             }
             // Логика для Раунда 3 (Сбор Связи)
@@ -552,9 +554,9 @@
                     html += `<p class='success' style="text-align: center;">✅ СВЯЗЬ УСТАНОВЛЕНА. Вы готовы к выходу.</p>`;
                 } else {
                     html += `<p style="text-align: center;">Выполните задание и нажмите кнопку ниже, чтобы перейти дальше.</p>
-                    <div style="text-align: center; margin-top: 20px;">
-                        <button class="btn" onclick="completeRound3()">ЗАВЕРШИТЬ РАУНД 3</button>
-                    </div>`;
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button class="btn" onclick="completeRound3()">ЗАВЕРШИТЬ РАУНД 3</button>
+                        </div>`;
                 }
             }
             // Логика для Раунда 4 и 5 (Маршрут/Финал)
@@ -576,8 +578,9 @@
             `;
 
             data.cards.forEach((card) => {
-                // Дополнительная проверка на наличие бонусного ресурса в Раунде 1
-                if (roundNum === 1 && card.includes("💡 Бонус:") && !progress.hasBonusResource && card.includes('Острый нож')) {
+                const isBonus = card.includes("💡 Бонус:");
+
+                if (isBonus && !progress.hasBonusResource) {
                     return; // Не показываем бонус, если он не получен
                 }
                 html += `<li>${card}</li>`;
@@ -602,7 +605,7 @@
 
             teamProgress[currentTeam].completed = true;
             clearInterval(timerInterval);
-            alert('Раунд 1 завершен. Вам доступен Раунд 2.');
+            alert('Раунд 1 завершен. Вам доступен Раунд 2. (Ресурс не получен)');
             
             // Обновляем навигацию и отображаем Раунд 1, чтобы показать кнопку "Перейти к Раунду 2"
             updateRoundNavigation(1);
@@ -630,9 +633,11 @@
             const correctWordCard = gameData[currentTeam][`Round ${roundNum}`].cards.find(c => c.includes('Секретное слово:'));
             if (!correctWordCard) return;
 
-            const correctWord = correctWordCard.split(': ')[1].trim().toUpperCase();
+            // Используем более надежный метод извлечения слова
+            const correctWordMatch = correctWordCard.match(/Секретное слово:\s*(.*)/i);
+            const correctWord = correctWordMatch ? correctWordMatch[1].trim().toUpperCase() : '';
 
-            if (userInput === correctWord) {
+            if (userInput === correctWord && correctWord.length > 0) {
                 teamProgress[currentTeam].round2Completed = true;
                 clearInterval(timerInterval);
                 feedback.innerHTML = '<span class="success">✅ КОД ПРИНЯТ. ФИЛЬТР АКТИВИРОВАН.</span>';
@@ -645,10 +650,11 @@
 
         // ФУНКЦИИ ИСПЫТАНИЯ (Раунд 1)
         function startResourceChallenge() {
-            if (teamProgress[currentTeam].hasBonusResource || teamProgress[currentTeam].completed) return; 
+            if (teamProgress[currentTeam].hasBonusResource || teamProgress[currentTeam].completed) return; 
 
             currentQuestionIndex = 0;
             correctAnswers = 0;
+            incorrectAnswers = 0; // Сбрасываем счетчик ошибок
             
             const challengeSection = document.getElementById('challenge-section');
             challengeSection.innerHTML = `
@@ -662,117 +668,91 @@
         }
         
         function nextQuestion(action) {
+            const questions = challengeQuestions[currentTeam];
+            const challengeSection = document.getElementById('challenge-section');
+            
+            // Обработка предыдущего ответа
+            if (action !== 'start' && currentQuestionIndex > 0) {
+                const currentQ = questions[currentQuestionIndex - 1];
+                const answerInput = document.getElementById('answer-input');
+                const userAnswer = (answerInput.value || '').trim().toUpperCase();
+                
+                // Проверка ответа
+                if (userAnswer === currentQ.a) {
+                    correctAnswers++;
+                    alert(`✅ Верно! Ответ: ${currentQ.a}`);
+                } else {
+                    incorrectAnswers++;
+                    alert(`❌ Ошибка! Правильный ответ: ${currentQ.a}`);
+                }
+            }
+
+            // Если все вопросы заданы, завершаем испытание
+            if (currentQuestionIndex >= questions.length) {
+                endChallenge();
+                return;
+            }
+
+            // Отображение следующего вопроса
+            const nextQ = questions[currentQuestionIndex];
+            
+            challengeSection.innerHTML = `
+                <h4 style="color:#ffcc00;">🔑 ВОПРОС ${currentQuestionIndex + 1} ИЗ ${questions.length}</h4>
+                <p id="challenge-question">${nextQ.q}</p>
+                <div id="challenge-buttons" class="input-area" style="text-align: center;">
+                    <input type="text" id="answer-input" placeholder="Введите ответ">
+                    <button class="btn" onclick="nextQuestion('submit')">
+                        ${currentQuestionIndex < questions.length - 1 ? 'СЛЕДУЮЩИЙ ВОПРОС' : 'ЗАВЕРШИТЬ'}
+                    </button>
+                </div>
+                <p style="margin-top: 10px;">Счет: Верно <span id="correct-count">${correctAnswers}</span> / Ошибки <span id="incorrect-count">${incorrectAnswers}</span></p>
+            `;
+
+            currentQuestionIndex++;
+        }
+
+        function endChallenge() {
+            teamProgress[currentTeam].completed = true; // Раунд 1 завершен
+
+            const success = correctAnswers >= 3; // Условие: 3 или более верных ответа
+            
+            if (success) {
+                teamProgress[currentTeam].hasBonusResource = true;
+                alert(`🎉 УСПЕХ! Вы набрали ${correctAnswers} из 5. КРИТИЧЕСКИЙ РЕСУРС ПОЛУЧЕН!`);
+            } else {
+                alert(`😔 ПРОВАЛ. Вы набрали ${correctAnswers} из 5. РЕСУРС НЕ ПОЛУЧЕН. Вам доступен Раунд 2.`);
+            }
+            
+            clearInterval(timerInterval);
+            
+            // Обновляем отображение Раунда 1, чтобы показать результат и кнопку "Перейти к Раунду 2"
+            updateRoundNavigation(1);
+            showRound(1);
+        }
+        
+        // ФУНКЦИЯ ДЛЯ РАУНДА 4 И 5
+        function finalizeChoice(roundNum, choice) {
             if (!currentTeam) return;
 
-            const questions = challengeQuestions[currentTeam];
-            const questionDisplay = document.getElementById('challenge-question');
-            const buttonsDisplay = document.getElementById('challenge-buttons');
-            const correctCountEl = document.getElementById('correct-count');
-            const incorrectCountEl = document.getElementById('incorrect-count');
-            const answeredQuestions = currentQuestionIndex;
-
-            if (action !== 'start' && answeredQuestions > 0) {
-                const lastQuestion = questions[answeredQuestions - 1];
-                const userAnswer = (document.getElementById('user-answer-input')?.value || '').trim().toUpperCase();
-                
-                // Проверка ответа (только если нажата кнопка 'ОТВЕТИТЬ')
-                const isCorrect = (action === 'answer') && (userAnswer === lastQuestion.a.toUpperCase());
-
-                if (isCorrect) {
-                    correctAnswers++;
+            if (roundNum === 4) {
+                alert(`✅ Маршрут выбран: ${choice}. Переходите к финальному раунду!`);
+                // После выбора, разблокируем следующий раунд, если он еще не разблокирован
+                if (!teamProgress[currentTeam].round3Completed) {
+                    teamProgress[currentTeam].round3Completed = true; 
                 }
-                // Если не "start", переходим к следующему вопросу
-                currentQuestionIndex++; 
-            }
-
-            // Обновление счетчика
-            const questionsTotal = questions.length;
-            const finalIncorrect = currentQuestionIndex - correctAnswers;
-            
-            correctCountEl.textContent = correctAnswers;
-            if (incorrectCountEl) {
-                incorrectCountEl.textContent = finalIncorrect;
-            }
-
-            if (currentQuestionIndex < questionsTotal) {
-                // Показать следующий вопрос
-                const currentQ = questions[currentQuestionIndex];
-                
-                questionDisplay.innerHTML = `
-                    <p>**ВОПРОС ${currentQuestionIndex + 1} из ${questionsTotal}:** ${currentQ.q}</p>
-                    <input type="text" id="user-answer-input" placeholder="Введите ответ">
+                updateRoundNavigation(roundNum);
+                // Если это 4 раунд, пытаемся перейти на 5
+                showRound(5);
+            } else if (roundNum === 5) {
+                alert(`🎉 ФИНАЛЬНОЕ РЕШЕНИЕ: ${choice}. Игра окончена!`);
+                document.getElementById('round-content').innerHTML = `
+                    <h3 class='success' style="text-align: center;">[ МИССИЯ ЗАВЕРШЕНА ]</h3>
+                    <p style="text-align: center;">Ваш выбор: **${choice}**.</p>
+                    <p style="text-align: center; font-style: italic;">Подсчет результатов и анализ выживания завершен. Удачи на поверхности!</p>
                 `;
-                buttonsDisplay.innerHTML = `
-                    <button class="btn" onclick="nextQuestion('answer')">ОТВЕТИТЬ</button>
-                    <button class="btn" style="background-color: #331a00; border-color: #444;" onclick="nextQuestion('skip')">ПРОПУСТИТЬ</button>
-                `;
-                
-                // Если только начали, то счетчик вопросов уже обновлен выше.
-                if (action === 'start') {
-                    currentQuestionIndex = 1;
-                }
-            } else {
-                // Испытание завершено
-                endChallenge(correctAnswers, finalIncorrect);
+                clearInterval(timerInterval);
             }
         }
-        
-        function endChallenge(correctAnswers, finalIncorrect) {
-            const challengeSection = document.getElementById('challenge-section');
-            let resultMessage = '';
-                
-            if (correctAnswers >= 3) {
-                const resourceName = gameData[currentTeam].Round 1.challenge_resource;
-                const bonusCard = `💡 Бонус: Острый нож (доп. ресурс)`; 
-
-                if (!teamProgress[currentTeam].hasBonusResource) {
-                    if (gameData[currentTeam].Round 1.cards.filter(c => c.includes('Бонус:')).length > 0) {
-                        gameData[currentTeam].Round 1.cards = gameData[currentTeam].Round 1.cards.map(card => 
-                            card.includes('💡 Бонус:') ? `<span class='success'>${card} (ПОЛУЧЕН)</span>` : card
-                        );
-                    } else {
-                        gameData[currentTeam].Round 1.cards.push(`<span class='success'>${bonusCard} (ПОЛУЧЕН)</span>`); 
-                    }
-                    teamProgress[currentTeam].hasBonusResource = true;
-                }
-
-                resultMessage = `<span class='success'>✅ УСПЕХ! ${correctAnswers} из 5. Вы получаете **Критический Ресурс**.</span>`;
-            } else {
-                resultMessage = `<span class='warning'>❌ ПРОВАЛ! ${correctAnswers} из 5. Вы не получаете Критический Ресурс.</span>`;
-            }
-                
-            // АКТИВАЦИЯ ДОСТУПА К РАУНДУ 2
-            teamProgress[currentTeam].completed = true; 
-            clearInterval(timerInterval);
-
-            // Финальный экран
-            challengeSection.innerHTML = `
-                <h4>🔥 ИСПЫТАНИЕ ЗАВЕРШЕНО 🔥</h4>
-                <p style="font-size: 1.5em; margin: 20px 0;">
-                    Верных ответов: **${correctAnswers}** / Ошибок: **${finalIncorrect}**
-                </p>
-                <p style="font-size: 1.5em; margin-bottom: 20px;">
-                    ${resultMessage}
-                </p>
-                <button class="btn" onclick="updateRoundNavigation(1); showRound(1)">ОБНОВИТЬ КАРТОЧКИ И ПРОДОЛЖИТЬ</button>
-            `;
-        }
-        
-        function finalizeChoice(roundNum, choice) {
-            alert(`Ваше финальное решение для Раунда ${roundNum}: ${choice}`);
-        }
-
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Установка начального состояния
-             document.getElementById('time-left').textContent = "10:00";
-             document.getElementById('game-container').style.display = 'none';
-             // Снимаем активный класс с первого раунда, чтобы он установился в showRound
-             const round1Btn = document.querySelector(`.round-btn[data-round="1"]`);
-             if (round1Btn) {
-                 round1Btn.classList.remove('active');
-             }
-        });
     </script>
 </body>
 </html>
