@@ -20,7 +20,6 @@
         .current-round-title { color: #f1c40f; }
         .task-list { list-style-type: none; padding: 0; }
         .task-list li { margin-bottom: 8px; }
-        /* Новый стиль для инвентаря */
         .inventory-list { margin-top: 10px; list-style-type: none; padding: 0; display: flex; flex-wrap: wrap; gap: 10px;}
         .inventory-item { padding: 5px 10px; border-radius: 5px; background: #444;}
     </style>
@@ -78,12 +77,19 @@
 
     <script>
         const RESOURCES = {
-            E: { name: 'Энергоячейка', code: 'E' },
-            B: { name: 'Био Смесь', code: 'B' },
-            S: { name: 'Сверхсплав', code: 'S' },
+            // Базовые ресурсы (5 шт)
+            E: { name: 'Источн Энергии', code: 'E' },
+            B: { name: 'Орг Материя', code: 'B' },
+            S: { name: 'Прочный Металл', code: 'S' },
+            L: { name: 'Катализатор L', code: 'L' },
+            F: { name: 'Волокно F', code: 'F' },
+            
+            // Промежуточные ресурсы (4 шт)
             M: { name: 'Крио Модуль', code: 'M' },
             W: { name: 'Синтезатор Воды', code: 'W' },
             K: { name: 'Гермо Контейнер', code: 'K' },
+            Z: { name: 'Оптич Кабель', code: 'Z' }, // Бонусный
+            
             P: { name: 'Маяк Спасения', code: 'P' }
         };
 
@@ -100,13 +106,13 @@
 
         let gameState = {
             group: null,
-            inventory: { E: 0, B: 0, S: 0, M: 0, W: 0, K: 0, P: 0 },
+            inventory: { E: 0, B: 0, S: 0, L: 0, F: 0, M: 0, W: 0, K: 0, Z: 0, P: 0 }, // Обновленный инвентарь
             currentRound: 0,
             status: "Ожидание начала миссии",
             historyLog: []
         };
 
-        // --- ОБЩИЕ ФУНКЦИИ ---
+        // --- ОБЩИЕ ФУНКЦИИ (без изменений) ---
 
         function updateLog(message, isCritical = false) {
             const logBox = document.getElementById('game-log');
@@ -144,11 +150,14 @@
         }
 
         function nextRound() {
-            // Проверки перед переходом
-            if (gameState.currentRound === 1 && (gameState.inventory.E === 0 || gameState.inventory.B === 0 || gameState.inventory.S === 0)) {
-                updateLog("🛑 Сначала соберите базовые ресурсы E B S", true);
+            // Проверки перед переходом (обновлены для 5 ресурсов)
+            const baseResources = ['E', 'B', 'S', 'L', 'F'];
+            
+            if (gameState.currentRound === 1 && baseResources.every(code => gameState.inventory[code] === 0)) {
+                updateLog("🛑 Сначала соберите базовые ресурсы", true);
                 return;
             }
+            
             if (gameState.currentRound === 2 && (gameState.inventory.M === 0 && gameState.inventory.W === 0 && gameState.inventory.K === 0)) {
                  updateLog("🛑 Соберите хотя бы один промежуточный ресурс M W или K", true);
                  return;
@@ -175,7 +184,7 @@
             updateUI();
         }
 
-        // --- ЛОГИКА ВЕДУЩЕГО (СЕКРЕТНЫЕ СЛОВА) ---
+        // --- ЛОГИКА ВЕДУЩЕГО (без изменений) ---
 
         function processModCommand() {
             const input = document.getElementById('mod-input').value.trim().toLowerCase();
@@ -186,8 +195,9 @@
             if (words[0] === 'добыть' && words.length === 3) {
                 const resCode = words[1].toUpperCase();
                 const amount = parseInt(words[2]);
+                const baseResources = ['E', 'B', 'S', 'L', 'F'];
                 
-                if (RESOURCES[resCode] && !isNaN(amount) && amount > 0 && gameState.currentRound === 1) {
+                if (baseResources.includes(resCode) && !isNaN(amount) && amount > 0 && gameState.currentRound === 1) {
                     gameState.inventory[resCode] += amount;
                     updateLog(`📢 Ведущий подтвердил Группа ${gameState.group} получает +${amount} **${RESOURCES[resCode].name}**`);
                     updateUI();
@@ -198,20 +208,19 @@
             // 2. КРАФТ [код] (Р2)
             if (words[0] === 'крафт' && words.length === 2) {
                 const resCode = words[1].toUpperCase();
-                if (['M', 'W', 'K'].includes(resCode) && gameState.currentRound === 2) {
+                if (['M', 'W', 'K', 'Z'].includes(resCode) && gameState.currentRound === 2) { // Z добавлен
                     craftIntermediate(resCode);
                     return;
                 }
             }
 
-            // 3. КОНТРАКТ (Р6)
+            // 3. КОНТРАКТ (Р6) и 4. ОТДАТЬ / ПОЛУЧИТЬ (без изменений)
             if (input === 'контракт' && gameState.currentRound === 6) {
                 updateLog("🤝 **ПЕРЕКУПЩИК АКТИВИРОВАН** Начните переговоры используйте ОТДАТЬ ПОЛУЧИТЬ");
                 document.getElementById('trade-dialogue').style.display = 'block';
                 return;
             }
             
-            // 4. ОТДАТЬ / ПОЛУЧИТЬ [код] [кол во] (Р6 модерирование обмена)
             if ((words[0] === 'отдать' || words[0] === 'получить') && words.length === 3) {
                  const action = words[0];
                  const resCode = words[1].toUpperCase();
@@ -237,11 +246,14 @@
             updateLog("Неверная или недопустимая команда Ведущего", true);
         }
 
-        // --- ЛОГИКА КРАФТА (Р2) ---
+        // --- ЛОГИКА КРАФТА (Р2) - ОБНОВЛЕНО ---
 
         function craftIntermediate(resCode) {
             const costs = {
-                M: { E: 3, B: 2 }, W: { B: 3, S: 2 }, K: { S: 3, E: 2 }
+                M: { E: 3, B: 2 }, 
+                W: { B: 3, S: 2 }, 
+                K: { S: 3, L: 2 }, // Новый рецепт
+                Z: { L: 3, F: 2 }  // Новый рецепт (бонусный)
             };
             const cost = costs[resCode];
             let canCraft = true;
@@ -267,6 +279,7 @@
         // --- ДЕТАЛЬНАЯ ЛОГИКА РАУНДОВ (3-7) ---
 
         function getRound1Task() {
+            // Задания привязаны к выбранной группе (как в вашем первом запросе)
             switch(gameState.group) {
                 case 'Technocrats': return "🔐 Задание Решите криптограмму используя только 4 буквы например АРЕС";
                 case 'Bioengineers': return "🎨 Задание Назовите 5 биологических элементов необходимых для жизни на Марсе кроме воды";
@@ -276,7 +289,12 @@
         }
         
         function getCostString(code) {
-            const costs = { M: { E: 3, B: 2 }, W: { B: 3, S: 2 }, K: { S: 3, E: 2 } };
+             const costs = {
+                M: { E: 3, B: 2 }, 
+                W: { B: 3, S: 2 }, 
+                K: { S: 3, L: 2 }, 
+                Z: { L: 3, F: 2 }
+            };
             return Object.entries(costs[code]).map(([c, count]) => `${count} ${RESOURCES[c].name}`).join(' и ');
         }
         
@@ -284,6 +302,8 @@
             return gameState.historyLog.some(log => log.round === gameState.currentRound) ? 'disabled' : '';
         }
 
+        // ... (Функции applyR3Action, applyR4Action, applyR5Action, applyR6Action остаются без изменений по логике) ...
+        
         function applyR3Action(code) {
             let statusChange = 0;
             const hasResource = gameState.inventory[code] > 0;
@@ -350,7 +370,7 @@
             } else if (action === 'Race') {
                 if (gameState.inventory.E > 0) {
                     gameState.inventory.E -= 1;
-                    statusChange = 1; message = "Соревнование Вы потеряли 1 Энергоячейку но набрали скорость **+1 к финальному статусу**";
+                    statusChange = 1; message = "Соревнование Вы потеряли 1 Источн Энергии но набрали скорость **+1 к финальному статусу**";
                 } else {
                     statusChange = -2; message = "Соревнование Не хватило энергии для рывка **-2 к финальному статусу**";
                 }
@@ -363,6 +383,7 @@
             loadRound(6);
             updateUI();
         }
+
 
         function assembleBeacon() {
             const required = { M: 1, W: 1, K: 1 };
@@ -388,8 +409,10 @@
 
         function calculateFinalScore() {
             const assemblyBonus = gameState.inventory.P > 0 ? 5 : 0;
+            // Бонус за Оптический Кабель (Z)
+            const Z_bonus = gameState.inventory.Z > 0 ? 2 : 0; 
             const historyScore = gameState.historyLog.reduce((sum, log) => sum + log.statusChange, 0);
-            return assemblyBonus + historyScore;
+            return assemblyBonus + historyScore + Z_bonus; // Z_bonus добавлен
         }
 
         function getFinalMessage() {
@@ -400,7 +423,7 @@
             return "⚠️ Низкий Успех Счет " + score + " Маяк собран но слабый сигнал Ваше выживание под вопросом";
         }
 
-        // --- ЗАГРУЗКА РАУНДОВ ---
+        // --- ЗАГРУЗКА РАУНДОВ (обновлено) ---
 
         function loadRound(round) {
             const desc = document.getElementById('round-description');
@@ -416,7 +439,7 @@
                     break;
 
                 case 2:
-                    desc.innerHTML = `<h3>Задание</h3><p>Создайте критически важные компоненты 🔑 Ключевое действие Введите команду **КРАФТ [код]**</p><hr><h4>Компоненты (Минимальная цель по 1 шт)</h4><ul class="task-list"><li>**${RESOURCES.M.name}** M Требует ${getCostString('M')}</li><li>**${RESOURCES.W.name}** W Требует ${getCostString('W')}</li><li>**${RESOURCES.K.name}** K Требует ${getCostString('K')}</li></ul>`;
+                    desc.innerHTML = `<h3>Задание</h3><p>Создайте критически важные компоненты 🔑 Ключевое действие Введите команду **КРАФТ [код]**</p><hr><h4>Компоненты (Минимальная цель по 1 шт)</h4><ul class="task-list"><li>**${RESOURCES.M.name}** M Требует ${getCostString('M')}</li><li>**${RESOURCES.W.name}** W Требует ${getCostString('W')}</li><li>**${RESOURCES.K.name}** K Требует ${getCostString('K')}</li><li>**${RESOURCES.Z.name}** Z (Бонус) Требует ${getCostString('Z')}</li></ul>`;
                     actions.innerHTML = `<button disabled>Действия выполняются через панель Ведущего КРАФТ</button>`;
                     break;
 
