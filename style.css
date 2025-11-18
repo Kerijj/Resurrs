@@ -1,0 +1,192 @@
+/* --- Глобальный стиль: МАРСИАНСКИЙ ТЕРМИНАЛ --- */
+body { 
+    font-family: 'Orbitron', sans-serif;
+    background: #0f0a05; /* Почти черный, как вакуум */
+    color: #e7825d; /* Ржаво-красный/оранжевый для основного текста */
+    padding: 20px; 
+    line-height: 1.6;
+}
+
+.container { 
+    max-width: 1000px; 
+    margin: 0 auto; 
+    padding: 40px; 
+    background: rgba(25, 10, 5, 0.95); 
+    border: 5px solid #c0392b; /* Критический контур */
+    border-radius: 5px; 
+    box-shadow: 0 0 30px #e74c3c, inset 0 0 10px #c0392b;
+}
+
+/* --- ЗАГОЛОВКИ И ТЕКСТ --- */
+h1 { 
+    color: #f1c40f; 
+    text-align: center; 
+    text-shadow: 0 0 10px #f1c40f; 
+    font-size: 2.2em; 
+}
+h2 { 
+    color: #5dade2; 
+    border-bottom: 2px dashed #e74c3c; 
+    padding-bottom: 10px; 
+    margin-top: 30px; 
+}
+h3 { 
+    color: #2ecc71; 
+    margin-top: 20px; 
+    font-size: 1.1em; 
+}
+
+/* --- ОСНОВНЫЕ БЛОКИ --- */
+.intro, .round-content, .status-panel { 
+    margin-bottom: 25px; 
+    padding: 20px; 
+    border: 1px solid rgba(231, 76, 60, 0.5); 
+    border-radius: 5px; 
+    background: rgba(18, 5, 5, 0.3); 
+}
+
+/* --- ПАНЕЛЬ СТАТУСА И ИНВЕНТАРЬ --- */
+.status-panel { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: flex-start; 
+}
+.info-block { 
+    flex: 1; 
+    margin-right: 20px; 
+}
+.status-panel p { 
+    margin: 5px 0; 
+}
+
+.inventory-list { 
+    list-style-type: none; 
+    padding: 0; 
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 10px;
+}
+.inventory-item { 
+    padding: 6px 12px; 
+    border-radius: 4px; 
+    background: #5a2e28; /* Темно-красный */
+    color: #fdfefe; 
+    font-weight: bold; 
+    font-size: 0.9em;
+    border: 1px solid #e74c3c;
+}
+
+/* --- ЖУРНАЛ СИСТЕМЫ (ЛОГ) --- */
+.log-box { 
+    margin-top: 25px; 
+    background: #0f0a05; 
+    padding: 15px; 
+    height: 150px; 
+    overflow-y: scroll; 
+    border-radius: 5px; 
+    font-size: 0.85em; 
+    border: 1px solid #7f8c8d;
+    color: #ecf0f1; /* Светлый текст */
+}
+.log-box p { 
+    margin: 3px 0; 
+}
+.log-box .error { 
+    color: #e74c3c; 
+    font-weight: bold; 
+}
+
+/* --- КНОПКИ --- */
+button { 
+    padding: 10px 18px; 
+    border: none; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    margin: 6px; 
+    font-weight: bold; 
+    background: #34495e; /* Темно-синий/серый */
+    color: #ecf0f1; 
+    transition: background 0.2s; 
+    box-shadow: 0 3px #2c3e50; 
+}
+button:hover:not(:disabled) { 
+    background: #3b536b; 
+    transform: translateY(1px); 
+    box-shadow: 0 2px #2c3e50; 
+}
+button:disabled { 
+    background: #402020; 
+    cursor: not-allowed; 
+    opacity: 0.6; 
+    box-shadow: none;
+}
+
+/* Специальные кнопки */
+.group-select button { 
+    width: 30%; 
+    background: #c0392b; 
+    box-shadow: 0 4px #a93226; 
+    color: #fdfefe; 
+}
+.group-select button:hover { 
+    background: #e74c3c; 
+}
+.round-action-button { 
+    background: #2ecc71; 
+    box-shadow: 0 4px #27ae60; 
+}
+.round-action-button:hover { 
+    background: #27ae60; 
+}
+.end-round-button { 
+    background: #e74c3c; 
+    box-shadow: 0 4px #c0392b; 
+}
+.end-round-button:hover { 
+    background: #c0392b; 
+}
+
+/* --- ТАБЛИЦА ЗАКУПОК --- */
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 15px; 
+    background: #0f0a05; 
+}
+th, td { 
+    border: 1px solid #c0392b; 
+    padding: 10px; 
+    text-align: left; 
+}
+th { 
+    background: #5a2e28; 
+    color: #f1c40f; 
+}
+
+/* --- ПРОТОКОЛ СВЯЗИ (МОДЕРАТОРСКАЯ ПАНЕЛЬ) --- */
+.mod-panel { 
+    margin-top: 30px; 
+    padding: 20px; 
+    background: rgba(5, 5, 20, 0.7);
+    border-radius: 5px; 
+    border: 1px solid #5dade2;
+}
+#mod-input { 
+    padding: 10px; 
+    border-radius: 4px; 
+    border: 1px solid #7f8c8d; 
+    margin-right: 10px; 
+    background: #0f0a05; 
+    color: #e7825d; 
+    width: 350px;
+}
+.final-message { 
+    padding: 25px; 
+    background: #1a5e37; 
+    color: #fdfefe; 
+    border-radius: 5px; 
+    font-size: 1.4em; 
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 0 20px #2ecc71;
+}
