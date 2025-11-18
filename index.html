@@ -4,102 +4,105 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Экспедиция Арес 7: Экономика Выживания</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Базовый стиль */
+        /* Базовый стиль: более мягкий и чистый дизайн */
         body { 
-            font-family: 'Montserrat', sans-serif; 
-            background: #0d1117; /* Темный фон GitHub */
-            color: #c9d1d9; /* Светлый текст */
+            font-family: 'Roboto', sans-serif; 
+            background: #282c34; /* Глубокий темный фон */
+            color: #abb2bf; /* Светлый, мягкий текст */
             padding: 20px; 
             line-height: 1.6;
         }
         .container { 
-            max-width: 900px; 
+            max-width: 950px; 
             margin: 0 auto; 
-            padding: 30px; 
-            background: #161b22; /* Темный фон для блока */
-            border-radius: 12px; 
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); 
+            padding: 35px; 
+            background: #1e2127; /* Основной блок */
+            border-radius: 15px; 
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7); 
         }
         
         /* Заголовки */
-        h1 { color: #e74c3c; margin-top: 0; text-align: center; }
-        h2 { color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: 10px; margin-top: 20px; }
-        h3 { color: #e74c3c; }
+        h1 { color: #e06c75; margin-top: 0; text-align: center; }
+        h2 { color: #61afef; border-bottom: 2px solid #3e4451; padding-bottom: 12px; margin-top: 25px; }
+        h3 { color: #e06c75; }
         
         /* Основные блоки */
         .intro, .round-content, #trade-dialogue { 
             margin-bottom: 25px; 
             padding: 20px; 
-            border: 1px solid #30363d; 
-            border-radius: 8px; 
-            background: #0d1117; 
+            border: 1px solid #3e4451; 
+            border-radius: 10px; 
+            background: #282c34; 
         }
         
         /* Дисплей ресурсов */
         .resources-display { 
-            background: #21262d; 
-            padding: 15px; 
-            border-radius: 8px; 
+            background: #3e4451; 
+            padding: 18px; 
+            border-radius: 10px; 
             margin-top: 20px; 
             display: flex; 
             justify-content: space-between;
             align-items: center;
         }
-        .status-info { flex: 1; margin-right: 20px;}
-        .resources-display h3 { color: #2ecc71; margin-top: 0; }
-        .hp-bar { color: #e74c3c; font-weight: bold; font-size: 1.1em; }
-        .actions-count { color: #f1c40f; font-weight: bold; font-size: 1.1em; }
+        .status-info { flex: 1; margin-right: 30px;}
+        .resources-display h3 { color: #98c379; margin-top: 0; }
+        .hp-bar { color: #e06c75; font-weight: bold; font-size: 1.2em; }
+        .actions-count { color: #e5c07b; font-weight: bold; font-size: 1.2em; }
 
         /* Журнал */
         .log-box { 
             margin-top: 20px; 
-            background: #0d1117; 
+            background: #1e2127; 
             padding: 15px; 
             height: 150px; 
             overflow-y: scroll; 
-            border-radius: 8px; 
-            font-size: 0.85em; 
-            border: 1px solid #30363d;
+            border-radius: 10px; 
+            font-size: 0.9em; 
+            border: 1px solid #3e4451;
         }
         .log-box p { margin: 2px 0; }
-        .log-box span { color: #e74c3c; } /* Стиль для ошибок */
+        .log-box span { color: #e06c75; } /* Стиль для ошибок */
         
         /* Кнопки */
         button { 
-            padding: 10px 18px; 
+            padding: 12px 20px; 
             border: none; 
-            border-radius: 6px; 
+            border-radius: 8px; 
             cursor: pointer; 
-            margin: 5px; 
+            margin: 6px; 
             font-weight: bold; 
-            background: #3498db; 
+            background: #61afef; /* Синий */
             color: white; 
             transition: background 0.2s, opacity 0.2s; 
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
         }
-        button:hover:not(:disabled) { background: #2980b9; }
+        button:hover:not(:disabled) { background: #569cd6; }
         button:disabled { background: #555; cursor: not-allowed; opacity: 0.6; }
         
-        .group-select button { width: 250px; }
+        .group-select button { width: 30%; min-width: 200px; }
 
         /* Панель Ведущего */
         .mod-panel { 
-            margin-top: 25px; 
-            padding: 15px; 
-            background: #21262d; 
-            border-radius: 8px; 
+            margin-top: 30px; 
+            padding: 20px; 
+            background: #3e4451; 
+            border-radius: 10px; 
+            display: flex;
+            align-items: center;
         }
         #mod-input { 
+            flex-grow: 1;
             padding: 10px; 
-            border-radius: 4px; 
-            border: 1px solid #7f8c8d; 
-            margin-right: 10px; 
-            background: #0d1117; 
-            color: #dcdcdc; 
-            width: 300px;
+            border-radius: 6px; 
+            border: 1px solid #61afef; 
+            margin-right: 15px; 
+            background: #282c34; 
+            color: #abb2bf; 
         }
+        .mod-panel button { margin: 0 5px; }
         
         /* Инвентарь */
         .inventory-list { 
@@ -108,37 +111,37 @@
             padding: 0; 
             display: flex; 
             flex-wrap: wrap; 
-            gap: 10px;
+            gap: 15px;
         }
         .inventory-item { 
-            padding: 8px 12px; 
-            border-radius: 5px; 
-            background: #30363d;
-            font-size: 0.9em;
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+            padding: 10px 15px; 
+            border-radius: 8px; 
+            background: #282c34;
+            border: 1px solid #4b5263;
+            font-size: 1em;
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
         }
         
         /* Стиль для активного раунда */
-        .current-round-title { color: #f1c40f; font-size: 1.5em; }
-        .trade-info { font-size: 0.9em; color: #9c9c9c; margin-top: 10px;}
+        .current-round-title { color: #98c379; font-size: 1.6em; }
+        .trade-info { font-size: 0.9em; color: #a9b5c3; margin-top: 10px;}
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>🌌 Экспедиция Арес 7: Экономика Выживания</h1>
+        <h1>🌌 АРЕС 7: ЭКОНОМИКА ВЫЖИВАНИЯ</h1>
         <div id="game-area">
             
             <div class="intro" id="intro-screen">
-                <h2>Начало Миссии</h2>
-                <p>Вы последние выжившие члены экспедиции Арес 7 на Красной планете. Выберите свою группу, чтобы начать.</p>
+                <h2>Начало Миссии: Выбор Группы</h2>
+                <p>Ваша специализация определит стартовый бонус. Выберите группу, чтобы начать миссию.</p>
                 
-                <div class="group-select">
+                <div class="group-select" style="display: flex; justify-content: space-around; flex-wrap: wrap;">
                     <button onclick="startGame('Technocrats')">🛠️ Технократы (Источн. Энергии)</button>
                     <button onclick="startGame('Bioengineers')">🧪 Биоинженеры (Орг. Материя)</button>
                     <button onclick="startGame('Constructors')">🧱 Конструкторы (Прочный Металл)</button>
                 </div>
-                <p style="margin-top: 20px;">Ваш выбор определит ваш бонусный ресурс в Раунде 1.</p>
             </div>
 
             <div id="game-round" style="display:none;">
@@ -148,7 +151,7 @@
 
                 <div class="resources-display">
                     <div class="status-info">
-                        <h3>Инвентарь: <span id="player-group-name"></span></h3>
+                        <h3>Группа: <span id="player-group-name"></span></h3>
                         <p>Жизнеобеспечение (HP): <span id="res-hp" class="hp-bar"></span></p>
                         <p>Действий осталось: <span id="actions-remaining" class="actions-count"></span> / 3</p>
                         <p id="group-status"></p>
@@ -158,8 +161,8 @@
 
                 <div id="trade-dialogue" style="display:none;">
                     <h3>🤝 Переговоры с Перекупщиком</h3>
-                    <p style="color: #f1c40f;">Введите в панель Ведущего, что вы хотите **ОТДАТЬ [код] [кол-во]** и **ПОЛУЧИТЬ [код] [кол-во]**</p>
-                    <p class="trade-info">Например: <code>ОТДАТЬ S 1</code> и <code>ПОЛУЧИТЬ B 1</code> (ведущий выполняет обе команды).</p>
+                    <p style="color: #e5c07b;">**Ведущему:** Введите в панель, что игрок хочет **ОТДАТЬ [код] [кол-во]** и **ПОЛУЧИТЬ [код] [кол-во]**</p>
+                    <p class="trade-info">*(Пример: ОТДАТЬ S 1 и ПОЛУЧИТЬ B 1)*</p>
                 </div>
 
                 <div class="action-area" id="action-area"></div>
@@ -170,15 +173,15 @@
                 </div>
 
                 <div class="mod-panel">
-                    <h4>Панель Ведущего (Ввод команд)</h4>
-                    <input type="text" id="mod-input" placeholder="Введите команду Ведущего (КРАФТ, КОНТРАКТ, ОТДАТЬ/ПОЛУЧИТЬ)">
-                    <button onclick="processModCommand()">Ввод Команды</button>
-                    <button onclick="checkNextRound()" style="background: #e74c3c;">Завершить Раунд (Списание HP)</button>
+                    <h4 style="margin: 0; color: #61afef;">🚀 КОНСОЛЬ ВЕДУЩЕГО:</h4>
+                    <input type="text" id="mod-input" placeholder="Введите команду (КРАФТ, ЗАДАНИЕ, КОНТРАКТ, ОТДАТЬ/ПОЛУЧИТЬ)">
+                    <button onclick="processModCommand()" style="background: #98c379;">Ввод Команды</button>
+                    <button onclick="checkNextRound()" style="background: #e06c75;">Завершить Раунд</button>
                 </div>
             </div>
             
             <div id="game-over" style="display:none; text-align: center;">
-                 <h2 style="color: #e74c3c;">🔴 МИССИЯ ПРОВАЛЕНА</h2>
+                 <h2 style="color: #e06c75;">🔴 МИССИЯ ПРОВАЛЕНА</h2>
                  <p id="game-over-message" style="font-size: 1.2em;"></p>
             </div>
         </div>
@@ -218,7 +221,7 @@
 
         const ROUND_TITLES = [
             "Инициализация Миссии",
-            "Раунд 1: Сбор Базовых Элементов",
+            "Раунд 1: Сбор Базовых Элементов (Через коды)",
             "Раунд 2: Крафт и Логистика",
             "Раунд 3: Геотермальная Аномалия",
             "Раунд 4: Исследование Осколка",
@@ -228,10 +231,10 @@
         ];
         
         const CRAFT_COSTS = {
-            M: { E: 3, B: 2 }, // Крио-Модуль: Энергия + Органика
-            W: { B: 3, S: 2 }, // Синтезатор Воды: Органика + Металл
-            K: { S: 3, L: 2 }, // Гермо-Контейнер: Металл + Катализатор
-            Z: { L: 3, F: 2 }  // Оптич. Кабель: Катализатор + Волокно (БОНУС)
+            M: { E: 3, B: 2 }, 
+            W: { B: 3, S: 2 }, 
+            K: { S: 3, L: 2 }, 
+            Z: { L: 3, F: 2 }  
         };
 
         let gameState = {
@@ -249,7 +252,7 @@
 
         function updateLog(message, isError = false) {
             const logBox = document.getElementById('game-log');
-            const prefix = isError ? '<span style="color: #e74c3c;">[ОШИБКА]</span> ' : '';
+            const prefix = isError ? '<span style="color: #e06c75;">[ОШИБКА]</span> ' : '';
             logBox.innerHTML += `<p>${prefix}${message}</p>`;
             logBox.scrollTop = logBox.scrollHeight;
         }
@@ -314,11 +317,11 @@
             const hpElement = document.getElementById('res-hp');
             hpElement.textContent = gameState.inventory.HP;
             if (gameState.inventory.HP <= 6) {
-                hpElement.style.color = '#ff0000'; // Красный при низком HP
+                hpElement.style.color = '#ff4d4d'; // Красный
             } else if (gameState.inventory.HP > 12) {
-                hpElement.style.color = '#2ecc71'; // Зеленый при высоком HP
+                hpElement.style.color = '#98c379'; // Зеленый
             } else {
-                 hpElement.style.color = '#f1c40f'; // Желтый/Оранжевый
+                 hpElement.style.color = '#e5c07b'; // Желтый
             }
             
             document.getElementById('actions-remaining').textContent = gameState.maxActions - gameState.actionsTaken;
@@ -375,14 +378,33 @@
                 }
             }
 
-            // 2. КОНТРАКТ (Активация обмена в Р6)
+            // 2. ЗАДАНИЕ [код ресурса] (Активация сбора ресурсов в Р1)
+            if (words[0] === 'задание' && words.length === 2 && gameState.currentRound === 1) {
+                const resCode = words[1].toUpperCase();
+                if (RESOURCES[resCode] && ['E', 'B', 'S', 'L', 'F'].includes(resCode)) {
+                    // Проверка действий
+                    if (takeAction()) {
+                        const bonusRes = GROUP_BONUSES[gameState.group];
+                        const isBonus = resCode === bonusRes;
+                        const gain = isBonus ? 5 : 3;
+                        
+                        gameState.inventory[resCode] += gain;
+                        const message = `Добыча ${RESOURCES[resCode].name} через код: **+${gain}**. ${isBonus ? "Бонусный Успех 🌟" : "Стандартный Сбор"}`;
+                        updateLog(`🎉 Успешно выполнено. ${message}`);
+                        updateUI();
+                    }
+                    return;
+                }
+            }
+
+            // 3. КОНТРАКТ (Активация обмена в Р6)
             if (input === 'контракт' && gameState.currentRound === 6) {
                 updateLog("🤝 **ПЕРЕКУПЩИК АКТИВИРОВАН**. Введите в панель: ОТДАТЬ [код] [кол-во] и ПОЛУЧИТЬ [код] [кол-во].");
                 document.getElementById('trade-dialogue').style.display = 'block';
                 return;
             }
             
-            // 3. ОТДАТЬ / ПОЛУЧИТЬ [код] [кол-во] (Модерирование обмена)
+            // 4. ОТДАТЬ / ПОЛУЧИТЬ [код] [кол-во] (Модерирование обмена)
             if ((words[0] === 'отдать' || words[0] === 'получить') && words.length === 3) {
                 const action = words[0];
                 const resCode = words[1].toUpperCase();
@@ -405,7 +427,7 @@
                 }
             }
             
-            if (input) updateLog("Неверная или недопустимая команда Ведущего (КРАФТ, КОНТРАКТ, ОТДАТЬ/ПОЛУЧИТЬ).", true);
+            if (input) updateLog("Неверная или недопустимая команда Ведущего (КРАФТ, ЗАДАНИЕ, КОНТРАКТ, ОТДАТЬ/ПОЛУЧИТЬ).", true);
         }
 
         // --- ЛОГИКА ДЕЙСТВИЙ ---
@@ -441,13 +463,9 @@
             let statusChange = 0;
             let message = "";
 
-            if (gameState.currentRound === 1) { // Сбор ресурсов
-                const bonusRes = GROUP_BONUSES[gameState.group];
-                const isBonus = actionCode === bonusRes;
-                const gain = isBonus ? 5 : 3; 
-                
-                gameState.inventory[actionCode] += gain;
-                message = `Добыча ${RESOURCES[actionCode].name}: **+${gain}**. ${isBonus ? "Бонусный Успех 🌟" : "Стандартный Сбор"}`;
+            if (gameState.currentRound === 1) { 
+                 // Этот раунд управляется только командой "ЗАДАНИЕ"
+                 return;
             } else if (gameState.currentRound === 3) { // Аномалия
                 const hasS = gameState.inventory.S > 0;
                 const hasB = gameState.inventory.B > 0;
@@ -559,7 +577,7 @@
                 updateUI();
                 
                 // Завершение игры
-                document.getElementById('action-area').innerHTML = `<h3 style="color: #2ecc71;">${getFinalMessage()}</h3>`;
+                document.getElementById('action-area').innerHTML = `<h3 style="color: #98c379;">${getFinalMessage()}</h3>`;
                 document.getElementById('round-title').textContent = "🛰️ ФИНАЛ МИССИИ";
                 document.getElementById('actions-remaining').textContent = 0;
             }
@@ -584,13 +602,13 @@
 
         function getRoundDescription(round) {
             switch(round) {
-                case 1: return `<h3>Цель: Сбор Базовых Элементов</h3><p>Выберите, какой ресурс вы будете добывать в этом действии (лимит 3 действия). Каждый ресурс имеет уникальную иконку.</p><p>Ваша группа **${GROUP_NAMES[gameState.group]}** получает **+5** своего профильного ресурса (🌟) и **+3** других.</p>`;
-                case 2: return `<h3>Цель: Крафт и Логистика (СВОБОДНОЕ ДЕЙСТВИЕ)</h3><p>Создайте компоненты для Маяка (M, W, K) или бонусный кабель (Z). Введите команду **КРАФТ [код]** в панель Ведущего. Это действие не тратит лимит хода.</p><hr><h4>Компоненты и Стоимость</h4><ul class='task-list'><li>**❄️ M (Крио-Модуль):** 3 ${RESOURCES.E.icon} E + 2 ${RESOURCES.B.icon} B</li><li>**💧 W (Синтезатор Воды):** 3 ${RESOURCES.B.icon} B + 2 ${RESOURCES.S.icon} S</li><li>**📦 K (Гермо-Контейнер):** 3 ${RESOURCES.S.icon} S + 2 ${RESOURCES.L.icon} L</li><li>**🔗 Z (Оптич. Кабель):** 3 ${RESOURCES.L.icon} L + 2 ${RESOURCES.F.icon} F (Бонус к финалу)</li></ul>`;
-                case 3: return "<h3>Цель: Геотермальная Аномалия</h3><p>На вашем пути возникла опасная аномалия. Используйте ресурс для безопасного прохождения (+1 Статус) или рискуйте.</p>";
-                case 4: return "<h3>Цель: Исследование Осколка</h3><p>Найден мерцающий Обломок (часть старой антенны). Примените один компонент для изучения или захвата.</p>";
+                case 1: return `<h3>Цель: Сбор Базовых Элементов (через коды)</h3><p>Чтобы добыть ресурс, попросите Ведущего выдать вам **зашифрованное задание**. Каждое задание — это одно действие из трех.</p><p>Ваша группа **${GROUP_NAMES[gameState.group]}** получает **+5** своего профильного ресурса (🌟) и **+3** других за правильный ответ.</p><hr><p>Команды для Ведущего: <code>ЗАДАНИЕ E</code>, <code>ЗАДАНИЕ B</code>, <code>ЗАДАНИЕ S</code>, <code>ЗАДАНИЕ L</code>, <code>ЗАДАНИЕ F</code>.</p>`;
+                case 2: return `<h3>Цель: Крафт и Логистика (СВОБОДНОЕ ДЕЙСТВИЕ)</h3><p>Создайте компоненты для Маяка (M, W, K) или бонусный кабель (Z). Введите команду **КРАФТ [код]** в панель Ведущего. Это действие не тратит лимит хода.</p><hr><h4>Компоненты и Стоимость</h4><ul class='task-list'><li>**❄️ M (Крио-Модуль):** 3 ⚡ E + 2 🌱 B</li><li>**💧 W (Синтезатор Воды):** 3 🌱 B + 2 🔩 S</li><li>**📦 K (Гермо-Контейнер):** 3 🔩 S + 2 🧪 L</li><li>**🔗 Z (Оптич. Кабель):** 3 🧪 L + 2 🧶 F (Бонус к финалу)</li></ul>`;
+                case 3: return "<h3>Цель: Геотермальная Аномалия</h3><p>На вашем пути возникла опасная аномалия. Используйте ресурс для безопасного прохождения (+1 Статус) или рискуйте. Доступно: S, B.</p>";
+                case 4: return "<h3>Цель: Исследование Осколка</h3><p>Найден мерцающий Обломок. Примените компонент для изучения или захвата. Доступно: M, W, K.</p>";
                 case 5: return "<h3>Цель: Пылевая Буря и Защита</h3><p>Надвигается буря. Выберите стратегию: **Защита** (нужен K) для статуса или **Ремонт** (тратит E/B) для восстановления HP.</p>";
                 case 6: return "<h3>Цель: Финальный Подъем</h3><p>Последний рывок к точке сбора. Выберите стратегию. **Сотрудничество (Обмен)** активируется словом **КОНТРАКТ** в панели Ведущего.</p>";
-                case 7: return "<h3>Цель: Сборка Маяка и Финал</h3><p>Соберите 1 **M** 1 **W** 1 **K** для победы.</p>";
+                case 7: return "<h3>Цель: Сборка Маяка и Финал</h3><p>Соберите 1 **M** 1 **W** 1 **K** для победы. Это последнее действие.</p>";
             }
         }
 
@@ -601,44 +619,38 @@
             desc.innerHTML = getRoundDescription(round);
 
             if (round === 1) {
-                 actions.innerHTML = `
-                     <button onclick="applyRoundAction('E')">${RESOURCES.E.icon} Добыть Источн Энергии (E)</button>
-                     <button onclick="applyRoundAction('B')">${RESOURCES.B.icon} Добыть Орг Материю (B)</button>
-                     <button onclick="applyRoundAction('S')">${RESOURCES.S.icon} Добыть Прочный Металл (S)</button>
-                     <button onclick="applyRoundAction('L')">${RESOURCES.L.icon} Добыть Катализатор L (L)</button>
-                     <button onclick="applyRoundAction('F')">${RESOURCES.F.icon} Добыть Волокно F (F)</button>
-                 `;
+                 actions.innerHTML = `<button disabled style="background: #3e4451;">Сбор ресурсов: см. инструкции выше (через команду ЗАДАНИЕ).</button>`;
             } else if (round === 2) {
-                 actions.innerHTML = `<button disabled>Действия выполняются через панель Ведущего (КРАФТ)</button>`;
+                 actions.innerHTML = `<button disabled style="background: #3e4451;">Крафт: используйте команду КРАФТ в панели Ведущего.</button>`;
             } else if (round === 3) {
                  actions.innerHTML = `
                      <p>Доступно: ${RESOURCES.S.icon} S (${gameState.inventory.S}), ${RESOURCES.B.icon} B (${gameState.inventory.B})</p>
                      <button onclick="applyRoundAction('S')">Укрепить путь (-1 S, +1 Статус)</button>
                      <button onclick="applyRoundAction('B')">Обход (-1 B, +1 Статус)</button>
-                     <button onclick="applyRoundAction('Risk')" style="background: #a84f3c;">Рискнуть (Нет ресурса) (-2 HP, -2 Статуса)</button>
+                     <button onclick="applyRoundAction('Risk')" style="background: #e06c75;">Рискнуть (Нет ресурса) (-2 HP, -2 Статуса)</button>
                  `;
             } else if (round === 4) {
                  actions.innerHTML = `
                      <p>Доступно: ${RESOURCES.M.icon} M (${gameState.inventory.M}), ${RESOURCES.W.icon} W (${gameState.inventory.W}), ${RESOURCES.K.icon} K (${gameState.inventory.K})</p>
                      <button onclick="applyRoundAction('M')">Изучить Крио-Модулем (M, +1 Статус)</button>
                      <button onclick="applyRoundAction('W')">Проанализировать Синтезатором (W, -1 Статус)</button>
-                     <button onclick="applyRoundAction('K')" style="background: #2ecc71;">Герметизировать Контейнером (K, +2 Статуса)</button>
+                     <button onclick="applyRoundAction('K')" style="background: #98c379;">Герметизировать Контейнером (K, +2 Статуса)</button>
                  `;
             } else if (round === 5) {
                  actions.innerHTML = `
                      <p>Доступно: ${RESOURCES.K.icon} K (${gameState.inventory.K}), ${RESOURCES.E.icon} E (${gameState.inventory.E}), ${RESOURCES.B.icon} B (${gameState.inventory.B})</p>
                      <button onclick="applyRoundAction('Defend')">Защитить оборудование (-1 K, +2 Статуса)</button>
-                     <button onclick="applyRoundAction('Repair')" style="background: #f39c12;">Временный ремонт (-1 E/B, +3 HP)</button>
+                     <button onclick="applyRoundAction('Repair')" style="background: #e5c07b;">Временный ремонт (-1 E/B, +3 HP)</button>
                  `;
             } else if (round === 6) {
                  actions.innerHTML = `
                      <p>Действий осталось: ${gameState.maxActions - gameState.actionsTaken} / 3</p>
                      <button onclick="applyRoundAction('Race')">Соревнование (-1 E, +1 Статус)</button>
-                     <button onclick="applyRoundAction('Trade')" style="background: #8e44ad;">Сотрудничество (Активировать Обмен)</button>
+                     <button onclick="applyRoundAction('Trade')" style="background: #c678dd;">Сотрудничество (Активировать Обмен)</button>
                      <button onclick="applyRoundAction('Safe')">Осторожность (+1 Статус)</button>
                  `;
             } else if (round === 7) {
-                actions.innerHTML = `<button onclick="assembleBeacon()" style="background: #2ecc71;">🚀 Собрать Маяк Спасения</button>`;
+                actions.innerHTML = `<button onclick="assembleBeacon()" style="background: #98c379;">🚀 Собрать Маяк Спасения</button>`;
             }
         }
         
