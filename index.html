@@ -8,21 +8,21 @@
     <style>
         /* Марсианский Стиль */
         body { 
-            font-family: 'Orbitron', sans-serif; /* Футуристичный шрифт */
-            background: #2c0b0b; /* Темно-бордовый, как марсианская почва */
-            color: #d1b4a6; /* Песочный цвет текста */
+            font-family: 'Orbitron', sans-serif;
+            background: #2c0b0b;
+            color: #d1b4a6;
             padding: 20px; 
             line-height: 1.5;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%232c0b0b"/><circle cx="50" cy="50" r="10" fill="%236e3c3c" opacity="0.3"/></svg>'); /* Нежный паттерн кратера */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%232c0b0b"/><circle cx="50" cy="50" r="10" fill="%236e3c3c" opacity="0.3"/></svg>');
         }
         .container { 
             max-width: 950px; 
             margin: 0 auto; 
             padding: 30px; 
-            background: rgba(44, 11, 11, 0.9); /* Полупрозрачный фон */
-            border: 3px solid #e74c3c; /* Красный ободок */
+            background: rgba(44, 11, 11, 0.9); 
+            border: 3px solid #e74c3c; 
             border-radius: 15px; 
-            box-shadow: 0 0 25px #c0392b; /* Свечение */
+            box-shadow: 0 0 25px #c0392b; 
         }
         
         /* Заголовки */
@@ -55,7 +55,7 @@
         .inventory-item { 
             padding: 8px 15px; 
             border-radius: 6px; 
-            background: #e74c3c; /* Красные компоненты */
+            background: #e74c3c; 
             color: #2c0b0b; 
             font-weight: bold; 
             font-size: 0.95em;
@@ -86,7 +86,7 @@
             background: #3498db; 
             color: #d1b4a6; 
             transition: background 0.3s, transform 0.1s; 
-            box-shadow: 0 4px #2980b9; /* 3D эффект */
+            box-shadow: 0 4px #2980b9; 
         }
         button:hover:not(:disabled) { background: #2980b9; transform: translateY(1px); box-shadow: 0 3px #2980b9; }
         button:disabled { background: #604040; cursor: not-allowed; opacity: 0.7; box-shadow: none;}
@@ -638,43 +638,38 @@
                  if (group === 'Technocrats') {
                      actions.innerHTML = `<button onclick="applyRoundAction('Opt_E')">🛠️ Оптимизировать Энергию (-1 E, +1 Z, +1 Статус)</button><button onclick="applyRoundAction('Rec_S')">🔩 Обычный сбор Сплава (+2 S)</button>`;
                  } else if (group === 'Bioengineers') {
-                     actions.innerHTML = `<button onclick="applyRoundAction('Opt_B')">🧪 Запустить Гидропонику (-1 B, +1 L, +1 Статус)</button><button onclick="applyRoundAction('Rec_F')">🧶 Обычный сбор Волокна (+2 F)</button>`;
+                     actions.innerHTML = `<button onclick="applyRoundAction('Opt_B')">🧪 Запуск Гидропоники (-1 B, +1 L, +1 Статус)</button><button onclick="applyRoundAction('Rec_F')">🧶 Сбор Флоры (+2 F)</button>`;
                  } else if (group === 'Constructors') {
-                     actions.innerHTML = `<button onclick="applyRoundAction('Opt_S')">🧱 Укрепить Базу (-1 S, +1 F, +1 Статус)</button><button onclick="applyRoundAction('Rec_E')">⚡ Обычный сбор Энергоячеек (+2 E)</button>`;
+                     actions.innerHTML = `<button onclick="applyRoundAction('Opt_S')">🧱 Укрепить Базу (-1 S, +1 F, +1 Статус)</button><button onclick="applyRoundAction('Rec_E')">⚡ Сбор с Панелей (+2 E)</button>`;
                  }
             } else if (round === 3) {
-                 actions.innerHTML = `
-                     <button onclick="applyRoundAction('L_Fix')">💧 Устранить Реагентом (-1 L, +2 Статус)</button>
-                     <button onclick="applyRoundAction('M_Fix')">❄️ Улучшить Модулем (-1 M, +2 HP)</button>
-                     <button onclick="applyRoundAction('Risk_Fix')" style="background: #a84f3c;">❌ Починка вручную (-2 HP, -1 Статус)</button>
-                 `;
+                actions.innerHTML = `
+                    <button onclick="applyRoundAction('L_Fix')" style="background: #e67e22;">💧 Устранить течь реагентом (-1 L)</button>
+                    <button onclick="applyRoundAction('M_Fix')" style="background: #3498db;">❄️ Охладить Крио-Модулем (-1 M)</button>
+                `;
             } else if (round === 4) {
-                 actions.innerHTML = `
-                     <button onclick="applyRoundAction('K_Invest')">📦 Захватить Контейнером (-1 K, +3 L)</button>
-                     <button onclick="applyRoundAction('W_Invest')">🌊 Анализировать Синтезатором (-1 W, +2 Статус)</button>
-                     <button onclick="applyRoundAction('Risk_Invest')" style="background: #a84f3c;">❌ Исследование без защиты (-3 HP)</button>
-                 `;
+                actions.innerHTML = `
+                    <button onclick="applyRoundAction('K_Invest')" style="background: #9b59b6;">📦 Захват Контейнером (-1 K)</button>
+                    <button onclick="applyRoundAction('W_Invest')" style="background: #34495e;">🌊 Анализ Водой (-1 W)</button>
+                `;
             } else if (round === 5) {
-                 actions.innerHTML = `
-                     <p>Доступны компоненты M, W, K (для крафта).</p>
-                     <button onclick="applyRoundAction('Craft_M_W_K')">🔧 Протокол Крафта (СВОБОДНОЕ действие)</button>
-                     <button onclick="applyRoundAction('Gather_E_B_S')">🔩 Сбор запасов (+1 E, +1 B, +1 S, +1 Статус)</button>
-                 `;
+                actions.innerHTML = `
+                    <button onclick="applyRoundAction('Craft_M_W_K')" style="background: #27ae60;">🛠️ Напоминание: Крафт (ввод текста)</button>
+                    <button onclick="applyRoundAction('Gather_E_B_S')" style="background: #f39c12;">🌪️ Срочный сбор ресурсов (+1 E, B, S)</button>
+                `;
             } else if (round === 6) {
-                 actions.innerHTML = `
-                     <button onclick="applyRoundAction('Trade')">🤝 Протокол Обмена (СВОБОДНОЕ действие)</button>
-                     <button onclick="applyRoundAction('Final_Dash')">⚡ Финальный Рывок (-2 E, +3 Статус)</button>
-                     <button onclick="applyRoundAction('Safe_Wait')">⏳ Осторожное ожидание (Нет эффекта)</button>
-                 `;
+                actions.innerHTML = `
+                    <button onclick="applyRoundAction('Trade')" style="background: #16a085;">🤝 Напоминание: Обмен (ввод текста)</button>
+                    <button onclick="applyRoundAction('Final_Dash')" style="background: #c0392b;">🚀 Финальный Рывок (-2 E, +3 Статус)</button>
+                `;
             } else if (round === 7) {
                 actions.innerHTML = `
-                    <p style="color: #2ecc71; font-weight: bold;">Требуется: 1 ❄️ M, 1 🌊 W, 1 📦 K, 1 🔗 Z</p>
-                    <button onclick="assembleBeacon()" style="background: #2ecc71;">🚀 Собрать Маяк Спасения</button>`;
+                    <button onclick="assembleBeacon()" style="background: #f1c40f; color: #2c0b0b; font-size: 1.2em;">🛰️ СОБРАТЬ МАЯК И ЗАВЕРШИТЬ</button>
+                `;
             }
         }
-        
-        // Запуск при загрузке
-        document.addEventListener('DOMContentLoaded', updateLog);
+
+        document.getElementById('round-title').textContent = ROUND_TITLES[0];
     </script>
 </body>
 </html>
