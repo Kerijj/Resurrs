@@ -339,7 +339,6 @@
                         gameState.inventory.HP -= 2;
                      }
                  } else if (actionCode === 'Risk') {
-                     // Рискнуть без ресурса, но это уже минус 1 действие, поэтому логика выше лучше
                      statusChange = -1; message = "Не удалось применить технологию Решение принято наугад -1 к статусу";
                  }
              } else if (gameState.currentRound === 4) { // Исследование Осколка
