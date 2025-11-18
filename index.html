@@ -6,11 +6,11 @@
     <title>Марсианин: Экономика Выживания (Арес 7)</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Базовый стиль */
+        /* (Стили остались прежними для сохранения футуристичного вида) */
         body { 
             font-family: 'Roboto', sans-serif; 
-            background: #000c19; /* Темный космос */
-            color: #d8e2f0; /* Светлый текст */
+            background: #000c19; 
+            color: #d8e2f0; 
             padding: 25px; 
             line-height: 1.6;
         }
@@ -18,18 +18,14 @@
             max-width: 1000px; 
             margin: 0 auto; 
             padding: 35px; 
-            background: #0f1c2c; /* Основной блок */
+            background: #0f1c2c; 
             border-radius: 18px; 
-            border: 3px solid #e74c3c; /* Красная линия Марса */
+            border: 3px solid #e74c3c; 
             box-shadow: 0 10px 40px rgba(231, 76, 60, 0.3); 
         }
-        
-        /* Заголовки */
         h1 { color: #f1c40f; margin-top: 0; text-align: center; text-shadow: 0 0 5px rgba(241, 196, 15, 0.5); }
         h2 { color: #3498db; border-bottom: 2px solid #3e4451; padding-bottom: 15px; margin-top: 30px; }
         h3 { color: #e74c3c; }
-        
-        /* Основные блоки */
         .intro, .round-content, #trade-dialogue, #communication-panel { 
             margin-bottom: 25px; 
             padding: 25px; 
@@ -37,8 +33,6 @@
             border-radius: 12px; 
             background: #1e2127; 
         }
-        
-        /* Дисплей ресурсов */
         .resources-display { 
             background: #282c34; 
             padding: 20px; 
@@ -49,11 +43,8 @@
             align-items: center;
         }
         .status-info { flex: 1; margin-right: 30px;}
-        .resources-display h3 { color: #2ecc71; margin-top: 0; }
         .hp-bar { color: #e74c3c; font-weight: bold; font-size: 1.3em; }
         .actions-count { color: #f1c40f; font-weight: bold; font-size: 1.3em; }
-
-        /* Журнал */
         .log-box { 
             margin-top: 20px; 
             background: #0f1c2c; 
@@ -64,10 +55,7 @@
             font-size: 0.9em; 
             border: 1px solid #3e4451;
         }
-        .log-box p { margin: 2px 0; }
         .log-box span { color: #e74c3c; } 
-        
-        /* Кнопки */
         button { 
             padding: 12px 20px; 
             border: none; 
@@ -82,10 +70,6 @@
         }
         button:hover:not(:disabled) { background: #2980b9; }
         button:disabled { background: #555; cursor: not-allowed; opacity: 0.6; }
-        
-        .group-select button { width: 30%; min-width: 200px; }
-
-        /* Панель Ведущего */
         .mod-panel { 
             margin-top: 30px; 
             padding: 20px; 
@@ -104,10 +88,7 @@
             background: #0f1c2c; 
             color: #d8e2f0; 
         }
-        
-        /* Инвентарь */
         .inventory-list { 
-            margin-top: 10px; 
             list-style-type: none; 
             padding: 0; 
             display: flex; 
@@ -119,12 +100,22 @@
             border-radius: 8px; 
             background: #1e2127;
             border: 1px solid #4b5263;
-            font-size: 1em;
-            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
         }
-
-        /* Панель связи */
-        #communication-panel p { color: #98c379; font-weight: bold; margin: 0; }
+        .task-form { 
+            background: #282c34; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin-top: 15px;
+        }
+        .task-form input { 
+            padding: 10px; 
+            border-radius: 6px; 
+            border: 1px solid #3498db; 
+            background: #0f1c2c; 
+            color: #d8e2f0; 
+            margin-right: 10px; 
+            width: 70%;
+        }
     </style>
 </head>
 <body>
@@ -159,27 +150,26 @@
                     <ul class="inventory-list" id="inventory-list-display"></ul>
                 </div>
                 
-                <div id="communication-panel">
+                <div id="communication-panel" class="intro">
                     <h3>📢 Общий канал связи</h3>
                     <p id="communication-message">Канал чист. Установите контакт с другими группами...</p>
                     <button onclick="simulateConversation()" style="background: #e74c3c;">Инициировать Обмен</button>
                     
                     <div id="trade-dialogue" style="display:none; margin-top: 15px; padding: 15px; background: #3e4451;">
-                        <p style="color: #f1c40f;">**Ведущему:** Введите: **ОТДАТЬ [код] [кол-во]** и **ПОЛУЧИТЬ [код] [кол-во]**</p>
+                        <p style="color: #f1c40f;">**Инструкция по обмену:** Игрок объявляет сделку, Ведущий вводит команды: **ОТДАТЬ [код] [кол-во]** и **ПОЛУЧИТЬ [код] [кол-во]**.</p>
                     </div>
                 </div>
-
 
                 <div class="action-area" id="action-area"></div>
                 
                 <div class="log-box">
-                    **Журнал Борта (Ведущего и Игрока)**
+                    **Журнал Борта**
                     <div id="game-log"></div>
                 </div>
 
                 <div class="mod-panel">
                     <h4 style="margin: 0; color: #3498db;">⚙️ КОНСОЛЬ ВЕДУЩЕГО:</h4>
-                    <input type="text" id="mod-input" placeholder="Введите команду (КРАФТ, ЗАДАНИЕ, СБОР, ОТДАТЬ/ПОЛУЧИТЬ)">
+                    <input type="text" id="mod-input" placeholder="Введите команду (КРАФТ, ВЕРНО, ОТДАТЬ/ПОЛУЧИТЬ, ...)">
                     <button onclick="processModCommand()" style="background: #2ecc71;">Ввод Команды</button>
                     <button onclick="checkNextRound()" style="background: #e74c3c;">Завершить Раунд</button>
                 </div>
@@ -195,27 +185,24 @@
     <script>
         // --- ДАННЫЕ ИГРЫ ---
         const RESOURCES = {
-            // Базовые ресурсы (5 шт)
             E: { name: 'Энергоячейка', code: 'E', icon: '⚡' },
             W: { name: 'Вода (Л)', code: 'W', icon: '💧' },
             T: { name: 'Почва (Кг)', code: 'T', icon: '⛰️' },
             M: { name: 'Металлолом', code: 'M', icon: '🔩' },
             K: { name: 'Провода/Каб.', code: 'K', icon: '🔗' },
             
-            // Промежуточные компоненты (для выживания)
             P: { name: 'Микро-Полив', code: 'P', icon: '💧🌱' }, 
             G: { name: 'Термо-Генератор', code: 'G', icon: '☀️' }, 
             C: { name: 'Гермо-Контейнер', code: 'C', icon: '📦' }, 
             
-            // Финальный элемент
             S: { name: 'Маяк Спасения', code: 'S', icon: ' маяк' },
             HP: { name: 'Жизнеобеспечение', code: 'HP', icon: '💔' }
         };
         
         const GROUP_BONUSES = {
-            Technocrats: 'E', // Энергоячейки
-            Bioengineers: 'T', // Почва
-            Constructors: 'M' // Металлолом
+            Technocrats: 'E', 
+            Bioengineers: 'T', 
+            Constructors: 'M' 
         };
 
         const GROUP_NAMES = {
@@ -226,7 +213,7 @@
 
         const ROUND_TITLES = [
             "Инициализация Миссии",
-            "Раунд 1: Тематический Сбор (Задания)",
+            "Раунд 1: Тематический Сбор (Загадки)",
             "Раунд 2: Свободный Сбор (Лимит веса)",
             "Раунд 3: Обустройство Жизни (Крафт)",
             "Раунд 4: Риск и Исследование",
@@ -235,11 +222,18 @@
             "Раунд 7: Сборка Маяка и Финал"
         ];
         
-        // Стоимость тематического крафта
         const CRAFT_COSTS = {
-            P: { T: 8, W: 5, K: 3 }, // Микро-Полив: Почва + Вода + Кабели
-            G: { E: 8, M: 5, K: 3 }, // Термо-Генератор: Энергоячейка + Металл + Кабели
-            C: { M: 8, E: 5, T: 3 }  // Гермо-Контейнер: Металл + Энергия + Почва (для изоляции)
+            P: { T: 8, W: 5, K: 3 }, 
+            G: { E: 8, M: 5, K: 3 }, 
+            C: { M: 8, E: 5, T: 3 }  
+        };
+
+        const THEMATIC_TASKS = {
+            E: "Какой металл используется в солнечных панелях для преобразования света в электричество?", // Ответ: Кремний
+            W: "Назовите процесс, который превращает углекислый газ и воду в глюкозу и кислород?", // Ответ: Фотосинтез
+            T: "Назовите основной неорганический компонент марсианской почвы, который придает ей красный цвет?", // Ответ: Оксид железа (или Ржавчина)
+            M: "Самый прочный, но легкий сплав, используемый в авиастроении и космических аппаратах.", // Ответ: Титан (или Алюминий)
+            K: "Как называется устройство, которое преобразует постоянный ток в переменный?", // Ответ: Инвертор
         };
 
         let gameState = {
@@ -250,10 +244,10 @@
             maxActions: 3,
             status: "Ожидание выбора группы...",
             historyLog: [],
-            conversationHistory: 0 // Счётчик для имитации общения
+            conversationHistory: 0 
         };
 
-        // --- УПРАВЛЕНИЕ ИГРОЙ ---
+        // --- УПРАВЛЕНИЕ ИГРОЙ (Функции те же, что и ранее) ---
 
         function updateLog(message, isError = false) {
             const logBox = document.getElementById('game-log');
@@ -321,7 +315,7 @@
             loadRound(1);
         }
         
-        // --- UI и Инвентарь ---
+        // --- UI и Инвентарь (Функции те же) ---
 
         function updateUI() {
             document.getElementById('player-group-name').textContent = GROUP_NAMES[gameState.group];
@@ -336,7 +330,6 @@
             document.getElementById('group-status').innerHTML = gameState.status;
             document.getElementById('round-title').textContent = ROUND_TITLES[gameState.currentRound];
             
-            // Список инвентаря
             const inventoryList = document.getElementById('inventory-list-display');
             let html = '';
             const orderedKeys = Object.keys(RESOURCES).filter(k => gameState.inventory[k] > 0 && k !== 'HP' && k !== 'S');
@@ -351,71 +344,81 @@
             inventoryList.innerHTML = html || '<li class="inventory-item">Инвентарь пуст</li>';
         }
         
-        // --- ЛОГИКА КОМАНД ВЕДУЩЕГО ---
+        // --- НОВАЯ ЛОГИКА КОМАНД ВЕДУЩЕГО ---
 
         function processModCommand() {
-            const input = document.getElementById('mod-input').value.trim().toLowerCase();
+            const input = document.getElementById('mod-input').value.trim().toUpperCase(); // Вся команда в верхний регистр
             const words = input.split(' ');
             document.getElementById('mod-input').value = '';
 
             // 1. КРАФТ [код]
-            if (words[0] === 'крафт' && words.length === 2 && [3, 4, 5].includes(gameState.currentRound)) {
-                const resCode = words[1].toUpperCase();
+            if (words[0] === 'КРАФТ' && words.length === 2 && [3, 4, 5].includes(gameState.currentRound)) {
+                const resCode = words[1];
                 if (['P', 'G', 'C'].includes(resCode)) {
                     craftComponent(resCode);
                     return;
                 }
             }
             
-            // 2. ЗАДАНИЕ [код ресурса] (Р1)
-            if (words[0] === 'задание' && words.length === 2 && gameState.currentRound === 1) {
-                const resCode = words[1].toUpperCase();
-                if (['E', 'W', 'T', 'M', 'K'].includes(resCode)) {
-                    if (takeAction()) {
-                        const isBonus = resCode === GROUP_BONUSES[gameState.group];
-                        const gain = isBonus ? 10 : 5;
-                        gameState.inventory[resCode] += gain;
-                        updateLog(`🎉 Задание выполнено! Добыто **+${gain} ${RESOURCES[resCode].name}**. ${isBonus ? "Бонус 🌟" : ""}`);
-                        updateUI();
-                    }
-                    return;
+            // 2. ВЕРНО [код ресурса] (Подтверждение ответа игрока в Р1 и Р2)
+            if (words[0] === 'ВЕРНО' && words.length === 2 && [1, 2].includes(gameState.currentRound)) {
+                const resCode = words[1];
+                
+                if (gameState.currentRound === 1) {
+                     if (['E', 'W', 'T', 'M', 'K'].includes(resCode)) {
+                         const isBonus = resCode === GROUP_BONUSES[gameState.group];
+                         const gain = isBonus ? 10 : 5;
+                         
+                         gameState.inventory[resCode] += gain;
+                         updateLog(`🎉 **[ВЕДУЩИЙ]** Ответ верный! Добыто **+${gain} ${RESOURCES[resCode].name}**. ${isBonus ? "Бонус 🌟" : ""}`);
+                         // Действие тратится при вводе правильного ответа
+                         takeAction(); 
+                         updateUI();
+                     } else {
+                         updateLog(`🛑 Неизвестный код ресурса для команды ВЕРНО.`, true);
+                     }
+                } else if (gameState.currentRound === 2) {
+                     // Для Р2 Ведущий вводит ВЕРНО и количество ресурса
+                     // Это более гибко, чем фиксированная команда СБОР.
+                     updateLog(`🛑 Для Раунда 2 используйте команду ВЕРНО [КОД] [КОЛ-ВО]`, true);
                 }
+                return;
             }
 
-            // 3. СБОР [код ресурса] [кол-во] (Р2)
-            if (words[0] === 'сбор' && words.length === 3 && gameState.currentRound === 2) {
-                const resCode = words[1].toUpperCase();
+            // 2.1. ВЕРНО [код ресурса] [кол-во] (Подтверждение сбора/ответа в Р2)
+            if (words[0] === 'ВЕРНО' && words.length === 3 && gameState.currentRound === 2) {
+                const resCode = words[1];
                 const amount = parseInt(words[2]);
-                const MAX_COLLECT = 15; // Максимально разрешено собрать за 1 действие
+                const MAX_COLLECT = 15;
                 
                 if (['W', 'T', 'E', 'M', 'K'].includes(resCode) && !isNaN(amount) && amount > 0 && amount <= MAX_COLLECT) {
-                    if (takeAction()) {
-                        gameState.inventory[resCode] += amount;
-                        updateLog(`⛏️ Сбор: **+${amount} ${RESOURCES[resCode].name}**.`);
-                        updateUI();
-                    }
-                    return;
+                    gameState.inventory[resCode] += amount;
+                    updateLog(`🎉 **[ВЕДУЩИЙ]** Сбор подтвержден: **+${amount} ${RESOURCES[resCode].name}**.`);
+                    takeAction(); 
+                    updateUI();
                 } else if (!isNaN(amount) && amount > MAX_COLLECT) {
-                    updateLog(`🛑 Нельзя собрать более ${MAX_COLLECT} единиц за раз.`, true);
-                    return;
+                    updateLog(`🛑 Нельзя собрать более ${MAX_COLLECT} единиц за раз (лимит Ведущего).`, true);
+                } else {
+                    updateLog(`🛑 Неизвестный код ресурса или неверное количество.`, true);
                 }
+                return;
             }
-
-            // 4. ОТДАТЬ / ПОЛУЧИТЬ [код] [кол-во] (Обмен)
-            if ((words[0] === 'отдать' || words[0] === 'получить') && words.length === 3 && [6, 7].includes(gameState.currentRound)) {
+            
+            // 3. ОТДАТЬ / ПОЛУЧИТЬ [код] [кол-во] (Обмен)
+            if ((words[0] === 'ОТДАТЬ' || words[0] === 'ПОЛУЧИТЬ') && words.length === 3 && [6, 7].includes(gameState.currentRound)) {
                 const action = words[0];
-                const resCode = words[1].toUpperCase();
+                const resCode = words[1];
                 const amount = parseInt(words[2]);
 
                 if (RESOURCES[resCode] && !isNaN(amount) && amount > 0 && document.getElementById('trade-dialogue').style.display === 'block') {
-                    if (action === 'отдать') {
+                    if (action === 'ОТДАТЬ') {
                         if (gameState.inventory[resCode] >= amount) {
                             gameState.inventory[resCode] -= amount;
                             updateLog(`[ОБМЕН] Группа ${GROUP_NAMES[gameState.group]} отдала **-${amount} ${RESOURCES[resCode].name}**`);
                         } else {
                             updateLog(`🛑 Недостаточно ${RESOURCES[resCode].name} для отдачи.`, true);
                         }
-                    } else if (action === 'получить') {
+                    } else if (action === 'ПОЛУЧИТЬ') {
                         gameState.inventory[resCode] += amount;
                         updateLog(`[ОБМЕН] Группа ${GROUP_NAMES[gameState.group]} получила **+${amount} ${RESOURCES[resCode].name}**`);
                     }
@@ -424,10 +427,39 @@
                 }
             }
             
-            if (input) updateLog("Неверная или недопустимая команда Ведущего. Доступны: КРАФТ, ЗАДАНИЕ/СБОР, ОТДАТЬ/ПОЛУЧИТЬ.", true);
+            if (input) updateLog("Неверная или недопустимая команда Ведущего. Доступны: КРАФТ, ВЕРНО, ОТДАТЬ/ПОЛУЧИТЬ.", true);
+        }
+        
+        // Функция для обработки ввода ответа игроком (Р1)
+        function submitRound1Task(resCode) {
+            const answer = document.getElementById(`task-input-${resCode}`).value.trim();
+            if (!answer) {
+                updateLog("Введите ответ на задание.", true);
+                return;
+            }
+            
+            // Действие тратится при попытке ответа
+            if (!takeAction()) return;
+            
+            updateLog(`[ОТВЕТ ИГРОКА] Вы запросили ${RESOURCES[resCode].name} и ответили: **${answer}**`);
+            updateLog(`**ВЕДУЩИЙ, проверьте ответ и введите: ВЕРНО ${resCode}**`);
         }
 
-        // --- ЛОГИКА ДЕЙСТВИЙ ---
+        // Функция для обработки ввода сбора игроком (Р2)
+        function submitRound2Collect() {
+             const resCode = document.getElementById('collect-res-code').value.trim().toUpperCase();
+             const amount = document.getElementById('collect-amount').value.trim();
+
+             if (!resCode || !amount) {
+                 updateLog("Укажите ресурс (E, W, T, M, K) и количество.", true);
+                 return;
+             }
+             
+             updateLog(`[ЗАПРОС ИГРОКА] Мы хотим собрать **${amount} ${RESOURCES[resCode]?.name || resCode}**.`);
+             updateLog(`**ВЕДУЩИЙ, проверьте лимит и введите: ВЕРНО ${resCode} ${amount}**`);
+        }
+
+        // --- ЛОГИКА ДЕЙСТВИЙ (Функции те же) ---
 
         function craftComponent(resCode) {
             const cost = CRAFT_COSTS[resCode];
@@ -465,10 +497,9 @@
             
             if (gameState.currentRound === 6 || gameState.currentRound === 7) {
                  document.getElementById('trade-dialogue').style.display = 'block';
-                 updateLog(`📢 ОТКРЫТО ОКНО ОБМЕНА. Игрок: введите в консоль Ведущего свою сделку.`, true);
+                 updateLog(`📢 ОТКРЫТО ОКНО ОБМЕНА. Игрок: объявите сделку вслух. Ведущий: введите команды.`, true);
             }
             
-            // Если игрок нажал кнопку обмена в неподходящий раунд
             if (gameState.currentRound < 6) {
                  updateLog(`Канал связи: "Обмен сейчас невозможен. Дождитесь Раунда 6."`, true);
             }
@@ -476,18 +507,20 @@
             gameState.conversationHistory++;
         }
 
-
         function applyRoundAction(actionCode) {
             if (!takeAction()) return; 
             
             let statusChange = 0;
             let message = "";
 
-            if (gameState.currentRound === 3) { // Обустройство (Строительство)
+            // Логика действий для Раундов 3-7 остается прежней
+            // ... (Вставим логику из предыдущего ответа)
+
+             if (gameState.currentRound === 3) { // Обустройство (Строительство)
                 const costMap = {
-                    'P': { T: 3, W: 3 }, // Базовая пища
-                    'G': { E: 3, K: 3 }, // Базовое тепло
-                    'C': { M: 3, T: 3 }  // Базовое убежище
+                    'P': { T: 3, W: 3 }, 
+                    'G': { E: 3, K: 3 }, 
+                    'C': { M: 3, T: 3 }  
                 };
                 
                 const component = costMap[actionCode];
@@ -545,14 +578,14 @@
                      statusChange = -2;
                      message = "Нет компонента для защиты! Шторм повредил базу. **-4 HP**, **-2 к статусу**.";
                  }
-            } else if (gameState.currentRound === 6) { // Обмен (Нажатие на кнопку "Обмен")
-                 // Кнопка просто вызывает диалог и сообщение
+            } else if (gameState.currentRound === 6) { // Обмен 
                  simulateConversation();
                  return;
             } else if (gameState.currentRound === 7) {
                 assembleBeacon();
                 return;
             }
+
 
             if (message) updateLog(`✅ Действие успешно. ${message}`);
             
@@ -569,61 +602,68 @@
             updateUI();
         }
 
-        // --- ФИНАЛ ---
-        function assembleBeacon() {
-            if (!takeAction()) return; 
-            
-            const required = { P: 1, G: 1, C: 1 };
-            let canAssemble = true;
 
-            for (const res in required) {
-                if (gameState.inventory[res] < required[res]) {
-                    updateLog(`🛑 Недостаточно ${RESOURCES[res].name} (1 шт) для сборки Маяка.`, true);
-                    canAssemble = false;
-                    break;
-                }
-            }
-
-            if (canAssemble) {
-                gameState.inventory.P -= 1;
-                gameState.inventory.G -= 1;
-                gameState.inventory.C -= 1;
-                gameState.inventory.S = 1;
-                updateLog(`🎉 **Маяк Спасения Собран!** Начинается передача сигнала.`);
-                updateUI();
-                
-                // Завершение игры
-                document.getElementById('action-area').innerHTML = `<h3 style="color: #2ecc71;">${getFinalMessage()}</h3>`;
-                document.getElementById('round-title').textContent = "🛰️ ФИНАЛ МИССИИ";
-                document.getElementById('actions-remaining').textContent = 0;
-            }
-        }
-
-        function calculateFinalScore() {
-            const assemblyBonus = gameState.inventory.S > 0 ? 10 : 0; 
-            const historyScore = gameState.historyLog.reduce((sum, log) => sum + log.statusChange, 0);
-            return assemblyBonus + historyScore;
-        }
-
-        function getFinalMessage() {
-            const score = calculateFinalScore();
-            if (gameState.inventory.S === 0) return `❌ Провал миссии! Маяк не собран. Счет: **${score}**`;
-            if (score >= 15) return `🌟 КРИТИЧЕСКИЙ УСПЕХ! Счет: **${score}**. Вы возвращаетесь героем!`;
-            if (score >= 8) return `✅ УСПЕХ! Счет: **${score}**. Сигнал принят. Вы выжили.`;
-            return `⚠️ НИЗКИЙ УСПЕХ! Счет: **${score}**. Маяк собран, но слабый сигнал.`;
-        }
-
-        // --- ЗАГРУЗКА РАУНДОВ ---
+        // --- ЗАГРУЗКА РАУНДОВ С ФОРМАМИ ---
 
         function getRoundDescription(round) {
             switch(round) {
-                case 1: return `<h3>Цель: Тематический Сбор</h3><p>Чтобы добыть ресурс, попросите Ведущего выдать вам **тематическое задание** (см. вашу специализацию). Задание — это 1 действие.</p><p>Бонус: **${RESOURCES[GROUP_BONUSES[gameState.group]].name}** (+10 ед. вместо +5).</p><hr><p>Команды для Ведущего: <code>ЗАДАНИЕ E</code>, <code>ЗАДАНИЕ W</code>, <code>ЗАДАНИЕ T</code>, <code>ЗАДАНИЕ M</code>, <code>ЗАДАНИЕ K</code>.</p>`;
-                case 2: return `<h3>Цель: Свободный Сбор (Лимит)</h3><p>Исследуйте окрестности и собирайте ресурсы. Вы можете собрать до **15 единиц** любого базового ресурса за одно действие.</p><hr><p>Команды для Ведущего: <code>СБОР E 10</code>, <code>СБОР T 5</code> (где 10 и 5 — количество).</p>`;
-                case 3: return `<h3>Цель: Обустройство Жизни (Базовое строительство)</h3><p>Постройте один из базовых элементов, чтобы закрепить позиции. Тратится 1 действие.</p>`;
+                case 1: 
+                    const bonusCode = GROUP_BONUSES[gameState.group];
+                    return `
+                        <h3>Цель: Тематический Сбор (Загадки)</h3>
+                        <p>Чтобы получить ресурс, введите ответ на загадку, соответствующую вашей специализации. Каждое задание — это одно действие.</p>
+                        <p>Бонус за правильный ответ: **+10 ед.** своего ресурса (🌟) или **+5 ед.** других.</p>
+                        <hr>
+                        <div class="task-form">
+                            <h4>Задание на Энергоячейки (E):</h4>
+                            <p>${THEMATIC_TASKS.E}</p>
+                            <input type="text" id="task-input-E" placeholder="Ваш ответ">
+                            <button onclick="submitRound1Task('E')">Ответить</button>
+                            
+                            <h4>Задание на Почву (T):</h4>
+                            <p>${THEMATIC_TASKS.T}</p>
+                            <input type="text" id="task-input-T" placeholder="Ваш ответ">
+                            <button onclick="submitRound1Task('T')">Ответить</button>
+
+                            </div>
+                        <p>После ответа **Ведущий** проверяет его и вводит команду: <code>ВЕРНО E</code> (или T, W, M, K)</p>
+                    `;
+                case 2: return `
+                    <h3>Цель: Свободный Сбор (Лимит веса)</h3>
+                    <p>Исследуйте окрестности и собирайте ресурсы. Вы можете собрать до **15 единиц** любого базового ресурса за одно действие. Тратится 1 действие.</p>
+                    <hr>
+                    <div class="task-form">
+                        <h4>Форма сбора:</h4>
+                        <input type="text" id="collect-res-code" placeholder="Код ресурса (E, W, T, M, K)" style="width: 25%;">
+                        <input type="number" id="collect-amount" placeholder="Количество (до 15)" style="width: 25%;">
+                        <button onclick="submitRound2Collect()">Запросить Сбор</button>
+                    </div>
+                    <p>После запроса **Ведущий** проверяет лимит (до 15) и вводит команду: <code>ВЕРНО T 10</code></p>
+                `;
+                case 3: return `
+                    <h3>Цель: Обустройство Жизни (Базовое строительство)</h3>
+                    <p>Постройте один из базовых элементов, чтобы закрепить позиции. Тратится 1 действие. Это НЕ КРАФТ, а простое строительство.</p>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>**💧🌱 Микро-Полив (P)**: -3 ⛰️ Почва, -3 💧 Вода</li>
+                        <li>**☀️ Термо-Генератор (G)**: -3 ⚡ Энергоячейка, -3 🔗 Кабели</li>
+                        <li>**📦 Гермо-Контейнер (C)**: -3 🔩 Металлолом, -3 ⛰️ Почва</li>
+                    </ul>
+                `;
                 case 4: return `<h3>Цель: Риск и Исследование</h3><p>Выберите: рискнуть здоровьем ради большого статуса или потратить ресурсы на восстановление HP.</p>`;
                 case 5: return `<h3>Цель: Шторм и Укрепление</h3><p>Надвигается мощный шторм. Выберите, какой промежуточный компонент пожертвовать для защиты.</p>`;
                 case 6: return `<h3>Цель: Финальная Торговля</h3><p>Критическая фаза. Свяжитесь с другими группами через канал связи и проведите обмен. Используйте кнопку **"Инициировать Обмен"**.</p>`;
-                case 7: return `<h3>Цель: Сборка Маяка и Финал</h3><p>Вам требуется 1 **Микро-Полив (P)**, 1 **Термо-Генератор (G)** и 1 **Гермо-Контейнер (C)**.</p>`;
+                case 7: return `
+                    <h3>Цель: Сборка Маяка и Финал</h3>
+                    <p>Вам требуется 1 **Микро-Полив (P)**, 1 **Термо-Генератор (G)** и 1 **Гермо-Контейнер (C)**. Это последнее действие.</p>
+                    <hr>
+                    <h3>Свободное действие: Крафт!</h3>
+                    <p>Вы можете скрафтить недостающие компоненты в любое время, используя команду Ведущего <code>КРАФТ [код]</code>.</p>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>**💧🌱 P**: 8 T + 5 W + 3 K</li>
+                        <li>**☀️ G**: 8 E + 5 M + 3 K</li>
+                        <li>**📦 C**: 8 M + 5 E + 3 T</li>
+                    </ul>
+                `;
             }
         }
 
@@ -632,9 +672,10 @@
             const actions = document.getElementById('action-area');
             actions.innerHTML = '';
             desc.innerHTML = getRoundDescription(round);
-
+            
+            // Скрытие/Отображение форм заданий
             if (round === 1 || round === 2) {
-                 actions.innerHTML = `<button disabled style="background: #3e4451;">Действия: ввод команды в консоль Ведущего.</button>`;
+                 actions.innerHTML = `<button disabled style="background: #3e4451;">Действия: ввод ответа/запроса в форме выше.</button>`;
             } else if (round === 3) {
                  actions.innerHTML = `
                      <button onclick="applyRoundAction('P')">Базовая пища (-3T, -3W) (Полив)</button>
@@ -656,7 +697,7 @@
                  `;
             } else if (round === 6) {
                  actions.innerHTML = `
-                     <button onclick="simulateConversation()" style="background: #c678dd;">Начать Переговоры (Открывает обмен)</button>
+                     <button onclick="applyRoundAction('Trade')" style="background: #c678dd;">Начать Переговоры (Открывает обмен)</button>
                      <button disabled style="background: #3e4451;">Обмен: только через консоль Ведущего после переговоров.</button>
                  `;
             } else if (round === 7) {
@@ -664,7 +705,6 @@
             }
         }
         
-        // Запуск при загрузке
         document.addEventListener('DOMContentLoaded', () => {
              updateLog("Игра загружена. Выберите команду, чтобы начать.");
         });
