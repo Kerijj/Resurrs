@@ -1,108 +1,108 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ПРОТОКОЛ: ЭКСПЕДИЦИЯ АРЕС | БОРТОВОЙ ЖУРНАЛ</title>
-    
-        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    
-        <link rel="stylesheet" href="style.css">
-    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ПРОТОКОЛ: ЭКСПЕДИЦИЯ АРЕС | БОРТОВОЙ ЖУРНАЛ</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    
 </head>
 <body>
 
-    <div class="container">
-        
-                <h1>МАРСИАНСКИЙ ТЕРМИНАЛ: ПРОТОКОЛ "АЛЬФА"</h1>
-        
-                <h2>🚨 ПРОТОКОЛ: ЗАПУСК (КРИТИЧЕСКИЙ СТАТУС)</h2>
-        <div class="intro" id="preamble-story">
-            <p>
-                **[ПЕРЕДАЧА ДАННЫХ]** Наш спускаемый аппарат, *«Гермес V»*, совершил жесткую посадку в регионе Элизиум Планиция. Повреждения критические: основной реактор питания вышел из строя, системы связи работают с перебоями. Мы изолированы, а запасы воздуха и воды рассчитаны всего на несколько марсианских суток. 
-            </p>
-            <p>
-                **[ОСНОВНАЯ ЦЕЛЬ]** Наша миссия изменилась. Теперь это не исследование, а **ВЫЖИВАНИЕ**. Нам необходимо немедленно запустить протокол экстренной добычи ресурсов, восстановить связь и, самое главное, обеспечить постоянный приток жизненно важных компонентов: **Энергии (🔋), Воды (💧) и Воздуха (💨)**. Командир, вы получили контроль над бортовым терминалом. Каждый раунд — это сутки. **Оставайтесь в живых.**
-            </p>
-        </div>
-        
-        ---
+    <div class="container">
+        
+        <h1>МАРСИАНСКИЙ ТЕРМИНАЛ: ПРОТОКОЛ "АЛЬФА"</h1>
+        
+        <h2>🚨 ПРОТОКОЛ: ЗАПУСК (КРИТИЧЕСКИЙ СТАТУС)</h2>
+        <div class="intro" id="preamble-story">
+            <p>
+                **[ПЕРЕДАЧА ДАННЫХ]** Наш спускаемый аппарат, *«Гермес V»*, совершил жесткую посадку в регионе Элизиум Планиция. Повреждения критические: основной реактор питания вышел из строя, системы связи работают с перебоями. Мы изолированы, а запасы воздуха и воды рассчитаны всего на несколько марсианских суток. 
+            </p>
+            <p>
+                **[ОСНОВНАЯ ЦЕЛЬ]** Наша миссия изменилась. Теперь это не исследование, а **ВЫЖИВАНИЕ**. Нам необходимо немедленно запустить протокол экстренной добычи ресурсов, восстановить связь и, самое главное, обеспечить постоянный приток жизненно важных компонентов: **Энергии (🔋), Воды (💧) и Воздуха (💨)**. Командир, вы получили контроль над бортовым терминалом. Каждый раунд — это сутки. **Оставайтесь в живых.**
+            </p>
+        </div>
+        
+        ---
 
-                <div class="intro">
-            <p><strong>[СИСТЕМА]</strong> Статус: <strong>ОНЛАЙН</strong> | Дата: <span id="current-date">20.11.2077</span> | Время Марса (UTC+1): <span id="current-time">09:35:00</span></p>
-            <p><strong>[МИССИЯ]</strong> Цель: Пополнение запасов и анализ среды. Командир: <strong>Имя Ведущего</strong></p>
-        </div>
-        
-        ---
+        <div class="intro">
+            <p><strong>[СИСТЕМА]</strong> Статус: <strong>ОНЛАЙН</strong> | Дата: <span id="current-date">20.11.2077</span> | Время Марса (UTC+1): <span id="current-time">09:35:00</span></p>
+            <p><strong>[МИССИЯ]</strong> Цель: Пополнение запасов и анализ среды. Командир: <strong>Имя Ведущего</strong></p>
+        </div>
+        
+        ---
 
-                <h2>📊 СТАТУС СИСТЕМЫ И ИНВЕНТАРЬ</h2>
-        <div class="status-panel">
-            
-            <div class="info-block">
-                <h3>ТЕКУЩИЕ РЕСУРСЫ</h3>
-                                <p>❤️ Здоровье: <span id="resource-health">100</span> (ед.)</p>
-                <p>🔋 Энергия: <span id="resource-power">1000</span> (ед.)</p>
-                <p>💧 Вода (H₂O): <span id="resource-water">50</span> (л)</p>
-                <p>💨 Воздух (O₂): <span id="resource-air">50</span> (м³)</p>
-            </div>
+        <h2>📊 СТАТУС СИСТЕМЫ И ИНВЕНТАРЬ</h2>
+        <div class="status-panel">
+            
+            <div class="info-block">
+                <h3>ТЕКУЩИЕ РЕСУРСЫ</h3>
+                <p>❤️ Здоровье: <span id="resource-health">100</span> (ед.)</p>
+                <p>🔋 Энергия: <span id="resource-power">1000</span> (ед.)</p>
+                <p>💧 Вода (H₂O): <span id="resource-water">50</span> (л)</p>
+                <p>💨 Воздух (O₂): <span id="resource-air">50</span> (м³)</p>
+            </div>
 
-            <div class="info-block">
-                <h3>ИНВЕНТАРЬ (У1, У2, У3)</h3>
-                <ul id="inventory-list" class="inventory-list">
-                    <li class="inventory-item">Нет ресурсов</li>
-                </ul>
-            </div>
+            <div class="info-block">
+                <h3>ИНВЕНТАРЬ (У1, У2, У3)</h3>
+                <ul id="inventory-list" class="inventory-list">
+                    <li class="inventory-item">Нет ресурсов</li>
+                </ul>
+            </div>
 
-        </div>
-        
-        ---
+        </div>
+        
+        ---
 
-                <h2>🎯 РАУНД <span id="round-number">1</span>: ВЫБОР ДЕЙСТВИЯ</h2>
-        <div class="round-content">
+        <h2>🎯 РАУНД <span id="round-number">1</span>: ВЫБОР ДЕЙСТВИЯ</h2>
+        <div class="round-content">
 
-            <h3>1. ВЫБОР ГРУППЫ</h3>
-            <div class="group-select">
-                <button id="select-group-a">Группа А (Технология)</button>
-                <button id="select-group-b">Группа Б (Биология)</button>
-                <button id="select-group-c">Группа В (Конструкция)</button>
-            </div>
+            <h3>1. ВЫБОР ГРУППЫ</h3>
+            <div class="group-select">
+                <button id="select-group-a" disabled>Группа А (Технология)</button>
+                <button id="select-group-b" disabled>Группа Б (Биология)</button>
+                <button id="select-group-c" disabled>Группа В (Конструкция)</button>
+            </div>
 
-            <h3>2. ДЕЙСТВИЕ ГРУППЫ</h3>
-            <p id="action-prompt">Выберите группу для продолжения протокола...</p>
-            
-            <div id="action-buttons" style="margin-top: 10px;">
-                <button class="round-action-button" disabled>ВЫПОЛНИТЬ ДЕЙСТВИЕ</button>
-            </div>
-            
-            <hr style="border-top: 1px solid #c0392b; margin: 20px 0;">
+            <h3>2. ДЕЙСТВИЕ ГРУППЫ</h3>
+            <p id="action-prompt">Выберите группу для продолжения протокола...</p>
+            
+            <div id="action-buttons" style="margin-top: 10px;">
+                <button class="round-action-button" disabled>ВЫПОЛНИТЬ ДЕЙСТВИЕ</button>
+            </div>
+            
+            <hr style="border-top: 1px solid #c0392b; margin: 20px 0;">
 
-            <h3>3. ЗАВЕРШЕНИЕ ФАЗЫ</h3>
-            <button id="end-round-button" class="end-round-button" disabled>ЗАВЕРШИТЬ РАУНД <span id="next-round-indicator">(2)</span></button>
-        </div>
-        
-        ---
+            <h3>3. ЗАВЕРШЕНИЕ ФАЗЫ</h3>
+            <button id="end-round-button" class="end-round-button" disabled>ЗАВЕРШИТЬ РАУНД <span id="next-round-indicator">(2)</span></button>
+        </div>
+        
+        ---
 
-                <h2>📢 ЖУРНАЛ СОБЫТИЙ</h2>
-        <div id="log-box" class="log-box">
-            <p><strong>[09:35:25]</strong> Системный Протокол запущен. Ожидание ввода...</p>
-        </div>
+        <h2>📢 ЖУРНАЛ СОБЫТИЙ</h2>
+        <div id="log-box" class="log-box">
+            <p><strong>[09:35:25]</strong> Системный Протокол запущен. Ожидание ввода...</p>
+        </div>
 
-                <div id="mod-panel" class="mod-panel" style="display: none;">
-            <h2>🧑‍💻 ПРОТОКОЛ СВЯЗИ (ВЕДУЩИЙ)</h2>
-            <input type="text" id="mod-input" placeholder="Введите команду или событие...">
-            <button id="send-mod-message">ОТПРАВИТЬ СООБЩЕНИЕ</button>
-        </div>
-        
-        <div id="game-over-message" class="final-message" style="display: none; margin-top: 30px;">
-            МИССИЯ ЗАВЕРШЕНА. АНАЛИЗ РЕЗУЛЬТАТОВ.
-        </div>
+        <div id="mod-panel" class="mod-panel" style="display: none;">
+            <h2>🧑‍💻 ПРОТОКОЛ СВЯЗИ (ВЕДУЩИЙ)</h2>
+            <input type="text" id="mod-input" placeholder="Введите команду или событие...">
+            <button id="send-mod-message">ОТПРАВИТЬ СООБЩЕНИЕ</button>
+        </div>
+        
+        <div id="game-over-message" class="final-message" style="display: none; margin-top: 30px;">
+            МИССИЯ ЗАВЕРШЕНА. АНАЛИЗ РЕЗУЛЬТАТОВ.
+        </div>
 
-    </div>
+    </div>
 
-    <script>
-    // ====================================================================
-    // === ВЕСЬ КОД JAVASCRIPT ДЛЯ ИГРЫ "МАРСИАНСКИЙ ТЕРМИНАЛ" ===
-    // ====================================================================
+    <script>
+    // ====================================================================
+    // === ВЕСЬ КОД JAVASCRIPT ДЛЯ ИГРЫ "МАРСИАНСКИЙ ТЕРМИНАЛ" ===
+    // ====================================================================
 
     // --- 1. ИНИЦИАЛИЗАЦИЯ ИГРОВЫХ ПЕРЕМЕННЫХ ---
 
@@ -157,7 +157,6 @@
                 { code: 'ИГ', name: 'Изотопный Генератор', description: '+0.5 Э постоянной энергии.', bonus: { type: 'POWER_BONUS', value: 0.5 }, level: 3 },
             ],
         },
-        // ... (остальные категории BIO_LIFE и CONSTRUCTION_REPAIR должны быть здесь, пропущено для краткости) ...
         BIO_LIFE: {
             name: "Биология и Жизнеобеспечение",
             level1: [ { code: 'ЛД', name: 'Лед', description: 'Лед', level: 1 }, { code: 'N', name: 'Азот', description: 'Азот', level: 1 }, { code: 'КЛ', name: 'Калий', description: 'Калий', level: 1 }, { code: 'СЛ', name: 'Соли', description: 'Соли', level: 1 }, { code: 'ФС', name: 'Фосфор', description: 'Фосфор', level: 1 }],
@@ -184,11 +183,15 @@
     const CRAFTING_RECIPES_R3 = {
         'КП': [{ code: 'РГ', amount: 2 }], 'H2O': [{ code: 'ЛД', amount: 2 }], 'ЛС': [{ code: 'АЛ', amount: 2 }],
         'ФС': [{ code: 'ЖЕ', amount: 2 }], 'ПР': [{ code: 'N', amount: 2 }], 'ЗС': [{ code: 'ТТ', amount: 2 }],
+        'CO': [{ code: 'CO2', amount: 2 }], 'КУ': [{ code: 'КЛ', amount: 2 }], 'ВК': [{ code: 'СВ', amount: 2 }],
+        'ГР': [{ code: 'МТ', amount: 2 }], 'МД': [{ code: 'СЛ', amount: 2 }], 'УП': [{ code: 'НК', amount: 2 }],
     };
 
     const CRAFTING_RECIPES_R4 = {
         'СФ': [{ code: 'КП', amount: 2 }], 'МБ': [{ code: 'H2O', amount: 2 }], 'АСГ': [{ code: 'ЛС', amount: 2 }],
         'ИГ': [{ code: 'ФС', amount: 2 }], 'СРВ': [{ code: 'ПР', amount: 2 }], 'РЭ': [{ code: 'ЗС', amount: 2 }],
+        'АВУ': [{ code: 'CO', amount: 2 }], 'БР': [{ code: 'КУ', amount: 2 }], 'АБП': [{ code: 'ВК', amount: 2 }],
+        'СТ': [{ code: 'ГР', amount: 2 }], 'ГСЕК': [{ code: 'МД', amount: 2 }], 'КО': [{ code: 'УП', amount: 2 }],
     };
     
     // Задания для Раунда 1 (только У1)
@@ -212,11 +215,27 @@
         { type: 'HEALTH', value: 20, msg: 'Сильные травмы экипажа от падения оборудования.' }
     ];
     const CRISIS_DATABASE = {
-        'A': { name: "ЭНЕРГЕТИЧЕСКИЙ ШТОРМ", flaw: "Утечка Энергии: -10 Э в конце раунда.", resolved: false, solution: { resource: 'ИГ', task: { question: "Рассчитайте ток (в А), если U=20 В, R=4 Ом.", answer: "5", rewardMsg: "Аварийный генератор запущен.", penalty: { type: 'POWER', value: 5 } } } },
+        'A': { name: "ЭНЕРГЕТИЧЕСКИЙ ШТОРМ", flaw: "Утечка Энергии: -10 Э в конце раунда.", resolved: false, solution: { resource: 'ИГ', task: { question: "Рассчитайте ток (в А), если U=20 В, R=4 Ом. ($I = U / R$)", answer: "5", rewardMsg: "Аварийный генератор запущен.", penalty: { type: 'POWER', value: 5 } } } },
         'B': { name: "БИОЛОГИЧЕСКАЯ УГРОЗА", flaw: "Снабжение Водой (H₂O) и Пищей (FOOD) прекращено.", resolved: false, solution: { resource: 'СРВ', task: { question: "Какой процесс обеспечивает растениям возможность вырабатывать кислород?", answer: "фотосинтез", rewardMsg: "Система рециркуляции перезапущена.", penalty: { type: 'WATER', value: 5 } } } },
         'C': { name: "КРИТИЧЕСКАЯ ПРОБОИНА", flaw: "50% шанс получить -10 Здоровья с каждым действием.", resolved: false, solution: { resource: 'АСГ', task: { question: "Какое основное преимущество дает сплав Титана (ТТ) для корпуса?", answer: "сверхпрочность", rewardMsg: "Пробоина временно устранена.", penalty: { type: 'HEALTH', value: 10 } } } }
     };
 
+    const ROUND_6_CHALLENGE = {
+        name: "СОЗДАНИЕ СВЕРХДАЛЬНЕГО ТРАНСПОНДЕРА",
+        flaw: "Только мощный транспондер может пробить ионную бурю и отправить сигнал спасения.",
+        cost: [
+            { code: 'ФС', amount: 2, group: 'A' }, 
+            { code: 'ПР', amount: 2, group: 'B' }, 
+            { code: 'ЗС', amount: 2, group: 'C' }  
+        ],
+        task: {
+            question: "Какое основное требование к орбитальной механике необходимо учесть при расчете окна запуска спасательного аппарата?",
+            answer: "орбитальное выравнивание",
+            rewardMsg: "Расчеты завершены. Транспондер готов к запуску.",
+            penalty: { type: 'HEALTH', value: 15 }
+        }
+    };
+    
     // --- 3. ОСНОВНЫЕ ФУНКЦИИ ИГРЫ ---
     
     function updateResourceDisplay() {
@@ -260,11 +279,106 @@
         }
     }
 
-    // --- РАУНД 1 ЛОГИКА (ЗАКУПКА) ---
-    function renderRound1Actions() { /* ... (логика Р1) ... */ }
-    function buyResource(code, price) { /* ... (логика Р1) ... */ }
-    function startRound1TaskPhase() { /* ... (логика Р1) ... */ }
-    function submitRound1Task(groupCode) { /* ... (логика Р1) ... */ }
+    // --- РАУНД 1 ЛОГИКА (ЗАКУПКА и ДОБЫЧА У1) ---
+    function renderRound1Actions() { 
+        const actionsDiv = document.getElementById('action-buttons');
+        actionsDiv.innerHTML = '';
+        document.getElementById('action-prompt').textContent = `Доступные баллы: ${gameData.points}. Выберите ресурс У1 для покупки.`;
+        
+        const level1Resources = Object.values(RESOURCE_DATABASE).flatMap(cat => cat.level1);
+
+        level1Resources.forEach(res => {
+            const price = RESOURCE_PRICES[res.code];
+            const button = document.createElement('button');
+            button.className = 'round-action-button';
+            button.textContent = `Купить ${res.name} (${res.code}) | Цена: ${price} баллов`;
+            
+            button.onclick = () => buyResource(res.code, price);
+            
+            if (gameData.points < price) {
+                button.disabled = true;
+                button.title = "Недостаточно баллов для покупки.";
+            }
+            actionsDiv.appendChild(button);
+        });
+
+        const endBuyPhaseButton = document.createElement('button');
+        endBuyPhaseButton.id = 'end-buy-phase';
+        endBuyPhaseButton.textContent = 'ЗАВЕРШИТЬ ЗАКУПКУ И ПЕРЕЙТИ К ДОБЫЧЕ (ЗАДАНИЕ)';
+        endBuyPhaseButton.style.backgroundColor = '#f39c12';
+        endBuyPhaseButton.onclick = startRound1TaskPhase;
+        actionsDiv.appendChild(endBuyPhaseButton);
+    }
+    
+    function buyResource(code, price) { 
+        if (gameData.points >= price) {
+            gameData.points -= price;
+            gameData.inventory[code] = (gameData.inventory[code] || 0) + 1;
+            logEvent(`Покупка: 1 ед. ${RESOURCE_LOOKUP[code].name} (${code}). Осталось баллов: ${gameData.points}`);
+            renderRound1Actions();
+            updateResourceDisplay();
+        } else {
+            logEvent('Ошибка: Недостаточно баллов для этой покупки!', true);
+        }
+    }
+
+    function startRound1TaskPhase() { 
+        if (gameData.taskCompleted) {
+             logEvent('Фаза добычи уже завершена! Переходите к следующему раунду.', true);
+             return;
+        }
+
+        const actionsDiv = document.getElementById('action-buttons');
+        actionsDiv.innerHTML = '';
+        document.getElementById('action-prompt').textContent = `Фаза 2: ДОБЫЧА. Вы можете выполнить одно задание для получения дополнительных ресурсов У1 и баллов.`;
+
+        ROUND_1_TASKS.forEach(task => {
+            const taskElement = document.createElement('div');
+            taskElement.style.marginBottom = '15px';
+            taskElement.innerHTML = `
+                <h3>${task.group} | 💡 Задание: ${task.question}</h3>
+                <input type="text" id="task-input-${task.group}" placeholder="Введите ваш ответ (1-2 слова)" style="width: 300px; padding: 8px; margin-right: 10px;">
+                <button id="task-button-${task.group}" onclick="submitRound1Task('${task.group}')">
+                    ВЫПОЛНИТЬ | Награда: ${task.reward.amount} ед. ${RESOURCE_LOOKUP[task.reward.code].name} (${task.reward.code}) и ${task.points} баллов
+                </button>
+            `;
+            actionsDiv.appendChild(taskElement);
+        });
+
+        document.getElementById('end-round-button').disabled = true;
+    }
+
+    function submitRound1Task(groupCode) { 
+        if (gameData.taskCompleted) {
+            logEvent('Задание уже выполнено! Переходите к следующему раунду.', true);
+            return;
+        }
+
+        const task = ROUND_1_TASKS.find(t => t.group === groupCode);
+        const input = document.getElementById(`task-input-${groupCode}`);
+        
+        const answer = input.value.trim().toLowerCase().replace(/ /g, "");
+        const expected = task.answer.toLowerCase().replace(/ /g, "");
+        
+        if (answer === expected) {
+            gameData.inventory[task.reward.code] = (gameData.inventory[task.reward.code] || 0) + task.reward.amount;
+            gameData.points += task.points;
+            gameData.taskCompleted = true;
+
+            logEvent(`✅ УСПЕХ! ${task.group} добыла 1 ед. ${task.reward.code} и получила ${task.points} баллов.`);
+            document.getElementById('action-prompt').textContent = 'Задание успешно выполнено. Переходите к Раунду 2.';
+            document.getElementById('end-round-button').disabled = false;
+
+        } else {
+            logEvent(`❌ ПРОВАЛ. Неверный ответ. Попробуйте другое действие в следующем раунде.`, true);
+        }
+
+        document.querySelectorAll('[id^="task-input-"]').forEach(el => el.disabled = true);
+        document.querySelectorAll('[id^="task-button-"]').forEach(el => el.disabled = true);
+        updateResourceDisplay();
+    }
+
+
     function initRound1() {
         document.getElementById('round-number').textContent = gameData.round;
         document.getElementById('next-round-indicator').textContent = `(${gameData.round + 1})`;
@@ -285,40 +399,227 @@
     // --- РАУНД 2 ЛОГИКА (ДОБОР У1) ---
     function initRound2() {
         document.getElementById('action-prompt').textContent = 'Выберите группу (A, B, или C) для выполнения задания и добычи 1 ед. ресурса У1.';
+        
+        // --- ИСПРАВЛЕНИЕ: АКТИВАЦИЯ КНОПОК ГРУПП ---
+        document.getElementById('select-group-a').disabled = false;
+        document.getElementById('select-group-b').disabled = false;
+        document.getElementById('select-group-c').disabled = false;
+        
         document.getElementById('select-group-a').onclick = () => selectGroup('A');
         document.getElementById('select-group-b').onclick = () => selectGroup('B');
         document.getElementById('select-group-c').onclick = () => selectGroup('C');
+        
         document.getElementById('end-round-button').disabled = false;
         document.getElementById('end-round-button').textContent = `ЗАВЕРШИТЬ РАУНД ${gameData.round} (ПЕРЕЙТИ К 3)`;
+        
         renderRound2Actions();
         logEvent('СИСТЕМА: Активирован Раунд 2. Доступна фаза добычи ресурсов У1 через выполнение заданий.');
     }
-    function renderRound2Actions() { /* ... (логика Р2) ... */ }
-    function submitRound2Task() { /* ... (логика Р2) ... */ }
+    
+    function renderRound2Actions() {
+        const actionsDiv = document.getElementById('action-buttons');
+        actionsDiv.innerHTML = '';
+
+        if (!gameData.activeGroup) {
+            actionsDiv.innerHTML = '<button class="round-action-button" disabled>Выберите группу</button>';
+            return;
+        }
+
+        const task = ROUND_2_TASKS[gameData.activeGroup];
+        
+        actionsDiv.innerHTML = `
+            <h3>Группа ${gameData.activeGroup} | 💡 Задание: ${task.question}</h3>
+            <p>Награда: 1 ед. ${RESOURCE_LOOKUP[task.reward.code].name} (${task.reward.code}).</p>
+            <input type="text" id="task-input-R2" placeholder="Введите ваш ответ" style="width: 300px; padding: 8px; margin-right: 10px;">
+            <button id="task-button-R2" onclick="submitRound2Task()">ВЫПОЛНИТЬ ДЕЙСТВИЕ</button>
+            <p class="error">Штраф за неверный ответ: -${task.penalty.value} ${task.penalty.type}</p>
+        `;
+    }
+
+    function submitRound2Task() {
+        const input = document.getElementById('task-input-R2');
+        const button = document.getElementById('task-button-R2');
+        const task = ROUND_2_TASKS[gameData.activeGroup];
+        const answer = input.value.trim().toLowerCase().replace(/ /g, "");
+        const expected = task.answer.toLowerCase().replace(/ /g, "");
+        
+        button.disabled = true;
+        input.disabled = true;
+
+        if (answer === expected) { 
+            // ✅ Успех
+            gameData.inventory[task.reward.code] = (gameData.inventory[task.reward.code] || 0) + task.reward.amount;
+            logEvent(`✅ УСПЕХ! Группа ${gameData.activeGroup} добыла 1 ед. ${task.reward.code}.`);
+        } else {
+            // ❌ Неверный ответ и штраф
+            const penaltyType = task.penalty.type.toLowerCase();
+            const penaltyValue = task.penalty.value;
+            
+            gameData.resources[penaltyType] -= penaltyValue; 
+            
+            logEvent(`❌ ПРОВАЛ. Группа ${gameData.activeGroup} не смогла выполнить задание. Штраф: -${penaltyValue} ${penaltyType.toUpperCase()}!`, true);
+        }
+        
+        updateResourceDisplay();
+        document.getElementById('action-prompt').textContent = `Действие Группы ${gameData.activeGroup} завершено. Выберите другую группу или завершите раунд.`;
+        gameData.activeGroup = null; 
+        renderRound2Actions(); 
+    }
 
     // --- РАУНД 3 ЛОГИКА (КРАФТИНГ У2) ---
     function initRound3() {
         document.getElementById('action-prompt').textContent = 'РАУНД 3: КРАФТИНГ УРОВНЯ 2. Выберите ресурс У2, который хотите произвести.';
+        
+        document.getElementById('select-group-a').disabled = false;
+        document.getElementById('select-group-b').disabled = false;
+        document.getElementById('select-group-c').disabled = false;
+
         document.getElementById('select-group-a').onclick = () => selectGroup('A');
         document.getElementById('select-group-b').onclick = () => selectGroup('B');
         document.getElementById('select-group-c').onclick = () => selectGroup('C');
+        
         document.getElementById('end-round-button').disabled = false;
         document.getElementById('end-round-button').textContent = `ЗАВЕРШИТЬ РАУНД ${gameData.round} (ПЕРЕЙТИ К 4)`;
+
         renderRound3Actions();
         logEvent('СИСТЕМА: Активирован Раунд 3. Крафтинг ресурсов Уровня 2.');
     }
-    function renderRound3Actions() { /* ... (логика Р3) ... */ }
-    function tryCrafting(outputCode, recipe) { /* ... (логика Р3) ... */ }
+    
+    function renderRound3Actions() {
+        const actionsDiv = document.getElementById('action-buttons');
+        actionsDiv.innerHTML = '';
+        
+        if (!gameData.activeGroup) {
+            actionsDiv.innerHTML = '<p>Выберите группу для начала крафтинга.</p>';
+            return;
+        }
+
+        const category = gameData.activeGroup === 'A' ? 'TECH_ENERGY' : (gameData.activeGroup === 'B' ? 'BIO_LIFE' : 'CONSTRUCTION_REPAIR');
+        const level2Resources = RESOURCE_DATABASE[category].level2;
+        
+        level2Resources.forEach(res => {
+            const recipe = CRAFTING_RECIPES_R3[res.code];
+            if (!recipe) return; // Пропускаем ресурсы без рецепта в R3
+            
+            const neededText = recipe.map(r => `${r.amount} ед. ${RESOURCE_LOOKUP[r.code].name} (${r.code})`).join(', ');
+            
+            const button = document.createElement('button');
+            button.className = 'round-action-button';
+            button.textContent = `Произвести ${res.name} (${res.code}) | Требуется: ${neededText}`;
+            
+            button.onclick = () => tryCrafting(res.code, recipe);
+            
+            let canCraft = true;
+            recipe.forEach(r => {
+                if ((gameData.inventory[r.code] || 0) < r.amount) {
+                    canCraft = false;
+                }
+            });
+
+            if (!canCraft) {
+                button.disabled = true;
+                button.title = "Недостаточно ресурсов У1.";
+            }
+
+            actionsDiv.appendChild(button);
+        });
+        
+        const tradeButton = document.createElement('button');
+        tradeButton.textContent = 'ОБМЕН/ДОБОР РЕСУРСОВ У1';
+        tradeButton.style.backgroundColor = '#9b59b6';
+        tradeButton.onclick = () => logEvent('Переход к обмену/добору... (Функция не реализована)', true);
+        actionsDiv.appendChild(tradeButton);
+    }
+    
+    function tryCrafting(outputCode, recipe, isR4 = false) {
+        let missingResources = [];
+
+        recipe.forEach(r => {
+            if ((gameData.inventory[r.code] || 0) < r.amount) {
+                missingResources.push({ code: r.code, needed: r.amount, have: (gameData.inventory[r.code] || 0) });
+            }
+        });
+
+        if (missingResources.length > 0) {
+            const missingText = missingResources.map(m => `${m.code} (Надо: ${m.needed}, Есть: ${m.have})`).join(', ');
+            logEvent(`❌ ОШИБКА КРАФТИНГА: Недостаточно ресурсов. Не хватает: ${missingText}.`, true);
+            return;
+        }
+
+        recipe.forEach(r => {
+            gameData.inventory[r.code] -= r.amount;
+        });
+
+        gameData.inventory[outputCode] = (gameData.inventory[outputCode] || 0) + 1;
+        
+        logEvent(`✅ УСПЕХ! Группа ${gameData.activeGroup} произвела 1 ед. ${RESOURCE_LOOKUP[outputCode].name} (${outputCode}).`);
+
+        updateResourceDisplay();
+        if (!isR4) {
+            renderRound3Actions();
+        } else {
+            renderRound4Actions();
+        }
+    }
 
     // --- РАУНД 4 ЛОГИКА (КРАФТИНГ У3) ---
     function initRound4() {
         document.getElementById('action-prompt').textContent = 'РАУНД 4: КРАФТИНГ УРОВНЯ 3 (ГОТОВЫЕ СИСТЕМЫ). Выберите, какую критическую систему создать.';
+        
+        document.getElementById('select-group-a').disabled = false;
+        document.getElementById('select-group-b').disabled = false;
+        document.getElementById('select-group-c').disabled = false;
+
+        document.getElementById('select-group-a').onclick = () => selectGroup('A');
+        document.getElementById('select-group-b').onclick = () => selectGroup('B');
+        document.getElementById('select-group-c').onclick = () => selectGroup('C');
+
         document.getElementById('end-round-button').disabled = false;
         document.getElementById('end-round-button').textContent = `ЗАВЕРШИТЬ РАУНД ${gameData.round} (ПЕРЕЙТИ К АПОКАЛИПСИСУ)`;
+        
         renderRound4Actions();
         logEvent('СИСТЕМА: Активирован Раунд 4. Крафтинг готовых систем Уровня 3.');
     }
-    function renderRound4Actions() { /* ... (логика Р4) ... */ }
+
+    function renderRound4Actions() {
+        const actionsDiv = document.getElementById('action-buttons');
+        actionsDiv.innerHTML = '';
+        
+        if (!gameData.activeGroup) {
+            actionsDiv.innerHTML = '<p>Выберите группу для начала крафтинга У3.</p>';
+            return;
+        }
+
+        const category = gameData.activeGroup === 'A' ? 'TECH_ENERGY' : (gameData.activeGroup === 'B' ? 'BIO_LIFE' : 'CONSTRUCTION_REPAIR');
+        const level3Resources = RESOURCE_DATABASE[category].level3;
+        
+        level3Resources.forEach(res => {
+            const recipe = CRAFTING_RECIPES_R4[res.code];
+            if (!recipe) return;
+
+            const neededText = recipe.map(r => `${r.amount} ед. ${RESOURCE_LOOKUP[r.code].name} (${r.code})`).join(', ');
+            
+            const button = document.createElement('button');
+            button.className = 'round-action-button';
+            button.textContent = `СОЗДАТЬ: ${res.name} (${res.code}) | Требуется: ${neededText}`;
+            
+            button.onclick = () => tryCrafting(res.code, recipe, true); // True для У3
+            
+            let canCraft = true;
+            recipe.forEach(r => {
+                if ((gameData.inventory[r.code] || 0) < r.amount) {
+                    canCraft = false;
+                }
+            });
+
+            if (!canCraft) {
+                button.disabled = true;
+                button.title = "Недостаточно ресурсов У2.";
+            }
+
+            actionsDiv.appendChild(button);
+        });
+    }
 
     // --- РАУНД 5 ЛОГИКА (АПОКАЛИПСИС) ---
     function initRound5() {
@@ -333,24 +634,278 @@
             return;
         }
         document.getElementById('action-prompt').textContent = 'РАУНД 5: ТРОЙНОЙ КРИЗИС! Каждая группа должна решить свою проблему.';
+        
+        document.getElementById('select-group-a').disabled = false;
+        document.getElementById('select-group-b').disabled = false;
+        document.getElementById('select-group-c').disabled = false;
+
         document.getElementById('select-group-a').onclick = () => selectGroup('A');
         document.getElementById('select-group-b').onclick = () => selectGroup('B');
         document.getElementById('select-group-c').onclick = () => selectGroup('C');
+        
         document.getElementById('end-round-button').disabled = false;
         document.getElementById('end-round-button').textContent = `ЗАВЕРШИТЬ РАУНД ${gameData.round} (ПЕРЕЙТИ К 6)`;
         renderRound5Actions();
         logEvent('СИСТЕМА: Запущен Раунд 5. ТРОЙНОЙ КРИЗИС АКТИВЕН. Срочно устраните угрозы!', true);
         updateResourceDisplay();
     }
-    function renderRound5Actions() { /* ... (логика Р5) ... */ }
-    function resolveCrisisResource(groupCode) { /* ... (логика Р5) ... */ }
-    function resolveCrisisTask(groupCode) { /* ... (логика Р5) ... */ }
+    
+    function renderRound5Actions() {
+        const actionsDiv = document.getElementById('action-buttons');
+        actionsDiv.innerHTML = '';
+        
+        if (!gameData.activeGroup) {
+            actionsDiv.innerHTML = '<p>Выберите группу для анализа текущей катастрофы.</p>';
+            return;
+        }
+
+        const crisis = CRISIS_DATABASE[gameData.activeGroup];
+        const resourceCode = crisis.solution.resource;
+        const task = crisis.solution.task;
+        const hasResource = (gameData.inventory[resourceCode] || 0) > 0;
+        
+        actionsDiv.innerHTML = `
+            <h2>🚨 КРИЗИС ГРУППЫ ${gameData.activeGroup}: ${crisis.name}</h2>
+            <p class="error">**УГРОЗА:** ${crisis.flaw}</p>
+            <p><strong>МЕТОДЫ УСТРАНЕНИЯ:</strong></p>
+            
+            ${hasResource ? `
+                <button class="round-action-button" onclick="resolveCrisisResource('${gameData.activeGroup}')" style="background: #2ecc71;">
+                    Использовать ${RESOURCE_LOOKUP[resourceCode].name} (${resourceCode}) (СНИМАЕТ УГРОЗУ)
+                </button>
+                <p>— Требуется: 1 ед. ${RESOURCE_LOOKUP[resourceCode].name}.</p>
+            ` : `
+                <button class="round-action-button" disabled style="background: #7f8c8d;">
+                    Не хватает: ${RESOURCE_LOOKUP[resourceCode].name} (${resourceCode})
+                </button>
+            `}
+            
+            <hr style="border-top: 1px dashed #e74c3c; margin: 20px 0;">
+
+            <h3>РУЧНОЙ ПРОТОКОЛ: ${task.question}</h3>
+            <input type="text" id="task-input-R5" placeholder="Введите ответ (1-2 слова)" style="width: 300px; padding: 8px; margin-right: 10px;">
+            <button id="task-button-R5" onclick="resolveCrisisTask('${gameData.activeGroup}')" style="background: #f1c40f; color: #0f0a05;">
+                Выполнить Вручную
+            </button>
+            <p>— Награда: Устранение угрозы. Штраф за провал: -${task.penalty.value} ${task.penalty.type.toUpperCase()}.</p>
+        `;
+    }
+
+    function resolveCrisisResource(groupCode) {
+        const crisis = CRISIS_DATABASE[groupCode];
+        const resourceCode = crisis.solution.resource;
+        
+        if ((gameData.inventory[resourceCode] || 0) > 0) {
+            gameData.inventory[resourceCode] -= 1; 
+            
+            CRISIS_DATABASE[groupCode].resolved = true;
+            
+            logEvent(`✅ УГРОЗА УСТРАНЕНА: Кризис ${crisis.name} решен с помощью 1 ед. ${resourceCode}.`, false);
+            document.getElementById('action-prompt').textContent = `Группа ${groupCode} устранила угрозу. Выберите другую группу или завершите раунд.`;
+            
+            // Сбрасываем группу и перерендериваем, чтобы обновить статус
+            gameData.activeGroup = null; 
+            renderRound5Actions();
+            updateResourceDisplay();
+        } else {
+            logEvent('Ошибка: Недостаточно ресурса для автоматического решения!', true);
+        }
+    }
+
+    function resolveCrisisTask(groupCode) {
+        const crisis = CRISIS_DATABASE[groupCode];
+        const task = crisis.solution.task;
+        const input = document.getElementById('task-input-R5');
+        const button = document.getElementById('task-button-R5');
+        const answer = input.value.trim().toLowerCase().replace(/ /g, "");
+
+        button.disabled = true;
+        input.disabled = true;
+        
+        if (answer.includes(task.answer) || task.answer.includes(answer)) {
+            CRISIS_DATABASE[groupCode].resolved = true;
+            logEvent(`✅ УГРОЗА УСТРАНЕНА: Ручной протокол для ${crisis.name} выполнен успешно.`, false);
+        } else {
+            const penaltyType = task.penalty.type.toUpperCase();
+            const penaltyValue = task.penalty.value;
+            gameData.resources[penaltyType.toLowerCase()] -= penaltyValue;
+            
+            logEvent(`❌ ПРОВАЛ: Ручной протокол для ${crisis.name} не удался. Штраф: -${penaltyValue} ${penaltyType}!`, true);
+        }
+
+        updateResourceDisplay();
+        document.getElementById('action-prompt').textContent = `Действие Группы ${groupCode} завершено. Выберите другую группу или завершите раунд.`;
+        
+        gameData.activeGroup = null; 
+        renderRound5Actions();
+    }
 
     // --- РАУНД 6 ЛОГИКА (СОТРУДНИЧЕСТВО) ---
-    // (Код из секции 1)
-    
+    function initRound6() {
+        document.getElementById('action-prompt').textContent = 'РАУНД 6: МЕЖГРУППОВОЕ СОТРУДНИЧЕСТВО. Для отправки сигнала спасения необходимо создать Сверхдальний Транспондер.';
+        
+        document.getElementById('select-group-a').disabled = false;
+        document.getElementById('select-group-b').disabled = false;
+        document.getElementById('select-group-c').disabled = false;
+
+        document.getElementById('select-group-a').onclick = () => selectGroup('A');
+        document.getElementById('select-group-b').onclick = () => selectGroup('B');
+        document.getElementById('select-group-c').onclick = () => selectGroup('C');
+        
+        document.getElementById('end-round-button').disabled = false;
+        document.getElementById('end-round-button').textContent = `ЗАВЕРШИТЬ РАУНД ${gameData.round} (ФИНАЛ)`;
+        
+        renderRound6Actions();
+        logEvent('СИСТЕМА: Запущен Раунд 6. Требуется собрать У2 ресурсы из всех категорий для Транспондера!', true);
+        updateResourceDisplay();
+    }
+
+    function renderRound6Actions() {
+        const actionsDiv = document.getElementById('action-buttons');
+        actionsDiv.innerHTML = '';
+        
+        const challenge = ROUND_6_CHALLENGE;
+        let hasAllResources = true;
+        let missingText = [];
+
+        challenge.cost.forEach(item => {
+            if ((gameData.inventory[item.code] || 0) < item.amount) {
+                hasAllResources = false;
+                missingText.push(`${item.code} (Надо: ${item.amount}, Есть: ${gameData.inventory[item.code] || 0})`);
+            }
+        });
+        
+        actionsDiv.innerHTML = `
+            <h2>📡 ${challenge.name}</h2>
+            <p><strong>ТРЕБОВАНИЯ:</strong> Для постройки необходимы компоненты от каждой группы (Уровень 2):</p>
+            <ul>
+                ${challenge.cost.map(item => `
+                    <li>${item.amount} ед. ${RESOURCE_LOOKUP[item.code].name} (${item.code}) [Группа ${item.group}]</li>
+                `).join('')}
+            </ul>
+
+            <hr style="border-top: 1px dashed #5dade2; margin: 20px 0;">
+
+            ${hasAllResources ? `
+                <button class="round-action-button" onclick="resolveRound6Resource()" style="background: #2ecc71;">
+                    ПОСТРОИТЬ ТРАНСПОНДЕР (Потратить ресурсы)
+                </button>
+            ` : (gameData.r6Resolved ? 
+                `<button class="round-action-button" disabled style="background: #27ae60;">ТРАНСПОНДЕР УЖЕ ПОСТРОЕН</button>` :
+                `<button class="round-action-button" disabled style="background: #e74c3c;">
+                    НЕДОСТАТОЧНО РЕСУРСОВ! Не хватает: ${missingText.join('; ')}
+                </button>
+            `)}
+            
+            <hr style="border-top: 1px dashed #e74c3c; margin: 20px 0;">
+
+            <h3>РУЧНОЙ ПРОТОКОЛ (Если ресурсы потеряны): ${challenge.task.question}</h3>
+            <input type="text" id="task-input-R6" placeholder="Введите ответ (1-2 слова)" style="width: 300px; padding: 8px; margin-right: 10px;" ${gameData.r6Resolved ? 'disabled' : ''}>
+            <button id="task-button-R6" onclick="resolveRound6Task()" style="background: #f1c40f; color: #0f0a05;" ${gameData.r6Resolved ? 'disabled' : ''}>
+                Выполнить Аварийный Расчет
+            </button>
+            <p>— Награда: Успех в расчетах. Штраф за провал: -${challenge.task.penalty.value} ${challenge.task.penalty.type.toUpperCase()}.</p>
+        `;
+    }
+
+    function resolveRound6Resource() {
+        if (gameData.r6Resolved) return;
+        const challenge = ROUND_6_CHALLENGE;
+        
+        challenge.cost.forEach(item => {
+            gameData.inventory[item.code] -= item.amount;
+        });
+
+        gameData.r6Resolved = true; 
+        logEvent(`✅ СИГНАЛ УСПЕХА: Сверхдальний Транспондер построен и запущен! Ожидание спасательного аппарата.`, false);
+        
+        gameData.resources.HEALTH += 20; 
+        logEvent(`БОНУС: Экипаж в безопасности. +20 Здоровья.`, false);
+        
+        updateResourceDisplay();
+        renderRound6Actions(); 
+    }
+
+    function resolveRound6Task() {
+        if (gameData.r6Resolved) return;
+
+        const task = ROUND_6_CHALLENGE.task;
+        const input = document.getElementById('task-input-R6');
+        const button = document.getElementById('task-button-R6');
+        const answer = input.value.trim().toLowerCase().replace(/ /g, "");
+
+        button.disabled = true;
+        input.disabled = true;
+        
+        if (answer.includes(task.answer) || task.answer.includes(answer)) {
+            gameData.r6Resolved = true; 
+            logEvent(`✅ СИГНАЛ УСПЕХА: Аварийный расчет выполнен! Сигнал отправлен.`, false);
+        } else {
+            const penaltyType = task.penalty.type.toUpperCase();
+            const penaltyValue = task.penalty.value;
+            gameData.resources[penaltyType.toLowerCase()] -= penaltyValue;
+            
+            logEvent(`❌ КРИТИЧЕСКИЙ ПРОВАЛ: Аварийный расчет не удался. Штраф: -${penaltyValue} ${penaltyType}!`, true);
+            gameData.r6Resolved = false;
+        }
+        updateResourceDisplay();
+        renderRound6Actions();
+    }
+
     // --- РАУНД 7 ЛОГИКА (ФИНАЛ) ---
-    // (Код из секции 1)
+
+    function initRound7() {
+        document.getElementById('select-group-a').disabled = true;
+        document.getElementById('select-group-b').disabled = true;
+        document.getElementById('select-group-c').disabled = true;
+        document.getElementById('end-round-button').textContent = 'ЗАВЕРШИТЬ МИССИЮ';
+
+        if (gameData.r6Resolved) {
+            document.getElementById('action-prompt').textContent = 'РАУНД 7: ФИНАЛЬНЫЙ ЭТАП. Сигнал отправлен. Спасательный аппарат прибывает. Выберите последнее действие.';
+            
+            const actionsDiv = document.getElementById('action-buttons');
+            actionsDiv.innerHTML = `
+                <h2>🚀 ФИНАЛЬНЫЙ ПРОТОКОЛ: ЭВАКУАЦИЯ</h2>
+                <p>Спасательный аппарат находится на орбите. Требуется <strong>10 ед. Энергии</strong> и <strong>5 ед. Воздуха</strong> для запуска челнока к кораблю.</p>
+                
+                <button class="round-action-button" onclick="finalEvacuate()" style="background: #00b894; font-size: 1.2em;">
+                    НАЧАТЬ ЭВАКУАЦИЮ
+                </button>
+            `;
+        } else {
+             document.getElementById('action-prompt').textContent = 'РАУНД 7: ФИНАЛЬНЫЙ ЭТАП. Сигнал спасения не отправлен. Время на Марсе истекает...';
+             document.getElementById('action-buttons').innerHTML = `
+                <p class="error">Критическая ошибка: Сигнал не отправлен. Миссия провалена.</p>
+             `;
+             document.getElementById('end-round-button').disabled = true;
+             document.getElementById('game-over-message').textContent = 'МИССИЯ ПРОВАЛЕНА. СИГНАЛ СПАСЕНИЯ НЕ ОТПРАВЛЕН.';
+             document.getElementById('game-over-message').style.display = 'block';
+        }
+
+        logEvent('СИСТЕМА: Активирован Раунд 7. ФИНАЛЬНАЯ ФАЗА.', true);
+    }
+
+    function finalEvacuate() {
+        const requiredPower = 10;
+        const requiredAir = 5;
+
+        if (gameData.resources.POWER >= requiredPower && gameData.resources.AIR >= requiredAir) {
+            gameData.resources.POWER -= requiredPower;
+            gameData.resources.AIR -= requiredAir;
+            
+            logEvent('✅ ЭВАКУАЦИЯ УСПЕШНА: Шаттл запущен. Экипаж на пути домой!', false);
+            
+            document.getElementById('game-over-message').textContent = 'МИССИЯ ВЫПОЛНЕНА. ЭКИПАЖ СПАСЕН.';
+            document.getElementById('game-over-message').style.display = 'block';
+            document.getElementById('action-buttons').innerHTML = '';
+            document.getElementById('end-round-button').disabled = true;
+
+        } else {
+            logEvent(`❌ ОТМЕНА ЭВАКУАЦИИ: Недостаточно ресурсов для запуска челнока. Нужно ${requiredPower} Энергии (есть ${gameData.resources.POWER}) и ${requiredAir} Воздуха (есть ${gameData.resources.AIR}).`, true);
+        }
+        updateResourceDisplay();
+    }
+
 
     // --- ГЛОБАЛЬНОЕ УПРАВЛЕНИЕ ---
     
@@ -393,7 +948,6 @@
                          gameData.resources.POWER -= 10;
                          logEvent('КРИТИЧЕСКИЙ ШТРАФ: -10 Энергии из-за нерешенного Шторма.', true);
                     }
-                    // Добавить другие штрафы, если кризисы не решены
                 }
             });
         }
@@ -408,6 +962,13 @@
         gameData.activeGroup = null;
         gameData.points = 0; 
         
+        // --- ИСПРАВЛЕНИЕ: АКТИВАЦИЯ КНОПОК ГРУПП НАЧИНАЯ С РАУНДА 2 ---
+        if (gameData.round >= 2) {
+            document.getElementById('select-group-a').disabled = false;
+            document.getElementById('select-group-b').disabled = false;
+            document.getElementById('select-group-c').disabled = false;
+        }
+
         // Запуск соответствующего раунда
         if (gameData.round === 2) {
             initRound2();
