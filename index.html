@@ -165,6 +165,18 @@
             justify-content: space-between;
             align-items: center;
         }
+        
+        .task-question {
+            color: #3498db;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .task-input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
 
         .action-controls {
             display: flex;
@@ -172,13 +184,18 @@
             align-items: center;
         }
         
-        input[type="number"] {
+        input[type="number"], input[type="text"] {
             background-color: #1e1e1e;
             border: 1px solid #00ffff;
             color: #fff;
             padding: 5px;
             border-radius: 3px;
         }
+        
+        input[type="text"] {
+            width: 250px;
+        }
+
 
         button {
             background-color: #555;
@@ -250,6 +267,11 @@
 
         #log-box p.error {
             color: #ff4444;
+            font-weight: bold;
+        }
+        
+        #log-box p.success {
+            color: #2ecc71;
             font-weight: bold;
         }
 
@@ -352,7 +374,7 @@
         
         <div id="pre-game-selector">
             <h1>МАРСИАНСКИЙ ТЕРМИНАЛ: ВЫБОР ГРУППЫ</h1>
-            <p>Выберите вашу постоянную группу. Это определит ваши **стартовые ресурсы У1** и **специализацию** (доступные крафтинговые рецепты У2/У3).</p>
+            <p>Выберите вашу постоянную группу. Это определит ваши <strong>стартовые ресурсы У1</strong> и <strong>специализацию</strong> (доступные крафтинговые рецепты У2/У3).</p>
             <div class="group-select-buttons">
                 <button id="pre-select-group-a" onclick="setPrimaryGroup('A')">ГРУППА А (ТЕХНОЛОГИЯ/ЭНЕРГИЯ)</button>
                 <button id="pre-select-group-b" onclick="setPrimaryGroup('B')">ГРУППА Б (БИОЛОГИЯ/ЖИЗНЬ)</button>
@@ -420,7 +442,7 @@
         resources: { ...INITIAL_RESOURCES },
         inventory: {}, 
         primaryGroup: null, // Основная группа игрока (A, B, или C)
-        taskCompleted: false, // Флаг для Р1/Р2/Р5/Р6
+        taskAttempted: false, // Флаг для Р1/Р2/Р5/Р6 (Была ли попытка)
         r6Resolved: false, 
     };
     
@@ -513,20 +535,40 @@
         'СТ': [{ code: 'ГР', amount: 2 }], 'ГСЕК': [{ code: 'МД', amount: 2 }], 'КО': [{ code: 'УП', amount: 2 }],
     };
     
-    // Задания для Раунда 1 (только У1 для активной группы)
+    // --- ОБНОВЛЕННЫЕ ЗАДАНИЯ С НЕСКОЛЬКИМИ ВОПРОСАМИ (ОДНО СЛОВО) ---
     const ROUND_1_TASKS = {
-        'A': { group: 'A', question: "Какова основная функция геологического сканера (ГС)?", answer: "поиск редких ресурсов", reward: { code: 'ЖЕ', amount: 1 }, points: 17 },
-        'B': { group: 'B', question: "Назовите основную форму воды, которую добывают на Марсе.", answer: "лед", reward: { code: 'ЛД', amount: 1 }, points: 15 },
-        'C': { group: 'C', question: "Какой ресурс используется для изоляции и имеет код 'СВ'?", answer: "стекловолокно", reward: { code: 'СВ', amount: 1 }, points: 24 },
+        'A': { group: 'A', reward: { code: 'ЖЕ', amount: 1 }, points: 17, tasks: [
+            { question: "Какова основная функция геологического сканера?", answer: "поиск" },
+            { question: "Назовите самый распространенный ресурс в марсианском грунте (РГ).", answer: "реголит" },
+            { question: "Назовите металл с кодом ЖЕ.", answer: "железо" }
+        ]},
+        'B': { group: 'B', reward: { code: 'ЛД', amount: 1 }, points: 15, tasks: [
+            { question: "Назовите основную форму воды, которую добывают на Марсе.", answer: "лед" },
+            { question: "Какой элемент имеет код N?", answer: "азот" },
+            { question: "Назовите основной процесс, дающий кислород растениям.", answer: "фотосинтез" }
+        ]},
+        'C': { group: 'C', reward: { code: 'СВ', amount: 1 }, points: 24, tasks: [
+            { question: "Какой ресурс используется для изоляции и имеет код СВ?", answer: "стекловолокно" },
+            { question: "Назовите металл с кодом АЛ.", answer: "алюминий" },
+            { question: "Назовите сверхпрочный металл с кодом ТТ.", answer: "титан" }
+        ]},
     };
     
-    // Задания для Раунда 2 (У1 через задание - теперь только для активной группы)
     const ROUND_2_TASKS = {
-        'A': { question: "Для чего нужен Изотопный Генератор (ИГ)?", answer: "постоянная энергия", reward: { code: 'CO2', amount: 1 }, penalty: { type: 'POWER', value: 3 } },
-        'B': { question: "Какие три основных элемента необходимы для удобрений (кроме воды)?", answer: "азот калий фосфор", reward: { code: 'N', amount: 1 }, penalty: { type: 'WATER', value: 3 } },
-        'C': { question: "Какой металл используется для сверхпрочных конструкций и имеет код 'ТТ'?", answer: "титан", reward: { code: 'ТТ', amount: 1 }, penalty: { type: 'HEALTH', value: 5 } }
+        'A': { penalty: { type: 'POWER', value: 5 }, tasks: [
+            { question: "Для чего нужен Изотопный Генератор (ИГ)?", answer: "энергия" },
+            { question: "Какое вещество получают из CO2 для топлива?", answer: "метан" }
+        ]},
+        'B': { penalty: { type: 'WATER', value: 5 }, tasks: [
+            { question: "Какие три основных элемента необходимы для удобрений? Назовите один из них, кроме Азота (N).", answer: "калий" },
+            { question: "Что необходимо для создания Жидкой Воды (H2O)?", answer: "лед" }
+        ]},
+        'C': { penalty: { type: 'HEALTH', value: 10 }, tasks: [
+            { question: "Назовите металл, используемый для сверхпрочных конструкций (ТТ).", answer: "титан" },
+            { question: "Какой сплав У2 создается из Алюминия?", answer: "легкий" }
+        ]}
     };
-    
+
     // Параметры для Раунда 5 (Апокалипсис)
     const APOCALYPSE_PENALTIES = [
         { type: 'WATER', value: 15, msg: 'Критическая потеря воды из-за пробоины в трубе.' },
@@ -541,7 +583,10 @@
             resolved: false, 
             solution: { 
                 resource: 'ИГ', 
-                task: { question: "Рассчитайте ток (в А), если U=20 В, R=4 Ом. ($I = U / R$)", answer: "5", rewardMsg: "Аварийный генератор запущен.", penalty: { type: 'POWER', value: 5 } } 
+                task: { questions: [
+                    { question: "Рассчитайте ток (в А), если U=20 В, R=4 Ом. ($I = U / R$)", answer: "5" },
+                    { question: "Назовите единицу измерения напряжения.", answer: "вольт" }
+                ], penalty: { type: 'POWER', value: 10 } } 
             } 
         },
         'B': { 
@@ -550,7 +595,10 @@
             resolved: false, 
             solution: { 
                 resource: 'СРВ', 
-                task: { question: "Какой процесс обеспечивает растениям возможность вырабатывать кислород?", answer: "фотосинтез", rewardMsg: "Система рециркуляции перезапущена.", penalty: { type: 'WATER', value: 5 } } 
+                task: { questions: [
+                    { question: "Какой процесс обеспечивает растениям возможность вырабатывать кислород?", answer: "фотосинтез" },
+                    { question: "Какой ресурс У3 помогает восстановить ЗЭ?", answer: "медбот" }
+                ], penalty: { type: 'WATER', value: 10 } } 
             } 
         },
         'C': { 
@@ -559,7 +607,10 @@
             resolved: false, 
             solution: { 
                 resource: 'АСГ', 
-                task: { question: "Какое основное преимущество дает сплав Титана (ТТ) для корпуса?", answer: "сверхпрочность", rewardMsg: "Пробоина временно устранена.", penalty: { type: 'HEALTH', value: 10 } } 
+                task: { questions: [
+                    { question: "Какое основное преимущество дает сплав Титана (ТТ) для корпуса?", answer: "прочность" },
+                    { question: "Какой элемент необходим для создания ВК?", answer: "стекловолокно" }
+                ], penalty: { type: 'HEALTH', value: 15 } } 
             } 
         }
     };
@@ -573,10 +624,12 @@
             { code: 'ЗС', amount: 2, group: 'C' }  // Закаленный Сплав (C, У2)
         ],
         task: {
-            question: "Какое основное требование к орбитальной механике необходимо учесть при расчете окна запуска спасательного аппарата?",
-            answer: "орбитальное выравнивание",
-            rewardMsg: "Расчеты завершены. Транспондер готов к запуску.",
-            penalty: { type: 'HEALTH', value: 15 }
+            questions: [
+                { question: "Какое основное требование к орбитальной механике необходимо учесть при расчете окна запуска спасательного аппарата? (выравнивание)", answer: "выравнивание" },
+                { question: "Назовите планету, с которой будет идти спасательный сигнал.", answer: "земля" },
+                { question: "Что использует Транспондер для передачи сигнала?", answer: "антенна" }
+            ],
+            penalty: { type: 'HEALTH', value: 20 }
         }
     };
     
@@ -624,6 +677,8 @@
         p.innerHTML = `[${timestamp}] ${message}`;
         if (isError) {
             p.classList.add('error');
+        } else if (!isError && message.includes('УСПЕХ')) {
+            p.classList.add('success');
         }
         logBox.prepend(p); 
         // Ограничение лога 20 записями
@@ -651,7 +706,7 @@
         // 1. Начисляем бонусные ресурсы
         PRIMARY_GROUP_BONUS_RESOURCES[group].forEach(code => {
             gameData.inventory[code] = (gameData.inventory[code] || 0) + 2; // +2 ед. У1
-            logEvent(`БОНУС: Основная Группа ${group} получила **2 ед.** ${RESOURCE_LOOKUP[code].name} (${code}).`);
+            logEvent(`БОНУС: Основная Группа ${group} получила 2 ед. ${RESOURCE_LOOKUP[code].name} (${code}).`);
         });
 
         // 2. Блокируем кнопки выбора
@@ -741,7 +796,7 @@
         if (gameData.points >= totalPrice && quantity > 0) {
             gameData.points -= totalPrice;
             gameData.inventory[code] = (gameData.inventory[code] || 0) + quantity;
-            logEvent(`Покупка: **${quantity} ед.** ${RESOURCE_LOOKUP[code].name} (${code}). Потрачено: **${totalPrice} Б**.`);
+            logEvent(`Покупка: ${quantity} ед. ${RESOURCE_LOOKUP[code].name} (${code}). Потрачено: ${totalPrice} Б.`);
             
             updateResourceDisplay(); 
             // Полная перерисовка для обновления лимитов всех кнопок
@@ -836,7 +891,7 @@
     }
     
     function startRound1TaskPhase() { 
-        if (gameData.taskCompleted) {
+        if (gameData.taskAttempted) {
              logEvent('Фаза добычи уже завершена! Переходите к следующему раунду.', true);
              document.getElementById('end-round-button').disabled = false;
              return;
@@ -844,18 +899,29 @@
 
         const actionsDiv = document.getElementById('action-buttons');
         actionsDiv.innerHTML = '';
-        document.getElementById('action-prompt').textContent = `Фаза 2/2: ДОБЫЧА. Выполните задание Группы **${gameData.primaryGroup}** для получения дополнительных ресурсов У1 и баллов.`;
+        document.getElementById('action-prompt').textContent = `Фаза 2/2: ДОБЫЧА. Выполните задания Группы ${gameData.primaryGroup} для получения дополнительных ресурсов У1 и баллов.`;
         document.getElementById('action-header-text').textContent = `2. ФАЗА ДОБЫЧИ (ЗАДАНИЕ)`;
 
-        const task = ROUND_1_TASKS[gameData.primaryGroup];
+        const taskData = ROUND_1_TASKS[gameData.primaryGroup];
         const taskElement = document.createElement('div');
         taskElement.style.marginBottom = '15px';
+        
+        let questionsHTML = '';
+        taskData.tasks.forEach((task, index) => {
+            questionsHTML += `
+                <div class="task-input-group">
+                    <span class="task-question">${index + 1}. ${task.question}</span>
+                    <input type="text" id="task-input-R1-${index}" placeholder="Ответ (одно слово)" style="width: 250px; padding: 8px; margin-left: 10px;">
+                </div>
+            `;
+        });
+        
         taskElement.innerHTML = `
-            <h3 style="color: #3498db;">Группа ${gameData.primaryGroup} | 💡 Задание: **${task.question}**</h3>
-            <p style="color: #ffcc00;">Награда: **${task.reward.amount} ед.** ${RESOURCE_LOOKUP[task.reward.code].name} (${task.reward.code}) и **${task.points} БАЛЛОВ**</p>
-            <input type="text" id="task-input-R1" placeholder="Введите ваш ответ (1-2 слова)" style="width: 300px; padding: 8px; margin-right: 10px;">
+            <h3 style="color: #3498db;">Группа ${gameData.primaryGroup} | 💡 Задания (${taskData.tasks.length} вопроса)</h3>
+            <p style="color: #ffcc00;">Максимальная Награда (за все): ${taskData.reward.amount} ед. ${RESOURCE_LOOKUP[taskData.reward.code].name} (${taskData.reward.code}) и ${taskData.points} БАЛЛОВ</p>
+            ${questionsHTML}
             <button id="task-button-R1" onclick="submitRound1Task()" class="round-action-button-main" style="width: auto; background: #3498db;">
-                ВЫПОЛНИТЬ ЗАДАНИЕ
+                ВЫПОЛНИТЬ ЗАДАНИЯ
             </button>
         `;
         actionsDiv.appendChild(taskElement);
@@ -864,30 +930,44 @@
     }
 
     function submitRound1Task() { 
-        if (gameData.taskCompleted) return;
+        if (gameData.taskAttempted) return;
 
-        const task = ROUND_1_TASKS[gameData.primaryGroup];
-        const input = document.getElementById(`task-input-R1`);
+        const taskData = ROUND_1_TASKS[gameData.primaryGroup];
         const button = document.getElementById(`task-button-R1`);
         
-        const answer = input.value.trim().toLowerCase().replace(/ /g, "");
-        const expected = task.answer.toLowerCase().replace(/ /g, "");
+        let correctAnswers = 0;
+        let totalQuestions = taskData.tasks.length;
         
+        taskData.tasks.forEach((task, index) => {
+            const input = document.getElementById(`task-input-R1-${index}`);
+            const answer = input.value.trim().toLowerCase().replace(/[^a-zа-яё]/g, ""); // Очистка: только буквы
+            const expected = task.answer.toLowerCase().replace(/[^a-zа-яё]/g, "");
+            
+            input.disabled = true;
+            if (answer === expected && answer.length > 0) {
+                correctAnswers++;
+            }
+        });
+
         button.disabled = true;
-        input.disabled = true;
+        gameData.taskAttempted = true; // Попытка сделана
+        
+        const rewardMultiplier = correctAnswers / totalQuestions;
+        
+        const gainedResources = Math.floor(taskData.reward.amount * rewardMultiplier);
+        const gainedPoints = Math.floor(taskData.points * rewardMultiplier);
+        
+        if (correctAnswers > 0) {
+            const rewardCode = taskData.reward.code;
+            gameData.inventory[rewardCode] = (gameData.inventory[rewardCode] || 0) + gainedResources;
+            gameData.points += gainedPoints;
 
-        if (answer === expected) {
-            gameData.inventory[task.reward.code] = (gameData.inventory[task.reward.code] || 0) + task.reward.amount;
-            gameData.points += task.points;
-            gameData.taskCompleted = true;
-
-            logEvent(`✅ УСПЕХ! Группа ${gameData.primaryGroup} добыла 1 ед. **${task.reward.code}** и получила **${task.points} Б**.`);
-            document.getElementById('action-prompt').textContent = 'Задание успешно выполнено. Переходите к Раунду 2.';
+            logEvent(`✅ УСПЕХ (${correctAnswers}/${totalQuestions}): Группа ${gameData.primaryGroup} добыла ${gainedResources} ед. ${rewardCode} и получила ${gainedPoints} Б.`);
+            document.getElementById('action-prompt').textContent = `Задания выполнены. ${correctAnswers} из ${totalQuestions} правильных. Переходите к Раунду 2.`;
 
         } else {
-            logEvent(`❌ ПРОВАЛ. Неверный ответ. Ресурс не получен.`, true);
-            document.getElementById('action-prompt').textContent = 'Задание провалено. Переходите к Раунду 2.';
-            gameData.taskCompleted = true; // Задание можно выполнить только один раз
+            logEvent(`❌ ПРОВАЛ (${correctAnswers}/${totalQuestions}). Ни один ответ не верен. Ресурсы и баллы не получены.`, true);
+            document.getElementById('action-prompt').textContent = 'Задания провалены. Переходите к Раунду 2.';
         }
 
         updateResourceDisplay();
@@ -900,7 +980,7 @@
         document.getElementById('next-round-indicator').textContent = `(${gameData.round + 1})`;
         document.getElementById('end-round-button').textContent = `ЗАВЕРШИТЬ РАУНД ${gameData.round} (ПЕРЕЙТИ К 2)`;
         
-        gameData.taskCompleted = false; // Сброс
+        gameData.taskAttempted = false; // Сброс
         logEvent('СИСТЕМА: Запуск Протокола Раунда 1. Начните закупку ресурсов Уровня 1 (100 Баллов).');
         renderRound1Actions();
         updateResourceDisplay();
@@ -911,10 +991,10 @@
     function initRound2() {
         document.getElementById('round-number').textContent = gameData.round;
         document.getElementById('next-round-indicator').textContent = `(${gameData.round + 1})`;
-        document.getElementById('action-header-text').textContent = `1. ФАЗА ДОБЫЧИ У1 (ОДИН РЕСУРС)`;
+        document.getElementById('action-header-text').textContent = `1. ФАЗА ДОБЫЧИ У1 (ЗАДАНИЕ)`;
         document.getElementById('end-round-button').textContent = `ЗАВЕРШИТЬ РАУНД ${gameData.round} (ПЕРЕЙТИ К 3)`;
         
-        gameData.taskCompleted = false; // Сброс для Р2
+        gameData.taskAttempted = false; // Сброс для Р2
         renderRound2Actions();
         logEvent(`СИСТЕМА: Активирован Раунд 2. Группа ${gameData.primaryGroup} выполняет задание добычи ресурса У1.`);
     }
@@ -923,23 +1003,33 @@
         const actionsDiv = document.getElementById('action-buttons');
         actionsDiv.innerHTML = '';
         
-        if (gameData.taskCompleted) {
+        if (gameData.taskAttempted) {
             document.getElementById('action-prompt').textContent = `Действие Группы ${gameData.primaryGroup} завершено. Переходите к Раунду 3.`;
             actionsDiv.innerHTML = `<p style="text-align: center; color: #00ffaa;">Действие Группы ${gameData.primaryGroup} в этом раунде завершено.</p>`;
             document.getElementById('end-round-button').disabled = false;
             return;
         }
 
-        const task = ROUND_2_TASKS[gameData.primaryGroup];
+        const taskData = ROUND_2_TASKS[gameData.primaryGroup];
+        const rewardCode = PRIMARY_GROUP_BONUS_RESOURCES[gameData.primaryGroup][0]; // Награда: 1 ед. первого бонусного У1
         
+        let questionsHTML = '';
+        taskData.tasks.forEach((task, index) => {
+            questionsHTML += `
+                <div class="task-input-group">
+                    <span class="task-question">${index + 1}. ${task.question}</span>
+                    <input type="text" id="task-input-R2-${index}" placeholder="Ответ (одно слово)" style="width: 250px; padding: 8px; margin-left: 10px;">
+                </div>
+            `;
+        });
+
         actionsDiv.innerHTML = `
             <div style="padding: 10px; border: 1px solid #3498db;">
-                <h3 style="color: #3498db;">Группа ${gameData.primaryGroup} | 💡 Задание: **${task.question}**</h3>
-                <p style="color: #ffcc00;">Награда: **1 ед.** ${RESOURCE_LOOKUP[task.reward.code].name} (${task.reward.code}).</p>
-                <p class="error" style="font-size: 0.9em;">Штраф за неверный ответ: **-${task.penalty.value} ${task.penalty.type.toUpperCase()}**</p>
-                
-                <input type="text" id="task-input-R2" placeholder="Введите ваш ответ" style="width: 300px; padding: 8px; margin-right: 10px;">
-                <button id="task-button-R2" onclick="submitRound2Task()" class="round-action-button-main" style="width: auto; background: #3498db;">
+                <h3 style="color: #3498db;">Группа ${gameData.primaryGroup} | 💡 Задания (${taskData.tasks.length} вопроса)</h3>
+                <p style="color: #ffcc00;">Полный Успех: 1 ед. ${RESOURCE_LOOKUP[rewardCode].name} (${rewardCode}).</p>
+                <p class="error" style="font-size: 0.9em;">Полный Провал: -${taskData.penalty.value} ${taskData.penalty.type.toUpperCase()}</p>
+                ${questionsHTML}
+                <button id="task-button-R2" onclick="submitRound2Task('${rewardCode}')" class="round-action-button-main" style="width: auto; background: #3498db;">
                     ВЫПОЛНИТЬ ДЕЙСТВИЕ
                 </button>
             </div>
@@ -947,31 +1037,41 @@
         document.getElementById('end-round-button').disabled = true;
     }
 
-    function submitRound2Task() {
-        if (gameData.taskCompleted) return;
+    function submitRound2Task(rewardCode) {
+        if (gameData.taskAttempted) return;
 
-        const input = document.getElementById('task-input-R2');
+        const taskData = ROUND_2_TASKS[gameData.primaryGroup];
         const button = document.getElementById('task-button-R2');
-        const task = ROUND_2_TASKS[gameData.primaryGroup];
 
-        const answer = input.value.trim().toLowerCase().replace(/ /g, "");
-        const expected = task.answer.toLowerCase().replace(/ /g, "");
+        let correctAnswers = 0;
+        let totalQuestions = taskData.tasks.length;
+        
+        taskData.tasks.forEach((task, index) => {
+            const input = document.getElementById(`task-input-R2-${index}`);
+            const answer = input.value.trim().toLowerCase().replace(/[^a-zа-яё]/g, "");
+            const expected = task.answer.toLowerCase().replace(/[^a-zа-яё]/g, "");
+            
+            input.disabled = true;
+            if (answer === expected && answer.length > 0) {
+                correctAnswers++;
+            }
+        });
         
         button.disabled = true;
-        input.disabled = true;
+        gameData.taskAttempted = true; // Действие выполнено
         
-        gameData.taskCompleted = true; // Действие выполнено
-        
-        if (answer.includes(expected) || expected.includes(answer)) { 
-            gameData.inventory[task.reward.code] = (gameData.inventory[task.reward.code] || 0) + task.reward.amount;
-            logEvent(`✅ УСПЕХ! Группа ${gameData.primaryGroup} добыла 1 ед. **${task.reward.code}**.`);
+        if (correctAnswers === totalQuestions) { 
+            gameData.inventory[rewardCode] = (gameData.inventory[rewardCode] || 0) + 1;
+            logEvent(`✅ УСПЕХ (${correctAnswers}/${totalQuestions}): Группа ${gameData.primaryGroup} добыла 1 ед. ${rewardCode}.`);
+        } else if (correctAnswers < totalQuestions && correctAnswers > 0) {
+            logEvent(`⚠️ ЧАСТИЧНЫЙ УСПЕХ (${correctAnswers}/${totalQuestions}): Ресурс не получен, но и штрафа нет.`, true);
         } else {
-            const penaltyType = task.penalty.type.toUpperCase();
-            const penaltyValue = task.penalty.value;
+            const penaltyType = taskData.penalty.type.toUpperCase();
+            const penaltyValue = taskData.penalty.value;
             
             gameData.resources[penaltyType] -= penaltyValue; 
             
-            logEvent(`❌ ПРОВАЛ. Группа ${gameData.primaryGroup} не смогла выполнить задание. Штраф: **-${penaltyValue} ${penaltyType}**!`, true);
+            logEvent(`❌ ПОЛНЫЙ ПРОВАЛ (${correctAnswers}/${totalQuestions}): Штраф: -${penaltyValue} ${penaltyType}!`, true);
         }
         
         updateResourceDisplay();
@@ -1001,7 +1101,7 @@
 
         gameData.inventory[outputCode] = (gameData.inventory[outputCode] || 0) + 1;
         
-        logEvent(`✅ УСПЕХ! Группа ${gameData.primaryGroup} произвела **1 ед.** ${RESOURCE_LOOKUP[outputCode].name} (**${outputCode}** - У${RESOURCE_LOOKUP[outputCode].level}).`);
+        logEvent(`✅ УСПЕХ! Группа ${gameData.primaryGroup} произвела 1 ед. ${RESOURCE_LOOKUP[outputCode].name} (${outputCode} - У${RESOURCE_LOOKUP[outputCode].level}).`);
 
         updateResourceDisplay();
         if (!isR4) {
@@ -1016,7 +1116,7 @@
         document.getElementById('round-number').textContent = gameData.round;
         document.getElementById('next-round-indicator').textContent = `(${gameData.round + 1})`;
         document.getElementById('action-header-text').textContent = `1. ФАЗА КРАФТИНГА У2 (У1 -> У2)`;
-        document.getElementById('action-prompt').textContent = `Группа ${gameData.primaryGroup} начинает крафтинг ресурсов **Уровня 2**. Действие опционально.`;
+        document.getElementById('action-prompt').textContent = `Группа ${gameData.primaryGroup} начинает крафтинг ресурсов Уровня 2. Действие опционально.`;
         document.getElementById('end-round-button').textContent = `ЗАВЕРШИТЬ РАУНД ${gameData.round} (ПЕРЕЙТИ К 4)`;
 
         renderRound3Actions();
@@ -1082,7 +1182,7 @@
         document.getElementById('next-round-indicator').textContent = `(${gameData.round + 1})`;
         document.getElementById('action-header-text').textContent = `1. ФАЗА КРАФТИНГА У3 (У2 -> У3)`;
         
-        document.getElementById('action-prompt').textContent = `Группа ${gameData.primaryGroup} начинает крафтинг критических систем **Уровня 3**. Действие опционально.`;
+        document.getElementById('action-prompt').textContent = `Группа ${gameData.primaryGroup} начинает крафтинг критических систем Уровня 3. Действие опционально.`;
         document.getElementById('end-round-button').textContent = `ЗАВЕРШИТЬ РАУНД ${gameData.round} (ПЕРЕЙТИ К КРИЗИСУ)`;
         
         renderRound4Actions();
@@ -1151,13 +1251,13 @@
         // Урон от Апокалипсиса
         APOCALYPSE_PENALTIES.forEach(p => {
             gameData.resources[p.type.toUpperCase()] -= p.value;
-            logEvent(`🚨 КРИЗИСНЫЙ УРОН: **-${p.value} ${p.type.toUpperCase()}**. ${p.msg}`, true);
+            logEvent(`🚨 КРИЗИСНЫЙ УРОН: -${p.value} ${p.type.toUpperCase()}. ${p.msg}`, true);
         });
         
-        document.getElementById('action-prompt').textContent = `РАУНД 5: КРИЗИС АКТИВНОЙ ГРУППЫ! Устраните угрозу, связанную с Группой **${gameData.primaryGroup}**.`;
+        document.getElementById('action-prompt').textContent = `РАУНД 5: КРИЗИС АКТИВНОЙ ГРУППЫ! Устраните угрозу, связанную с Группой ${gameData.primaryGroup}.`;
         
         // Обновляем статус resolved кризиса
-        CRISIS_DATABASE[gameData.primaryGroup].resolved = gameData.taskCompleted; 
+        CRISIS_DATABASE[gameData.primaryGroup].resolved = gameData.taskAttempted; 
         
         renderRound5Actions();
         logEvent(`СИСТЕМА: Запущен Раунд 5. Кризис ${CRISIS_DATABASE[gameData.primaryGroup].name} активен! Срочно устраните угрозу!`, true);
@@ -1174,41 +1274,51 @@
 
         if (crisis.resolved) {
             document.getElementById('action-prompt').textContent = 'Кризис успешно устранен. Вы можете завершить раунд.';
-            actionsDiv.innerHTML = `<p style="text-align: center; color: #2ecc71;">✅ Критическая угроза **${crisis.name}** устранена.</p>`;
+            actionsDiv.innerHTML = `<p style="text-align: center; color: #2ecc71;">✅ Критическая угроза ${crisis.name} устранена.</p>`;
             document.getElementById('end-round-button').disabled = false;
             return;
         }
 
         const resourceCode = crisis.solution.resource;
-        const task = crisis.solution.task;
+        const taskData = crisis.solution.task;
         const hasResource = (gameData.inventory[resourceCode] || 0) > 0;
+        
+        let questionsHTML = '';
+        taskData.questions.forEach((task, index) => {
+            questionsHTML += `
+                <div class="task-input-group">
+                    <span class="task-question">${index + 1}. ${task.question}</span>
+                    <input type="text" id="task-input-R5-${index}" placeholder="Ответ (одно слово)" style="width: 250px; padding: 8px; margin-left: 10px;">
+                </div>
+            `;
+        });
         
         actionsDiv.innerHTML = `
             <h2 style="color: #e74c3c;">🚨 КРИЗИС ГРУППЫ ${groupCode}: ${crisis.name}</h2>
-            <p class="error">**УГРОЗА:** ${crisis.flaw}</p>
+            <p class="error">УГРОЗА: ${crisis.flaw}</p>
             <p style="font-weight: bold; margin-top: 15px;">МЕТОДЫ УСТРАНЕНИЯ:</p>
             
             <div style="border: 1px solid #3498db; padding: 10px; margin-bottom: 10px;">
                 ${hasResource ? `
                     <button class="round-action-button-main" onclick="resolveCrisisResource('${groupCode}')" style="background: #2ecc71;">
-                        ИСПОЛЬЗОВАТЬ РЕСУРС **${RESOURCE_LOOKUP[resourceCode].name}** (${resourceCode})
+                        ИСПОЛЬЗОВАТЬ РЕСУРС ${RESOURCE_LOOKUP[resourceCode].name} (${resourceCode})
                     </button>
                     <p style="color: #00ffaa; font-size: 0.9em;">— Требуется: 1 ед. ${RESOURCE_LOOKUP[resourceCode].name}. Мгновенно устраняет угрозу.</p>
                 ` : `
                     <button class="round-action-button-main" disabled style="background: #e74c3c; opacity: 0.7;">
-                        НЕДОСТАТОЧНО РЕСУРСА **${RESOURCE_LOOKUP[resourceCode].name}** (${resourceCode})
+                        НЕДОСТАТОЧНО РЕСУРСА ${RESOURCE_LOOKUP[resourceCode].name} (${resourceCode})
                     </button>
                     <p style="color: #ff4444; font-size: 0.9em;">— Не хватает критического ресурса У3 для автоматического решения.</p>
                 `}
             </div>
             
             <div style="border: 1px solid #f1c40f; padding: 10px;">
-                <h3 style="color: #f1c40f;">РУЧНОЙ ПРОТОКОЛ (Аварийное Решение): ${task.question}</h3>
-                <input type="text" id="task-input-R5" placeholder="Введите ответ (1-2 слова)" style="width: 300px; padding: 8px; margin-right: 10px;">
+                <h3 style="color: #f1c40f;">РУЧНОЙ ПРОТОКОЛ (Аварийное Решение - ${taskData.questions.length} вопроса)</h3>
+                ${questionsHTML}
                 <button id="task-button-R5" onclick="resolveCrisisTask('${groupCode}')" class="round-action-button-main" style="background: #f1c40f; color: #121212; width: auto;">
                     Выполнить Вручную (ОДНА ПОПЫТКА)
                 </button>
-                <p style="font-size: 0.9em;">— Награда: Устранение угрозы. <span class="error">Штраф за провал: **-${task.penalty.value} ${task.penalty.type.toUpperCase()}**</span>.</p>
+                <p style="font-size: 0.9em;">— Награда: Устранение угрозы (при полном успехе). <span class="error">Штраф за полный провал: -${taskData.penalty.value} ${taskData.penalty.type.toUpperCase()}</span>.</p>
             </div>
         `;
         // Если только что был решен, кнопка активируется в resolveCrisis
@@ -1220,15 +1330,15 @@
         
         if (isSuccess) {
             CRISIS_DATABASE[groupCode].resolved = true;
-            gameData.taskCompleted = true; // Флаг, что кризис разрешен/попытка сделана
-            logEvent(`✅ УГРОЗА УСТРАНЕНА: Кризис **${crisis.name}** решен.`, false);
+            gameData.taskAttempted = true; // Флаг, что кризис разрешен/попытка сделана
+            logEvent(`✅ УГРОЗА УСТРАНЕНА: Кризис ${crisis.name} решен.`, false);
         } else {
             const penaltyType = crisis.solution.task.penalty.type.toUpperCase();
             const penaltyValue = crisis.solution.task.penalty.value;
             gameData.resources[penaltyType] -= penaltyValue;
-            gameData.taskCompleted = true; // Флаг, что кризис разрешен/попытка сделана
+            gameData.taskAttempted = true; // Флаг, что кризис разрешен/попытка сделана
 
-            logEvent(`❌ ПРОВАЛ: Ручной протокол для ${crisis.name} не удался. Штраф: **-${penaltyValue} ${penaltyType}**!`, true);
+            logEvent(`❌ ПОЛНЫЙ ПРОВАЛ: Ручной протокол для ${crisis.name} не удался. Штраф: -${penaltyValue} ${penaltyType}!`, true);
         }
 
         updateResourceDisplay();
@@ -1249,17 +1359,33 @@
     }
 
     function resolveCrisisTask(groupCode) {
-        const task = CRISIS_DATABASE[groupCode].solution.task;
-        const input = document.getElementById('task-input-R5');
+        const taskData = CRISIS_DATABASE[groupCode].solution.task;
         const button = document.getElementById('task-button-R5');
-        const answer = input.value.trim().toLowerCase().replace(/ /g, "");
-        const expected = task.answer.toLowerCase().replace(/ /g, "");
-
-        button.disabled = true;
-        input.disabled = true;
         
-        if (answer.includes(expected) || expected.includes(answer)) {
+        let correctAnswers = 0;
+        let totalQuestions = taskData.questions.length;
+
+        taskData.questions.forEach((task, index) => {
+            const input = document.getElementById(`task-input-R5-${index}`);
+            const answer = input.value.trim().toLowerCase().replace(/[^a-zа-яё]/g, "");
+            const expected = task.answer.toLowerCase().replace(/[^a-zа-яё]/g, "");
+            
+            input.disabled = true;
+            if (answer === expected && answer.length > 0) {
+                correctAnswers++;
+            }
+        });
+        
+        button.disabled = true;
+        
+        if (correctAnswers === totalQuestions) {
             resolveCrisis(groupCode, true);
+        } else if (correctAnswers < totalQuestions && correctAnswers > 0) {
+            logEvent(`⚠️ ЧАСТИЧНЫЙ УСПЕХ (${correctAnswers}/${totalQuestions}): Кризис не устранен, но штраф за полный провал не наложен.`, true);
+            gameData.taskAttempted = true;
+            updateResourceDisplay();
+            document.getElementById('end-round-button').disabled = false;
+            renderRound5Actions();
         } else {
             resolveCrisis(groupCode, false);
         }
@@ -1272,14 +1398,14 @@
         document.getElementById('action-header-text').textContent = `1. ФАЗА СВЯЗИ И СПАСЕНИЯ`;
         document.getElementById('end-round-button').textContent = `ЗАВЕРШИТЬ РАУНД ${gameData.round} (ФИНАЛ)`;
         
-        gameData.taskCompleted = gameData.r6Resolved; // Используем taskCompleted как флаг попытки для разблокировки кнопки
+        gameData.taskAttempted = gameData.r6Resolved; // Используем taskAttempted как флаг попытки для разблокировки кнопки
 
         document.getElementById('action-prompt').textContent = `РАУНД 6: КРИТИЧЕСКОЕ СОТРУДНИЧЕСТВО. Используйте ресурсы У2 от всех групп для создания Транспондера.`;
         
         renderRound6Actions();
         logEvent('СИСТЕМА: Запущен Раунд 6. Требуется собрать У2 ресурсы из всех категорий для Транспондера!', true);
         updateResourceDisplay();
-        document.getElementById('end-round-button').disabled = gameData.taskCompleted ? false : true;
+        document.getElementById('end-round-button').disabled = gameData.taskAttempted ? false : true;
     }
 
     function renderRound6Actions() {
@@ -1297,13 +1423,23 @@
             }
         });
         
+        let questionsHTML = '';
+        challenge.task.questions.forEach((task, index) => {
+            questionsHTML += `
+                <div class="task-input-group">
+                    <span class="task-question">${index + 1}. ${task.question}</span>
+                    <input type="text" id="task-input-R6-${index}" placeholder="Ответ (одно слово)" style="width: 250px; padding: 8px; margin-left: 10px;">
+                </div>
+            `;
+        });
+
         actionsDiv.innerHTML = `
             <h2 style="color: #00ffff;">📡 ${challenge.name} (ПОСТРОЙКА)</h2>
             <p><strong>ТРЕБОВАНИЯ (Все Группы, У2):</strong></p>
             <ul style="list-style: none; padding-left: 0;">
                 ${challenge.cost.map(item => `
                     <li style="color: ${gameData.inventory[item.code] >= item.amount ? '#2ecc71' : '#e74c3c'};">
-                        **${item.amount} ед.** ${RESOURCE_LOOKUP[item.code].name} (${item.code}) [Есть: ${gameData.inventory[item.code] || 0}]
+                        ${item.amount} ед. ${RESOURCE_LOOKUP[item.code].name} (${item.code}) [Есть: ${gameData.inventory[item.code] || 0}]
                     </li>
                 `).join('')}
             </ul>
@@ -1323,15 +1459,15 @@
             <hr style="border-top: 1px dashed #e74c3c; margin: 20px 0;">
 
             <div style="border: 1px solid #f1c40f; padding: 10px;">
-                <h3 style="color: #f1c40f;">РУЧНОЙ ПРОТОКОЛ (Аварийный Расчет): ${challenge.task.question}</h3>
-                <input type="text" id="task-input-R6" placeholder="Введите ответ (1-2 слова)" style="width: 300px; padding: 8px; margin-right: 10px;" ${gameData.taskCompleted ? 'disabled' : ''}>
-                <button id="task-button-R6" onclick="resolveRound6Task()" style="background: #f1c40f; color: #121212; width: auto;" ${gameData.taskCompleted ? 'disabled' : ''}>
+                <h3 style="color: #f1c40f;">РУЧНОЙ ПРОТОКОЛ (Аварийный Расчет - ${challenge.task.questions.length} вопроса)</h3>
+                ${questionsHTML}
+                <button id="task-button-R6" onclick="resolveRound6Task()" style="background: #f1c40f; color: #121212; width: auto;" ${gameData.taskAttempted ? 'disabled' : ''}>
                     Выполнить Аварийный Расчет
                 </button>
-                <p style="font-size: 0.9em;">— Награда: Успех в расчетах (**Транспондер считается построенным**). <span class="error">Штраф за провал: **-${challenge.task.penalty.value} ${challenge.task.penalty.type.toUpperCase()}**</span>.</p>
+                <p style="font-size: 0.9em;">— Награда: Успех в расчетах (Транспондер считается построенным, при полном успехе). <span class="error">Штраф за полный провал: -${challenge.task.penalty.value} ${challenge.task.penalty.type.toUpperCase()}</span>.</p>
             </div>
         `;
-        document.getElementById('end-round-button').disabled = gameData.taskCompleted ? false : true;
+        document.getElementById('end-round-button').disabled = gameData.taskAttempted ? false : true;
     }
 
     function resolveRound6Resource() {
@@ -1343,7 +1479,7 @@
         });
 
         gameData.r6Resolved = true; 
-        gameData.taskCompleted = true;
+        gameData.taskAttempted = true;
         logEvent(`✅ СИГНАЛ УСПЕХА: Сверхдальний Транспондер построен и запущен!`, false);
         
         gameData.resources.HEALTH += 10; 
@@ -1354,27 +1490,39 @@
     }
 
     function resolveRound6Task() {
-        if (gameData.taskCompleted) return;
+        if (gameData.taskAttempted) return;
 
-        const task = ROUND_6_CHALLENGE.task;
-        const input = document.getElementById('task-input-R6');
+        const taskData = ROUND_6_CHALLENGE.task;
         const button = document.getElementById('task-button-R6');
-        const answer = input.value.trim().toLowerCase().replace(/ /g, "");
-        const expected = task.answer.toLowerCase().replace(/ /g, "");
-
-        button.disabled = true;
-        input.disabled = true;
-        gameData.taskCompleted = true; // Попытка сделана
         
-        if (answer.includes(expected) || expected.includes(answer)) {
+        let correctAnswers = 0;
+        let totalQuestions = taskData.questions.length;
+
+        taskData.questions.forEach((task, index) => {
+            const input = document.getElementById(`task-input-R6-${index}`);
+            const answer = input.value.trim().toLowerCase().replace(/[^a-zа-яё]/g, "");
+            const expected = task.answer.toLowerCase().replace(/[^a-zа-яё]/g, "");
+            
+            input.disabled = true;
+            if (answer === expected && answer.length > 0) {
+                correctAnswers++;
+            }
+        });
+        
+        button.disabled = true;
+        gameData.taskAttempted = true; // Попытка сделана
+        
+        if (correctAnswers === totalQuestions) {
             gameData.r6Resolved = true; // Считается, что сигнал отправлен
             logEvent(`✅ СИГНАЛ УСПЕХА: Аварийный расчет выполнен! Сигнал отправлен.`, false);
+        } else if (correctAnswers < totalQuestions && correctAnswers > 0) {
+            logEvent(`⚠️ ЧАСТИЧНЫЙ УСПЕХ (${correctAnswers}/${totalQuestions}): Расчеты не завершены. Сигнал не отправлен.`, true);
         } else {
-            const penaltyType = task.penalty.type.toUpperCase();
-            const penaltyValue = task.penalty.value;
+            const penaltyType = taskData.penalty.type.toUpperCase();
+            const penaltyValue = taskData.penalty.value;
             gameData.resources[penaltyType] -= penaltyValue;
             
-            logEvent(`❌ КРИТИЧЕСКИЙ ПРОВАЛ: Аварийный расчет не удался. Штраф: **-${penaltyValue} ${penaltyType}**!`, true);
+            logEvent(`❌ КРИТИЧЕСКИЙ ПРОВАЛ (${correctAnswers}/${totalQuestions}): Аварийный расчет не удался. Штраф: -${penaltyValue} ${penaltyType}!`, true);
         }
         
         updateResourceDisplay();
@@ -1405,10 +1553,10 @@
                 <p style="font-weight: bold;">Спасательный аппарат на орбите. Требуется:</p>
                 <ul>
                     <li style="color: ${gameData.resources.POWER >= requiredPower ? '#2ecc71' : '#e74c3c'}">
-                        **10 ед. Энергии** (Есть: ${gameData.resources.POWER})
+                        10 ед. Энергии (Есть: ${gameData.resources.POWER})
                     </li>
                     <li style="color: ${gameData.resources.AIR >= requiredAir ? '#2ecc71' : '#e74c3c'}">
-                        **5 ед. Воздуха** (Есть: ${gameData.resources.AIR})
+                        5 ед. Воздуха (Есть: ${gameData.resources.AIR})
                     </li>
                 </ul>
                 
@@ -1435,7 +1583,7 @@
             gameData.resources.POWER -= requiredPower;
             gameData.resources.AIR -= requiredAir;
             
-            logEvent('✅ ЭВАКУАЦИЯ УСПЕШНА: Шаттл запущен. Экипаж на пути домой! **МИССИЯ ВЫПОЛНЕНА**.', false);
+            logEvent('✅ ЭВАКУАЦИЯ УСПЕШНА: Шаттл запущен. Экипаж на пути домой! МИССИЯ ВЫПОЛНЕНА.', false);
             
             document.getElementById('game-over-message').textContent = 'МИССИЯ ВЫПОЛНЕНА. ЭКИПАЖ СПАСЕН.';
             document.getElementById('game-over-message').style.display = 'block';
@@ -1538,7 +1686,7 @@
         gameData.round++;
         logEvent(`--- УСПЕШНЫЙ ПЕРЕХОД К РАУНДУ ${gameData.round}! ---`, false);
         
-        gameData.taskCompleted = false; // Сброс флага для каждого нового раунда
+        gameData.taskAttempted = false; // Сброс флага для каждого нового раунда
         
         if (gameData.round === 1) {
             initRound1();
