@@ -171,6 +171,20 @@
             padding: 8px;
             font-family: monospace;
         }
+        
+        /* Стили для начального экрана выбора */
+        .pre-game-setup {
+            text-align: center;
+            padding: 50px 0;
+            border: 1px solid #ffcc00;
+            margin-bottom: 20px;
+        }
+        .pre-game-setup button {
+            font-size: 1.1em;
+            padding: 15px 30px;
+            margin: 10px;
+            width: 250px;
+        }
     </style>
     
 </head>
@@ -192,70 +206,89 @@
         
         <hr style="border-top: 1px solid #1aff00;">
 
-        <div class="intro">
-            <p><strong>[СИСТЕМА]</strong> Статус: <strong>ОНЛАЙН</strong> | Дата: <span id="current-date">20.11.2077</span> | Время Марса (UTC+1): <span id="current-time">09:35:00</span></p>
-            <p><strong>[МИССИЯ]</strong> Цель: Пополнение запасов и анализ среды. Командир: <strong>Имя Ведущего</strong></p>
-        </div>
-        
-        <hr style="border-top: 1px solid #1aff00;">
-
-        <h2>📊 СТАТУС СИСТЕМЫ И ИНВЕНТАРЬ</h2>
-        <div class="status-panel">
-            
-            <div class="info-block">
-                <h3>ТЕКУЩИЕ РЕСУРСЫ</h3>
-                <p>❤️ Здоровье: <span id="resource-health">100</span> (ед.)</p>
-                <p>🔋 Энергия: <span id="resource-power">50</span> (ед.)</p>
-                <p>💧 Вода (H₂O): <span id="resource-water">50</span> (л)</p>
-                <p>💨 Воздух (O₂): <span id="resource-air">50</span> (м³)</p>
-            </div>
-
-            <div class="info-block">
-                <h3>ИНВЕНТАРЬ (У1, У2, У3)</h3>
-                <ul id="inventory-list" class="inventory-list">
-                    <li class="inventory-item">Нет ресурсов</li>
-                </ul>
-            </div>
-
-        </div>
-        
-        <hr style="border-top: 1px solid #1aff00;">
-
-        <h2>🎯 РАУНД <span id="round-number">1</span>: ВЫБОР ДЕЙСТВИЯ</h2>
-        <div class="round-content">
-
-            <h3>1. ВЫБОР ГРУППЫ</h3>
+        <div id="pre-game-selector" class="pre-game-setup">
+            <h2>⭐ ИНИЦИАЛИЗАЦИЯ: ВЫБОР ОСНОВНОЙ ГРУППЫ</h2>
+            <p>Выберите группу, которую вы будете возглавлять. Эта группа получит **дополнительные ресурсы У1** в начале игры и ее специализация будет критической.</p>
             <div class="group-select">
-                <button id="select-group-a" disabled>Группа А (Технология)</button>
-                <button id="select-group-b" disabled>Группа Б (Биология)</button>
-                <button id="select-group-c" disabled>Группа В (Конструкция)</button>
+                <button id="pre-select-group-a" onclick="setPrimaryGroup('A')" style="border-color: #00ffaa;">Группа А (Технология)</button>
+                <button id="pre-select-group-b" onclick="setPrimaryGroup('B')" style="border-color: #00ffaa;">Группа Б (Биология)</button>
+                <button id="pre-select-group-c" onclick="setPrimaryGroup('C')" style="border-color: #00ffaa;">Группа В (Конструкция)</button>
+            </div>
+            <p id="group-selection-status" style="margin-top: 15px; color: #ffcc00; font-weight: bold;">Ожидание выбора...</p>
+        </div>
+
+        <div id="main-game-interface" style="display: none;">
+            
+            <hr style="border-top: 1px solid #1aff00;">
+
+            <div class="intro">
+                <p><strong>[СИСТЕМА]</strong> Статус: <strong>ОНЛАЙН</strong> | Дата: <span id="current-date">20.11.2077</span> | Время Марса (UTC+1): <span id="current-time">09:35:00</span></p>
+                <p><strong>[МИССИЯ]</strong> Цель: Пополнение запасов и анализ среды. Командир: <strong>Имя Ведущего</strong></p>
+            </div>
+            
+            <hr style="border-top: 1px solid #1aff00;">
+
+            <h2>📊 СТАТУС СИСТЕМЫ И ИНВЕНТАРЬ</h2>
+            <div class="status-panel">
+                
+                <div class="info-block">
+                    <h3>ТЕКУЩИЕ РЕСУРСЫ</h3>
+                    <p>💵 Баллы покупки: <span id="resource-points">100</span> (ед.)</p>
+                    <p>❤️ Здоровье: <span id="resource-health">100</span> (ед.)</p>
+                    <p>🔋 Энергия: <span id="resource-power">50</span> (ед.)</p>
+                    <p>💧 Вода (H₂O): <span id="resource-water">50</span> (л)</p>
+                    <p>💨 Воздух (O₂): <span id="resource-air">50</span> (м³)</p>
+                </div>
+
+                <div class="info-block">
+                    <h3>ИНВЕНТАРЬ (У1, У2, У3)</h3>
+                    <ul id="inventory-list" class="inventory-list">
+                        <li class="inventory-item">Нет ресурсов</li>
+                    </ul>
+                </div>
+
+            </div>
+            
+            <hr style="border-top: 1px solid #1aff00;">
+
+            <h2>🎯 РАУНД <span id="round-number">1</span>: ВЫБОР ДЕЙСТВИЯ</h2>
+            <div class="round-content">
+
+                <div id="group-selection-panel" style="display: none;">
+                    <h3>1. АКТИВАЦИЯ ГРУППЫ ДЛЯ ДЕЙСТВИЯ</h3>
+                    <div class="group-select">
+                        <button id="select-group-a">Группа А (Технология)</button>
+                        <button id="select-group-b">Группа Б (Биология)</button>
+                        <button id="select-group-c">Группа В (Конструкция)</button>
+                    </div>
+                </div>
+
+
+                <h3><span id="action-header-text">1. ФАЗА ЗАКУПКИ</span> (<span id="active-group-display"></span>)</h3>
+                <p id="action-prompt">Выберите ресурс У1 для покупки...</p>
+                
+                <div id="action-buttons" style="margin-top: 10px;">
+                    <button class="round-action-button" disabled>ОЖИДАНИЕ</button>
+                </div>
+                
+                <hr style="border-top: 1px dashed #1aff00; margin: 20px 0;">
+
+                <h3>2. ЗАВЕРШЕНИЕ ФАЗЫ</h3>
+                <button id="end-round-button" class="end-round-button" disabled>ЗАВЕРШИТЬ РАУНД <span id="next-round-indicator">(2)</span></button>
+            </div>
+            
+            <hr style="border-top: 1px solid #1aff00;">
+
+            <h2>📢 ЖУРНАЛ СОБЫТИЙ</h2>
+            <div id="log-box" class="log-box">
+                <p><strong>[09:35:25]</strong> Системный Протокол запущен. Ожидание ввода...</p>
+            </div>
+            
+            <div id="game-over-message" class="final-message" style="display: none; margin-top: 30px;">
+                МИССИЯ ЗАВЕРШЕНА. АНАЛИЗ РЕЗУЛЬТАТОВ.
             </div>
 
-            <h3>2. ДЕЙСТВИЕ ГРУППЫ (<span id="active-group-display">Не выбрана</span>)</h3>
-            <p id="action-prompt">Выберите группу для продолжения протокола...</p>
-            
-            <div id="action-buttons" style="margin-top: 10px;">
-                <button class="round-action-button" disabled>ВЫПОЛНИТЬ ДЕЙСТВИЕ</button>
-            </div>
-            
-            <hr style="border-top: 1px dashed #1aff00; margin: 20px 0;">
-
-            <h3>3. ЗАВЕРШЕНИЕ ФАЗЫ</h3>
-            <button id="end-round-button" class="end-round-button" disabled>ЗАВЕРШИТЬ РАУНД <span id="next-round-indicator">(2)</span></button>
-        </div>
-        
-        <hr style="border-top: 1px solid #1aff00;">
-
-        <h2>📢 ЖУРНАЛ СОБЫТИЙ</h2>
-        <div id="log-box" class="log-box">
-            <p><strong>[09:35:25]</strong> Системный Протокол запущен. Ожидание ввода...</p>
-        </div>
-        
-        <div id="game-over-message" class="final-message" style="display: none; margin-top: 30px;">
-            МИССИЯ ЗАВЕРШЕНА. АНАЛИЗ РЕЗУЛЬТАТОВ.
-        </div>
-
-    </div>
+        </div> </div>
 
     <script>
     // ====================================================================
@@ -272,11 +305,12 @@
     };
     
     let gameData = {
-        round: 1,
+        round: 0, // Начинаем с 0, чтобы инициализация была отдельной фазой
         points: 100, // Стартовые баллы для Р1
         resources: { ...INITIAL_RESOURCES },
         inventory: {}, 
-        activeGroup: null, // ИСПРАВЛЕНО: Будет содержать 'A', 'B', или 'C'
+        primaryGroup: null, // НОВАЯ: Основная группа игрока
+        activeGroup: null, // Для Р2-Р6: текущая активная группа
         taskCompleted: false, // Для Р1
         r6Resolved: false, // Флаг для Р6
         r5ResolvedGroups: { 'A': false, 'B': false, 'C': false } // Для Р5
@@ -327,6 +361,13 @@
             level2: [ { code: 'ЛС', name: 'Легкий Сплав', description: 'Сплав', level: 2 }, { code: 'ЗС', name: 'Закаленный Сплав', description: 'Сплав', level: 2 }, { code: 'ВК', name: 'Восстановленные Компоненты', description: 'Компоненты', level: 2 }, { code: 'УП', name: 'Упрочненный Полимер', description: 'Полимер', level: 2 }, { code: 'ИК', name: 'Индукционная Катушка', description: 'Катушка', level: 2 }],
             level3: [ { code: 'АСГ', name: 'Автоматическая Система Герметизации', description: 'АСГ', level: 3 }, { code: 'РЭ', name: 'Радиационный Экран', description: 'РЭ', level: 3 }, { code: 'АБП', name: 'Аварийный Блок Питания', description: 'АБП', level: 3 }, { code: 'КО', name: 'Кевларовая Оболочка', description: 'КО', level: 3 }, { code: 'СС', name: 'Самовосстанавливающийся Скафандр', description: 'СС', level: 3 }],
         },
+    };
+    
+    // Бонусные ресурсы У1 при выборе основной группы
+    const PRIMARY_GROUP_BONUS_RESOURCES = {
+        'A': ['РГ', 'CO2'], // Технология: Реголит, CO2
+        'B': ['ЛД', 'N'],   // Биология: Лед, Азот
+        'C': ['АЛ', 'ТТ']   // Конструкция: Алюминий, Титан
     };
 
     const RESOURCE_LOOKUP = {};
@@ -401,8 +442,7 @@
         document.getElementById('resource-water').textContent = gameData.resources.WATER;
         document.getElementById('resource-air').textContent = gameData.resources.AIR;
         document.getElementById('resource-health').textContent = gameData.resources.HEALTH;
-        const pointsEl = document.getElementById('resource-points');
-        if(pointsEl) pointsEl.textContent = gameData.points;
+        document.getElementById('resource-points').textContent = gameData.points;
 
         const inventoryList = document.getElementById('inventory-list');
         inventoryList.innerHTML = '';
@@ -453,22 +493,70 @@
                 if (group === gameData.activeGroup) {
                     button.classList.add('active-group');
                 }
+                
+                // Деактивируем/активируем в зависимости от раунда
+                if (gameData.round === 1) {
+                    button.disabled = true; // Группы не выбираются в Р1
+                } else if (gameData.round > 1 && gameData.round <= 6) {
+                    // В Р2-Р6 группы выбираются
+                    button.disabled = false;
+                    // Особая логика: если действие группы уже выполнено в Р2
+                    if (gameData.round === 2 && document.getElementById(`select-group-${group.toLowerCase()}`).getAttribute('data-r2-done') === 'true') {
+                        button.disabled = true;
+                    }
+                } else {
+                    button.disabled = true;
+                }
             }
         });
 
-        if (gameData.activeGroup) {
-             activeGroupDisplay.textContent = `Группа ${gameData.activeGroup} (${RESOURCE_DATABASE[gameData.activeGroup].name})`;
+        // Обновление дисплея активной группы
+        if (gameData.round === 1) {
+            activeGroupDisplay.textContent = `Основная Группа: ${gameData.primaryGroup} (${RESOURCE_DATABASE[gameData.primaryGroup].name})`;
+            document.getElementById('action-header-text').textContent = `1. ФАЗА ЗАКУПКИ | ОСНОВНАЯ ГРУППА`;
+        } else if (gameData.activeGroup) {
+             activeGroupDisplay.textContent = `Активная Группа: ${gameData.activeGroup} (${RESOURCE_DATABASE[gameData.activeGroup].name})`;
+             document.getElementById('action-header-text').textContent = `2. ДЕЙСТВИЕ ГРУППЫ`;
         } else {
              activeGroupDisplay.textContent = 'Не выбрана';
+             document.getElementById('action-header-text').textContent = `2. ДЕЙСТВИЕ ГРУППЫ`;
         }
+    }
+
+    // --- ФАЗА ПРЕДВАРИТЕЛЬНОГО ВЫБОРА (ROUND 0) ---
+
+    function setPrimaryGroup(group) {
+        if (gameData.primaryGroup) return; // Запрет на повторный выбор
+        
+        gameData.primaryGroup = group;
+        
+        // 1. Начисляем бонусные ресурсы
+        PRIMARY_GROUP_BONUS_RESOURCES[group].forEach(code => {
+            gameData.inventory[code] = (gameData.inventory[code] || 0) + 2; // +2 ед. У1
+            logEvent(`БОНУС: Основная Группа ${group} получила 2 ед. ${RESOURCE_LOOKUP[code].name} (${code}).`);
+        });
+
+        // 2. Блокируем кнопки выбора
+        document.getElementById('pre-select-group-a').disabled = true;
+        document.getElementById('pre-select-group-b').disabled = true;
+        document.getElementById('pre-select-group-c').disabled = true;
+        document.getElementById(`pre-select-group-${group.toLowerCase()}`).classList.add('active-group');
+
+        // 3. Обновляем статус
+        document.getElementById('group-selection-status').textContent = `✅ ВЫБРАНА ГРУППА ${group} (${RESOURCE_DATABASE[group].name}). Начинаем Раунд 1.`;
+        
+        // 4. Переход к Раунду 1 (Запуск основной игры)
+        document.getElementById('pre-game-selector').style.display = 'none';
+        document.getElementById('main-game-interface').style.display = 'block';
+        gameData.round = 1; // Устанавливаем первый раунд
+        initRound1();
     }
     
     // --- РАУНД 1 ЛОГИКА (ЗАКУПКА и ДОБЫЧА У1) ---
     function renderRound1Actions() { 
         const actionsDiv = document.getElementById('action-buttons');
         actionsDiv.innerHTML = '';
-        document.getElementById('action-prompt').textContent = `Доступные баллы: ${gameData.points}. Выберите ресурс У1 для покупки.`;
-        document.getElementById('active-group-display').textContent = 'Фаза Закупки';
+        document.getElementById('action-prompt').textContent = `Доступные баллы: ${gameData.points}. Выберите ресурс У1 для покупки (Фаза 1/2).`;
         
         const level1Resources = Object.values(RESOURCE_DATABASE).flatMap(cat => cat.level1);
 
@@ -515,8 +603,8 @@
 
         const actionsDiv = document.getElementById('action-buttons');
         actionsDiv.innerHTML = '';
-        document.getElementById('action-prompt').textContent = `Фаза 2: ДОБЫЧА. Вы можете выполнить одно задание для получения дополнительных ресурсов У1 и баллов.`;
-        document.getElementById('active-group-display').textContent = 'Фаза Задания';
+        document.getElementById('action-prompt').textContent = `Фаза 2/2: ДОБЫЧА. Выполните одно задание для получения дополнительных ресурсов У1 и баллов.`;
+        document.getElementById('action-header-text').textContent = `2. ФАЗА ДОБЫЧИ (ЗАДАНИЕ)`;
 
         ROUND_1_TASKS.forEach(task => {
             const taskElement = document.createElement('div');
@@ -571,38 +659,29 @@
     function initRound1() {
         document.getElementById('round-number').textContent = gameData.round;
         document.getElementById('next-round-indicator').textContent = `(${gameData.round + 1})`;
+        document.getElementById('group-selection-panel').style.display = 'none'; // Скрываем в Р1
         
-        // РАУНД 1: Группы заблокированы
-        document.getElementById('select-group-a').disabled = true;
-        document.getElementById('select-group-b').disabled = true;
-        document.getElementById('select-group-c').disabled = true;
-        
-        const statusPanel = document.querySelector('.info-block');
-        if (!document.getElementById('resource-points')) {
-            const pointsP = document.createElement('p');
-            pointsP.innerHTML = `💵 Баллы покупки: <span id="resource-points">${gameData.points}</span> (ед.)`;
-            statusPanel.prepend(pointsP);
-        }
-
         logEvent('СИСТЕМА: Запуск Протокола Раунда 1. Начните закупку ресурсов Уровня 1 (100 Баллов).');
         renderRound1Actions();
         updateResourceDisplay();
         document.getElementById('end-round-button').onclick = nextRound;
         document.getElementById('end-round-button').disabled = true;
-        updateGroupButtons(); // Обновляем кнопки групп, чтобы убрать active-group
+        updateGroupButtons(); 
     }
     
     // --- РАУНД 2 ЛОГИКА (ДОБОР У1) ---
     function initRound2() {
         document.getElementById('action-prompt').textContent = 'Выберите группу (A, B, или C) для выполнения задания и добычи 1 ед. ресурса У1.';
+        document.getElementById('group-selection-panel').style.display = 'block'; 
         
-        document.getElementById('select-group-a').disabled = false;
-        document.getElementById('select-group-b').disabled = false;
-        document.getElementById('select-group-c').disabled = false;
+        // Сброс состояния кнопок групп для Р2
+        ['a', 'b', 'c'].forEach(g => {
+            const btn = document.getElementById(`select-group-${g}`);
+            btn.removeAttribute('data-r2-done'); // Позволяем выбрать снова
+            btn.disabled = false;
+        });
         
         document.getElementById('end-round-button').textContent = `ЗАВЕРШИТЬ РАУНД ${gameData.round} (ПЕРЕЙТИ К 3)`;
-        
-        gameData.taskCompleted = false; // Переиспользуем для Р2-Р4: отслеживание, выполнила ли группа действие
         
         renderRound2Actions();
         logEvent('СИСТЕМА: Активирован Раунд 2. Доступна фаза добычи ресурсов У1 через выполнение заданий.');
@@ -615,11 +694,20 @@
 
         if (!gameData.activeGroup) {
             actionsDiv.innerHTML = '<p class="error" style="text-align: center;">Активируйте одну из Групп (А, В или С) для начала действия.</p>';
+            document.getElementById('end-round-button').disabled = false; // Разрешаем завершать раунд без действий
             return;
         }
 
         const task = ROUND_2_TASKS[gameData.activeGroup];
+        const groupButton = document.getElementById(`select-group-${gameData.activeGroup.toLowerCase()}`);
         
+        // Если группа уже выполнила действие в этом раунде, не показываем форму
+        if (groupButton.getAttribute('data-r2-done') === 'true') {
+            actionsDiv.innerHTML = `<p style="text-align: center; color: #00ffaa;">Группа ${gameData.activeGroup} уже выполнила свое действие в этом раунде.</p>`;
+            document.getElementById('end-round-button').disabled = false;
+            return;
+        }
+
         actionsDiv.innerHTML = `
             <h3>Группа ${gameData.activeGroup} | 💡 Задание: ${task.question}</h3>
             <p>Награда: 1 ед. ${RESOURCE_LOOKUP[task.reward.code].name} (${task.reward.code}).</p>
@@ -627,6 +715,7 @@
             <button id="task-button-R2" onclick="submitRound2Task()">ВЫПОЛНИТЬ ДЕЙСТВИЕ</button>
             <p class="error">Штраф за неверный ответ: -${task.penalty.value} ${task.penalty.type.toUpperCase()}</p>
         `;
+        document.getElementById('end-round-button').disabled = true; // Блокируем завершение пока активно задание
     }
 
     function submitRound2Task() {
@@ -635,14 +724,17 @@
         const input = document.getElementById('task-input-R2');
         const button = document.getElementById('task-button-R2');
         const task = ROUND_2_TASKS[gameData.activeGroup];
+        const groupButton = document.getElementById(`select-group-${gameData.activeGroup.toLowerCase()}`);
+
         const answer = input.value.trim().toLowerCase().replace(/ /g, "");
         const expected = task.answer.toLowerCase().replace(/ /g, "");
         
         button.disabled = true;
         input.disabled = true;
         
-        // Блокируем кнопку группы после выполнения действия
-        document.getElementById(`select-group-${gameData.activeGroup.toLowerCase()}`).disabled = true;
+        
+        groupButton.setAttribute('data-r2-done', 'true');
+        groupButton.disabled = true;
 
         if (answer === expected) { 
             gameData.inventory[task.reward.code] = (gameData.inventory[task.reward.code] || 0) + task.reward.amount;
@@ -651,24 +743,25 @@
             const penaltyType = task.penalty.type;
             const penaltyValue = task.penalty.value;
             
-            gameData.resources[penaltyType] -= penaltyValue; 
+            gameData.resources[penaltyType.toUpperCase()] -= penaltyValue; 
             
-            logEvent(`❌ ПРОВАЛ. Группа ${gameData.activeGroup} не смогла выполнить задание. Штраф: -${penaltyValue} ${penaltyType}!`, true);
+            logEvent(`❌ ПРОВАЛ. Группа ${gameData.activeGroup} не смогла выполнить задание. Штраф: -${penaltyValue} ${penaltyType.toUpperCase()}!`, true);
         }
         
         updateResourceDisplay();
         document.getElementById('action-prompt').textContent = `Действие Группы ${gameData.activeGroup} завершено. Выберите другую группу или завершите раунд.`;
         gameData.activeGroup = null; 
         renderRound2Actions(); 
+        document.getElementById('end-round-button').disabled = false;
     }
 
     // --- РАУНД 3 ЛОГИКА (КРАФТИНГ У2) ---
     function initRound3() {
         document.getElementById('action-prompt').textContent = 'Выберите группу (А, В или С) для начала крафтинга ресурсов Уровня 2.';
+        document.getElementById('group-selection-panel').style.display = 'block'; 
         
-        document.getElementById('select-group-a').disabled = false;
-        document.getElementById('select-group-b').disabled = false;
-        document.getElementById('select-group-c').disabled = false;
+        // Сброс групп для Р3 (все могут крафтить)
+        ['a', 'b', 'c'].forEach(g => document.getElementById(`select-group-${g}`).disabled = false);
         
         document.getElementById('end-round-button').textContent = `ЗАВЕРШИТЬ РАУНД ${gameData.round} (ПЕРЕЙТИ К 4)`;
 
@@ -683,6 +776,7 @@
         
         if (!gameData.activeGroup) {
             actionsDiv.innerHTML = '<p class="error" style="text-align: center;">Активируйте одну из Групп (А, В или С) для начала крафтинга.</p>';
+            document.getElementById('end-round-button').disabled = false;
             return;
         }
 
@@ -691,7 +785,7 @@
         
         level2Resources.forEach(res => {
             const recipe = CRAFTING_RECIPES_R3[res.code];
-            if (!recipe) return; // Пропускаем ресурсы без рецепта в R3
+            if (!recipe) return; 
             
             const neededText = recipe.map(r => `${r.amount} ед. ${RESOURCE_LOOKUP[r.code].name} (${r.code})`).join(', ');
             
@@ -715,6 +809,7 @@
 
             actionsDiv.appendChild(button);
         });
+        document.getElementById('end-round-button').disabled = false;
     }
     
     function tryCrafting(outputCode, recipe, isR4 = false) {
@@ -751,10 +846,10 @@
     // --- РАУНД 4 ЛОГИКА (КРАФТИНГ У3) ---
     function initRound4() {
         document.getElementById('action-prompt').textContent = 'Выберите группу (А, В или С) для начала крафтинга ресурсов Уровня 3 (Критические Системы).';
+        document.getElementById('group-selection-panel').style.display = 'block'; 
         
-        document.getElementById('select-group-a').disabled = false;
-        document.getElementById('select-group-b').disabled = false;
-        document.getElementById('select-group-c').disabled = false;
+        // Сброс групп для Р4
+        ['a', 'b', 'c'].forEach(g => document.getElementById(`select-group-${g}`).disabled = false);
         
         document.getElementById('end-round-button').textContent = `ЗАВЕРШИТЬ РАУНД ${gameData.round} (ПЕРЕЙТИ К АПОКАЛИПСИСУ)`;
         
@@ -769,6 +864,7 @@
         
         if (!gameData.activeGroup) {
             actionsDiv.innerHTML = '<p class="error" style="text-align: center;">Активируйте одну из Групп (А, В или С) для начала крафтинга У3.</p>';
+            document.getElementById('end-round-button').disabled = false;
             return;
         }
 
@@ -801,21 +897,22 @@
 
             actionsDiv.appendChild(button);
         });
+        document.getElementById('end-round-button').disabled = false;
     }
 
     // --- РАУНД 5 ЛОГИКА (АПОКАЛИПСИС) ---
     function initRound5() {
         // Урон от Апокалипсиса
         APOCALYPSE_PENALTIES.forEach(p => {
-            gameData.resources[p.type] -= p.value;
+            gameData.resources[p.type.toUpperCase()] -= p.value;
             logEvent(`🚨 КРИЗИСНЫЙ УРОН: -${p.value} ${p.type.toUpperCase()}. ${p.msg}`, true);
         });
         
         document.getElementById('action-prompt').textContent = 'РАУНД 5: ТРОЙНОЙ КРИЗИС! Выберите группу (А, В или С), чтобы устранить ее угрозу.';
+        document.getElementById('group-selection-panel').style.display = 'block'; 
         
-        document.getElementById('select-group-a').disabled = false;
-        document.getElementById('select-group-b').disabled = false;
-        document.getElementById('select-group-c').disabled = false;
+        // Сброс групп для Р5
+        ['a', 'b', 'c'].forEach(g => document.getElementById(`select-group-${g}`).disabled = false);
         
         document.getElementById('end-round-button').textContent = `ЗАВЕРШИТЬ РАУНД ${gameData.round} (ПЕРЕЙТИ К 6)`;
         
@@ -838,9 +935,11 @@
         Object.keys(CRISIS_DATABASE).forEach(group => {
             if (!CRISIS_DATABASE[group].resolved) {
                 allResolved = false;
+                // Активируем кнопку, если кризис не решен
                 document.getElementById(`select-group-${group.toLowerCase()}`).style.opacity = 1;
                 document.getElementById(`select-group-${group.toLowerCase()}`).disabled = false;
             } else {
+                // Деактивируем кнопку, если кризис решен
                 document.getElementById(`select-group-${group.toLowerCase()}`).style.opacity = 0.5;
                 document.getElementById(`select-group-${group.toLowerCase()}`).disabled = true;
             }
@@ -855,14 +954,14 @@
 
         if (!gameData.activeGroup) {
             actionsDiv.innerHTML = '<p class="error" style="text-align: center;">Активируйте одну из Групп (А, В или С) для анализа и решения Кризиса.</p>';
-            document.getElementById('end-round-button').disabled = true;
+            document.getElementById('end-round-button').disabled = false; // Разрешаем завершать раунд, если не решены, но не выбрана группа
             return;
         }
 
         const crisis = CRISIS_DATABASE[gameData.activeGroup];
         if (crisis.resolved) {
             actionsDiv.innerHTML = `<p style="text-align: center; color: #2ecc71;">Кризис Группы ${gameData.activeGroup} уже был решен.</p>`;
-            document.getElementById('end-round-button').disabled = true;
+            document.getElementById('end-round-button').disabled = false;
             return;
         }
 
@@ -906,10 +1005,10 @@
             gameData.r5ResolvedGroups[groupCode] = true;
             logEvent(`✅ УГРОЗА УСТРАНЕНА: Кризис ${crisis.name} решен.`, false);
         } else {
-            const penaltyType = crisis.solution.task.penalty.type;
+            const penaltyType = crisis.solution.task.penalty.type.toUpperCase();
             const penaltyValue = crisis.solution.task.penalty.value;
-            gameData.resources[penaltyType.toLowerCase()] -= penaltyValue;
-            logEvent(`❌ ПРОВАЛ: Ручной протокол для ${crisis.name} не удался. Штраф: -${penaltyValue} ${penaltyType.toUpperCase()}!`, true);
+            gameData.resources[penaltyType] -= penaltyValue;
+            logEvent(`❌ ПРОВАЛ: Ручной протокол для ${crisis.name} не удался. Штраф: -${penaltyValue} ${penaltyType}!`, true);
         }
 
         updateResourceDisplay();
@@ -950,10 +1049,10 @@
     // --- РАУНД 6 ЛОГИКА (СОТРУДНИЧЕСТВО) ---
     function initRound6() {
         document.getElementById('action-prompt').textContent = 'РАУНД 6: МЕЖГРУППОВОЕ СОТРУДНИЧЕСТВО. Используйте ресурсы У2 для создания Транспондера или выполните аварийный расчет.';
+        document.getElementById('group-selection-panel').style.display = 'block'; 
         
-        document.getElementById('select-group-a').disabled = false;
-        document.getElementById('select-group-b').disabled = false;
-        document.getElementById('select-group-c').disabled = false;
+        // Сброс групп для Р6
+        ['a', 'b', 'c'].forEach(g => document.getElementById(`select-group-${g}`).disabled = false);
         
         document.getElementById('end-round-button').textContent = `ЗАВЕРШИТЬ РАУНД ${gameData.round} (ФИНАЛ)`;
         
@@ -1053,7 +1152,7 @@
             gameData.r6Resolved = true; 
             logEvent(`✅ СИГНАЛ УСПЕХА: Аварийный расчет выполнен! Сигнал отправлен.`, false);
         } else {
-            const penaltyType = task.penalty.type;
+            const penaltyType = task.penalty.type.toUpperCase();
             const penaltyValue = task.penalty.value;
             gameData.resources[penaltyType] -= penaltyValue;
             
@@ -1068,13 +1167,11 @@
     // --- РАУНД 7 ЛОГИКА (ФИНАЛ) ---
 
     function initRound7() {
-        document.getElementById('select-group-a').disabled = true;
-        document.getElementById('select-group-b').disabled = true;
-        document.getElementById('select-group-c').disabled = true;
+        document.getElementById('group-selection-panel').style.display = 'none'; 
         document.getElementById('end-round-button').textContent = 'ЗАВЕРШИТЬ МИССИЮ';
         document.getElementById('active-group-display').textContent = 'Финальный Протокол';
         
-        document.getElementById('end-round-button').disabled = true; // Заблокировать до выполнения эвакуации
+        document.getElementById('end-round-button').disabled = true; 
 
         if (gameData.r6Resolved) {
             document.getElementById('action-prompt').textContent = 'РАУНД 7: ФИНАЛЬНЫЙ ЭТАП. Сигнал отправлен. Спасательный аппарат прибывает. Начните эвакуацию.';
@@ -1148,7 +1245,6 @@
         } else if (gameData.round === 5) {
             renderRound5Actions();
         } else if (gameData.round === 6) {
-            // В Р6 выбор группы используется только для активации общей фазы, но не для разных действий.
             renderRound6Actions();
         }
     }
@@ -1214,8 +1310,10 @@
     }
     
     function initGame() {
-        document.getElementById('end-round-button').onclick = nextRound;
-        initRound1(); 
+        // Начало игры: отображаем только выбор группы
+        document.getElementById('main-game-interface').style.display = 'none';
+        document.getElementById('pre-game-selector').style.display = 'block';
+        logEvent('СИСТЕМА: Ожидание выбора основной группы для начала миссии.', true);
     }
 
     window.onload = initGame;
