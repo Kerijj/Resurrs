@@ -9,38 +9,40 @@
     
     <style>
         body {
-            background-color: #0b111e;
-            color: #1aff00; /* Ярко-зеленый для терминала */
+            /* Усиление контраста */
+            background-color: #040810; 
+            color: #39ff14; /* Ярко-салатовый для лучшей читабельности */
             font-family: 'Orbitron', sans-serif;
             margin: 0;
             padding: 20px;
-            text-shadow: 0 0 5px rgba(26, 255, 0, 0.5);
+            text-shadow: 0 0 3px rgba(57, 255, 20, 0.6);
             line-height: 1.6;
         }
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            border: 2px solid #1aff00;
-            box-shadow: 0 0 20px #1aff00;
+            border: 3px solid #39ff14;
+            box-shadow: 0 0 25px #39ff14;
             padding: 20px;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.85); /* Темнее фон контейнера */
         }
         h1, h2, h3 {
-            color: #1aff00;
+            color: #39ff14;
             text-align: center;
-            border-bottom: 1px dashed rgba(26, 255, 0, 0.3);
+            border-bottom: 1px dashed rgba(57, 255, 20, 0.4);
             padding-bottom: 10px;
             margin-top: 20px;
+            text-shadow: none; /* Убираем тень для заголовков, чтобы не рябило */
         }
         .intro p {
-            font-size: 0.9em;
+            font-size: 0.95em;
             color: #00ffaa;
         }
         .status-panel {
             display: flex;
             justify-content: space-around;
             padding: 10px 0;
-            border: 1px solid rgba(26, 255, 0, 0.5);
+            border: 1px solid rgba(57, 255, 20, 0.5);
             margin-bottom: 20px;
         }
         .info-block {
@@ -51,35 +53,38 @@
             border: none;
             margin: 0;
             padding: 0;
-            color: #ffcc00; /* Желтый для заголовков */
+            color: #ffcc00; 
         }
         .inventory-list {
             list-style: none;
             padding: 0;
         }
         .inventory-item {
-            font-size: 0.8em;
-            color: #00eeff; /* Голубой для инвентаря */
+            font-size: 0.85em;
+            color: #00eeff; 
         }
         .round-content {
-            border: 1px solid #1aff00;
+            border: 1px solid #39ff14;
             padding: 15px;
             margin-bottom: 20px;
         }
-        .group-select button {
-            background-color: #004d40;
-            color: #1aff00;
-            border: 2px solid #1aff00;
-            padding: 10px 20px;
-            margin: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s, box-shadow 0.3s;
+        /* Стили для кнопок */
+        .group-select button, .round-action-button, .end-round-button {
             font-family: 'Orbitron', sans-serif;
             font-weight: 700;
+            transition: background-color 0.3s, box-shadow 0.3s, border-color 0.3s;
+            cursor: pointer;
+        }
+        .group-select button {
+            background-color: #004d40;
+            color: #39ff14;
+            border: 2px solid #39ff14;
+            padding: 10px 20px;
+            margin: 5px;
         }
         .group-select button:hover:not(:disabled) {
             background-color: #00796b;
-            box-shadow: 0 0 10px #1aff00;
+            box-shadow: 0 0 10px #39ff14;
         }
         .group-select button:disabled {
             background-color: #333;
@@ -88,102 +93,109 @@
             cursor: not-allowed;
         }
         .group-select button.active-group {
-            background-color: #ff0000; /* Красный для активной */
-            box-shadow: 0 0 15px #ff0000;
+            background-color: #e74c3c; 
+            box-shadow: 0 0 15px #e74c3c;
             color: #fff;
-            border-color: #ff0000;
+            border-color: #e74c3c;
         }
-        .round-action-button {
+        
+        /* Основные кнопки действий */
+        .action-item-container {
+             background-color: #1c2833; /* Темно-синий фон для каждого действия */
+            border: 1px solid #7f8c8d;
+            padding: 10px;
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .round-action-button-main { /* Главная кнопка действия */
             background-color: #34495e;
             color: #fff;
             border: 1px solid #7f8c8d;
             padding: 10px 15px;
-            margin: 5px 0;
             cursor: pointer;
             width: 100%;
             text-align: left;
-            transition: background-color 0.3s;
-            font-family: 'Orbitron', sans-serif;
         }
-        .round-action-button:hover:not(:disabled) {
+        .round-action-button-main:hover:not(:disabled) {
             background-color: #2c3e50;
-            border-color: #1aff00;
+            border-color: #39ff14;
         }
-        .round-action-button:disabled {
-            background-color: #1a1a1a;
-            color: #444;
-            border-color: #222;
-            cursor: not-allowed;
+        
+        .action-controls {
+            display: flex;
+            gap: 5px;
+            align-items: center;
         }
+        .action-controls button {
+            padding: 5px 10px;
+            background-color: #1abc9c;
+            border: 1px solid #16a085;
+            color: #000;
+            font-weight: 700;
+        }
+        .action-controls button:hover:not(:disabled) {
+            background-color: #16a085;
+        }
+        
+        /* Кнопка "Завершить Раунд" */
         .end-round-button {
             background-color: #c0392b;
             color: #fff;
             border: 2px solid #e74c3c;
             padding: 15px;
             margin-top: 20px;
-            cursor: pointer;
             width: 100%;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
             font-size: 1.1em;
-            transition: background-color 0.3s, box-shadow 0.3s;
         }
         .end-round-button:hover:not(:disabled) {
             background-color: #e74c3c;
             box-shadow: 0 0 15px #e74c3c;
         }
-        .end-round-button:disabled {
-            background-color: #555;
-            color: #aaa;
-            border-color: #777;
-            cursor: not-allowed;
-        }
+        
         .log-box {
-            background-color: rgba(0, 0, 0, 0.9);
+            background-color: rgba(0, 0, 0, 0.95);
             border: 1px solid #00eeff;
             height: 200px;
             overflow-y: scroll;
             padding: 10px;
-            font-size: 0.8em;
+            font-size: 0.85em;
             color: #00ffaa;
+            font-family: monospace; /* Моноширинный шрифт для журнала */
         }
         .log-box p {
             margin: 3px 0;
         }
         .log-box .error {
-            color: #ff6666; /* Ярко-красный для ошибок */
+            color: #ff4444; /* Ярко-красный для ошибок */
             font-weight: bold;
         }
-        .final-message {
-            text-align: center;
-            font-size: 2em;
-            font-weight: 700;
-            padding: 30px;
-            margin: 30px 0;
-            border: 3px solid #ffcc00;
-            box-shadow: 0 0 30px #ffcc00;
-            color: #ffcc00;
-        }
-        input[type="text"] {
+        input[type="text"], input[type="number"] {
             background-color: #000;
-            border: 1px solid #1aff00;
-            color: #1aff00;
+            border: 1px solid #39ff14;
+            color: #39ff14;
             padding: 8px;
-            font-family: monospace;
+            font-family: 'Orbitron', sans-serif;
         }
-        
-        /* Стили для начального экрана выбора */
-        .pre-game-setup {
-            text-align: center;
-            padding: 50px 0;
-            border: 1px solid #ffcc00;
-            margin-bottom: 20px;
+        /* Стили для Крафтинга - отображение требования */
+        .crafting-info {
+            font-size: 0.9em;
+            color: #00eeff;
+            margin-right: 15px;
         }
-        .pre-game-setup button {
-            font-size: 1.1em;
-            padding: 15px 30px;
-            margin: 10px;
-            width: 250px;
+        .crafting-info.missing {
+            color: #ff4444;
+            font-weight: bold;
+        }
+        .crafting-item {
+             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-bottom: 1px dashed rgba(57, 255, 20, 0.2);
+            background-color: #1a1a1a;
         }
     </style>
     
@@ -197,18 +209,15 @@
         <h2>🚨 ПРОТОКОЛ: ЗАПУСК (КРИТИЧЕСКИЙ СТАТУС)</h2>
         <div class="intro" id="preamble-story">
             <p>
-                **[ПЕРЕДАЧА ДАННЫХ]** Наш спускаемый аппарат, *«Гермес V»*, совершил жесткую посадку в регионе Элизиум Планиция. Повреждения критические: основной реактор питания вышел из строя, системы связи работают с перебоями. Мы изолированы, а запасы воздуха и воды рассчитаны всего на несколько марсианских суток. 
-            </p>
-            <p>
-                **[ОСНОВНАЯ ЦЕЛЬ]** Наша миссия изменилась. Теперь это не исследование, а **ВЫЖИВАНИЕ**. Нам необходимо немедленно запустить протокол экстренной добычи ресурсов, восстановить связь и, самое главное, обеспечить постоянный приток жизненно важных компонентов: **Энергии (🔋), Воды (💧) и Воздуха (💨)**. Командир, вы получили контроль над бортовым терминалом. Каждый раунд — это сутки. **Оставайтесь в живых.**
+                **[ПЕРЕДАЧА ДАННЫХ]** Наш спускаемый аппарат, *«Гермес V»*, совершил жесткую посадку в регионе Элизиум Планиция. Повреждения критические: основной реактор питания вышел из строя, системы связи работают с перебоями. Наша миссия изменилась. Теперь это не исследование, а **ВЫЖИВАНИЕ**. 
             </p>
         </div>
         
-        <hr style="border-top: 1px solid #1aff00;">
+        <hr style="border-top: 1px solid #39ff14;">
 
         <div id="pre-game-selector" class="pre-game-setup">
             <h2>⭐ ИНИЦИАЛИЗАЦИЯ: ВЫБОР ОСНОВНОЙ ГРУППЫ</h2>
-            <p>Выберите группу, которую вы будете возглавлять. Эта группа станет **постоянно активной** и получит **дополнительные ресурсы У1** в начале игры.</p>
+            <p>Выберите группу, которую вы будете возглавлять. Эта группа станет **постоянно активной**.</p>
             <div class="group-select">
                 <button id="pre-select-group-a" onclick="setPrimaryGroup('A')" style="border-color: #00ffaa;">Группа А (Технология)</button>
                 <button id="pre-select-group-b" onclick="setPrimaryGroup('B')" style="border-color: #00ffaa;">Группа Б (Биология)</button>
@@ -219,14 +228,13 @@
 
         <div id="main-game-interface" style="display: none;">
             
-            <hr style="border-top: 1px solid #1aff00;">
+            <hr style="border-top: 1px solid #39ff14;">
 
             <div class="intro">
                 <p><strong>[СИСТЕМА]</strong> Статус: <strong>ОНЛАЙН</strong> | Дата: <span id="current-date">20.11.2077</span> | Время Марса (UTC+1): <span id="current-time">09:35:00</span></p>
-                <p><strong>[МИССИЯ]</strong> Цель: Пополнение запасов и анализ среды. Командир: <strong>Имя Ведущего</strong></p>
             </div>
             
-            <hr style="border-top: 1px solid #1aff00;">
+            <hr style="border-top: 1px solid #39ff14;">
 
             <h2>📊 СТАТУС СИСТЕМЫ И ИНВЕНТАРЬ</h2>
             <div class="status-panel">
@@ -249,25 +257,25 @@
 
             </div>
             
-            <hr style="border-top: 1px solid #1aff00;">
+            <hr style="border-top: 1px solid #39ff14;">
 
             <h2>🎯 РАУНД <span id="round-number">1</span>: ВЫБОР ДЕЙСТВИЯ</h2>
             <div class="round-content">
 
-                <h3><span id="action-header-text">1. ФАЗА ЗАКУПКИ</span> | <span id="active-group-display"></span></h3>
+                <h3><span id="action-header-text">1. ФАЗА ЗАКУПКИ</span> | АКТИВНАЯ ГРУППА: <span id="active-group-display"></span></h3>
                 <p id="action-prompt">Выберите ресурс У1 для покупки...</p>
                 
                 <div id="action-buttons" style="margin-top: 10px;">
-                    <button class="round-action-button" disabled>ОЖИДАНИЕ</button>
+                    <button class="round-action-button-main" disabled>ОЖИДАНИЕ</button>
                 </div>
                 
-                <hr style="border-top: 1px dashed #1aff00; margin: 20px 0;">
+                <hr style="border-top: 1px dashed #39ff14; margin: 20px 0;">
 
                 <h3>2. ЗАВЕРШЕНИЕ ФАЗЫ</h3>
                 <button id="end-round-button" class="end-round-button" disabled>ЗАВЕРШИТЬ РАУНД <span id="next-round-indicator">(2)</span></button>
             </div>
             
-            <hr style="border-top: 1px solid #1aff00;">
+            <hr style="border-top: 1px solid #39ff14;">
 
             <h2>📢 ЖУРНАЛ СОБЫТИЙ</h2>
             <div id="log-box" class="log-box">
@@ -439,7 +447,14 @@
         inventoryList.innerHTML = '';
         
         let hasInventory = false;
-        for (const code in gameData.inventory) {
+        // Сортировка по уровню (У1, У2, У3)
+        const sortedInventory = Object.keys(gameData.inventory).sort((a, b) => {
+            const levelA = RESOURCE_LOOKUP[a]?.level || 0;
+            const levelB = RESOURCE_LOOKUP[b]?.level || 0;
+            return levelA - levelB;
+        });
+
+        sortedInventory.forEach(code => {
             const count = gameData.inventory[code];
             if (count > 0) {
                 hasInventory = true;
@@ -449,7 +464,7 @@
                 item.textContent = `${res.name} (${res.code} - У${res.level}): ${count}`;
                 inventoryList.appendChild(item);
             }
-        }
+        });
         if (!hasInventory) {
              inventoryList.innerHTML = '<li class="inventory-item">Нет ресурсов</li>';
         }
@@ -508,6 +523,101 @@
         initRound1();
     }
     
+    // --- НОВЫЕ ФУНКЦИИ ДЛЯ КНОПОК +/- (РАУНД 1) ---
+
+    /**
+     * Обновляет количество для покупки и проверяет лимит баллов.
+     * @param {string} inputId ID поля ввода.
+     * @param {number} delta Изменение (-1 или +1).
+     * @param {number} unitPrice Цена за одну единицу.
+     */
+    function updateBuyCount(inputId, delta, unitPrice) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+
+        let count = parseInt(input.value) + delta;
+        
+        if (count < 1) {
+            count = 1;
+        }
+
+        const maxBuyable = Math.floor(gameData.points / unitPrice);
+        
+        if (maxBuyable === 0) {
+             count = 0; // Нельзя купить даже 1
+        } else if (count > maxBuyable) {
+            count = maxBuyable;
+        } else if (count === 0 && maxBuyable > 0) {
+             count = 1;
+        }
+        
+        input.value = count;
+        // Обновляем статус кнопки "Купить"
+        const buyButton = input.parentElement.querySelector('.buy-button-R1');
+        if (buyButton) {
+            buyButton.disabled = maxBuyable < 1;
+            buyButton.textContent = maxBuyable < 1 ? 'НЕТ БАЛЛОВ' : `КУПИТЬ (${count * unitPrice} БАЛЛОВ)`;
+        }
+    }
+
+    /**
+     * Проверяет ручной ввод, чтобы не превысить лимит баллов.
+     * @param {string} inputId ID поля ввода.
+     * @param {number} unitPrice Цена за одну единицу.
+     */
+    function checkMaxBuyable(inputId, unitPrice) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+
+        let count = parseInt(input.value);
+        
+        const maxBuyable = Math.floor(gameData.points / unitPrice);
+
+        if (isNaN(count) || count < 1 || maxBuyable === 0) {
+            input.value = maxBuyable > 0 ? 1 : 0;
+            count = parseInt(input.value);
+        }
+        
+        if (count > maxBuyable && maxBuyable > 0) {
+            input.value = maxBuyable;
+            count = maxBuyable;
+            logEvent(`Внимание: Максимальное количество, которое можно купить, составляет ${maxBuyable} единиц.`, true);
+        } else if (count > 0 && maxBuyable === 0) {
+             input.value = 0;
+             count = 0;
+        }
+
+        // Обновляем статус кнопки "Купить"
+        const buyButton = input.parentElement.querySelector('.buy-button-R1');
+        if (buyButton) {
+            buyButton.disabled = count <= 0 || count * unitPrice > gameData.points;
+            buyButton.textContent = count <= 0 ? 'КУПИТЬ' : `КУПИТЬ (${count * unitPrice} БАЛЛОВ)`;
+        }
+    }
+    
+    /**
+     * Покупает указанное количество ресурса.
+     * @param {string} code Код ресурса.
+     * @param {number} quantity Количество для покупки.
+     */
+    function buyResource(code, quantity) {
+        const price = RESOURCE_PRICES[code];
+        const totalPrice = price * quantity;
+
+        if (gameData.points >= totalPrice && quantity > 0) {
+            gameData.points -= totalPrice;
+            gameData.inventory[code] = (gameData.inventory[code] || 0) + quantity;
+            logEvent(`Покупка: ${quantity} ед. ${RESOURCE_LOOKUP[code].name} (${code}). Потрачено: ${totalPrice} баллов. Осталось баллов: ${gameData.points}`);
+            
+            updateResourceDisplay(); 
+            // Полная перерисовка, чтобы обновить лимиты всех кнопок +/-
+            renderRound1Actions(); 
+
+        } else {
+            logEvent(`Ошибка: Недостаточно баллов (${gameData.points}) для покупки ${quantity} ед. ${code} (Требуется ${totalPrice})!`, true);
+        }
+    }
+
     // --- РАУНД 1 ЛОГИКА (ЗАКУПКА и ДОБЫЧА У1) ---
     function renderRound1Actions() { 
         const actionsDiv = document.getElementById('action-buttons');
@@ -515,42 +625,88 @@
         document.getElementById('action-prompt').textContent = `Доступные баллы: ${gameData.points}. Выберите ресурс У1 для покупки (Фаза 1/2).`;
         
         const level1Resources = Object.values(RESOURCE_DATABASE).flatMap(cat => cat.level1);
+        const maxGlobalBuyable = Math.max(...level1Resources.map(res => Math.floor(gameData.points / RESOURCE_PRICES[res.code])));
+
 
         level1Resources.forEach(res => {
             const price = RESOURCE_PRICES[res.code];
-            const button = document.createElement('button');
-            button.className = 'round-action-button';
-            button.textContent = `Купить ${res.name} (${res.code}) | Цена: ${price} баллов`;
+            const maxBuyable = Math.floor(gameData.points / price);
+            const inputId = `buy-count-${res.code}`;
+            let currentCount = maxBuyable > 0 ? 1 : 0;
+            if (maxBuyable === 0) currentCount = 0;
             
-            button.onclick = () => buyResource(res.code, price);
+            const itemContainer = document.createElement('div');
+            itemContainer.className = 'action-item-container';
+
+            const info = document.createElement('span');
+            info.innerHTML = `<strong>${res.name}</strong> (${res.code}) | Цена за 1 ед.: <span style="color: #ffcc00;">${price} баллов</span>`;
+            itemContainer.appendChild(info);
+
+            const controls = document.createElement('div');
+            controls.className = 'action-controls';
+
+            // Кнопка МИНУС (-)
+            const btnMinus = document.createElement('button');
+            btnMinus.textContent = '–';
+            btnMinus.onclick = () => updateBuyCount(inputId, -1, price);
+            btnMinus.disabled = maxBuyable < 1; 
+            controls.appendChild(btnMinus);
+
+            // Поле ввода количества
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.id = inputId;
+            input.value = currentCount; 
+            input.min = 0;
+            input.max = maxBuyable;
+            input.style.width = '40px';
+            input.style.textAlign = 'center';
+            input.style.padding = '3px';
+            input.style.border = '1px solid #ffcc00';
+            input.disabled = maxBuyable < 1;
+            input.onchange = () => checkMaxBuyable(inputId, price);
+            controls.appendChild(input);
             
-            if (gameData.points < price) {
-                button.disabled = true;
-                button.title = "Недостаточно баллов для покупки.";
-            }
-            actionsDiv.appendChild(button);
+            // Кнопка ПЛЮС (+)
+            const btnPlus = document.createElement('button');
+            btnPlus.textContent = '+';
+            btnPlus.onclick = () => updateBuyCount(inputId, 1, price);
+            btnPlus.disabled = maxBuyable < 1; 
+            controls.appendChild(btnPlus);
+
+            // Кнопка ПОКУПКА
+            const buyButton = document.createElement('button');
+            buyButton.className = 'buy-button-R1';
+            const buttonText = maxBuyable < 1 ? 'НЕТ БАЛЛОВ' : `КУПИТЬ (${price} БАЛЛОВ)`;
+            buyButton.textContent = buttonText;
+            buyButton.style.padding = '5px 10px';
+            buyButton.style.backgroundColor = '#2ecc71';
+            buyButton.style.color = '#000';
+            buyButton.onclick = () => {
+                const count = parseInt(document.getElementById(inputId).value);
+                if (count > 0) {
+                    buyResource(res.code, count);
+                }
+            };
+            buyButton.disabled = maxBuyable < 1;
+            controls.appendChild(buyButton);
+
+            itemContainer.appendChild(controls);
+            actionsDiv.appendChild(itemContainer);
         });
 
         const endBuyPhaseButton = document.createElement('button');
         endBuyPhaseButton.id = 'end-buy-phase';
+        endBuyPhaseButton.className = 'end-round-button';
         endBuyPhaseButton.textContent = 'ЗАВЕРШИТЬ ЗАКУПКУ И ПЕРЕЙТИ К ДОБЫЧЕ (ЗАДАНИЕ)';
         endBuyPhaseButton.style.backgroundColor = '#f39c12';
+        endBuyPhaseButton.style.borderColor = '#e67e22';
         endBuyPhaseButton.onclick = startRound1TaskPhase;
         actionsDiv.appendChild(endBuyPhaseButton);
     }
     
-    function buyResource(code, price) { 
-        if (gameData.points >= price) {
-            gameData.points -= price;
-            gameData.inventory[code] = (gameData.inventory[code] || 0) + 1;
-            logEvent(`Покупка: 1 ед. ${RESOURCE_LOOKUP[code].name} (${code}). Осталось баллов: ${gameData.points}`);
-            renderRound1Actions();
-            updateResourceDisplay();
-        } else {
-            logEvent('Ошибка: Недостаточно баллов для этой покупки!', true);
-        }
-    }
-
+    // Функция buyResource была перенесена выше
+    
     function startRound1TaskPhase() { 
         if (gameData.taskCompleted) {
              logEvent('Фаза добычи уже завершена! Переходите к следующему раунду.', true);
@@ -568,9 +724,10 @@
         taskElement.style.marginBottom = '15px';
         taskElement.innerHTML = `
             <h3>Группа ${gameData.primaryGroup} | 💡 Задание: ${task.question}</h3>
+            <p style="color: #ffcc00;">Награда: ${task.reward.amount} ед. ${RESOURCE_LOOKUP[task.reward.code].name} (${task.reward.code}) и ${task.points} баллов</p>
             <input type="text" id="task-input-R1" placeholder="Введите ваш ответ (1-2 слова)" style="width: 300px; padding: 8px; margin-right: 10px;">
-            <button id="task-button-R1" onclick="submitRound1Task()">
-                ВЫПОЛНИТЬ | Награда: ${task.reward.amount} ед. ${RESOURCE_LOOKUP[task.reward.code].name} (${task.reward.code}) и ${task.points} баллов
+            <button id="task-button-R1" onclick="submitRound1Task()" class="round-action-button-main" style="width: auto; background: #3498db;">
+                ВЫПОЛНИТЬ ЗАДАНИЕ ГРУППЫ ${gameData.primaryGroup}
             </button>
         `;
         actionsDiv.appendChild(taskElement);
@@ -652,10 +809,13 @@
         
         actionsDiv.innerHTML = `
             <h3>Группа ${gameData.primaryGroup} | 💡 Задание: ${task.question}</h3>
-            <p>Награда: 1 ед. ${RESOURCE_LOOKUP[task.reward.code].name} (${task.reward.code}).</p>
+            <p style="color: #ffcc00;">Награда: 1 ед. ${RESOURCE_LOOKUP[task.reward.code].name} (${task.reward.code}).</p>
+            <p class="error" style="font-size: 0.9em;">Штраф за неверный ответ: -${task.penalty.value} ${task.penalty.type.toUpperCase()}</p>
+            
             <input type="text" id="task-input-R2" placeholder="Введите ваш ответ" style="width: 300px; padding: 8px; margin-right: 10px;">
-            <button id="task-button-R2" onclick="submitRound2Task()">ВЫПОЛНИТЬ ДЕЙСТВИЕ</button>
-            <p class="error">Штраф за неверный ответ: -${task.penalty.value} ${task.penalty.type.toUpperCase()}</p>
+            <button id="task-button-R2" onclick="submitRound2Task()" class="round-action-button-main" style="width: auto; background: #3498db;">
+                ВЫПОЛНИТЬ ДЕЙСТВИЕ ГРУППЫ ${gameData.primaryGroup}
+            </button>
         `;
         document.getElementById('end-round-button').disabled = true;
     }
@@ -715,28 +875,44 @@
         level2Resources.forEach(res => {
             const recipe = CRAFTING_RECIPES_R3[res.code];
             if (!recipe) return; 
+
+            let canCraft = true;
+            let missingText = [];
+            
+            recipe.forEach(r => {
+                const have = gameData.inventory[r.code] || 0;
+                if (have < r.amount) {
+                    canCraft = false;
+                    missingText.push(`${r.amount - have} ед. ${r.code}`);
+                }
+            });
             
             const neededText = recipe.map(r => `${r.amount} ед. ${RESOURCE_LOOKUP[r.code].name} (${r.code})`).join(', ');
             
+            const itemContainer = document.createElement('div');
+            itemContainer.className = 'crafting-item';
+            
+            const info = document.createElement('span');
+            info.innerHTML = `<strong>${res.name}</strong> (${res.code}) | Требуется: ${neededText}`;
+            itemContainer.appendChild(info);
+            
+            const controls = document.createElement('div');
+            controls.className = 'action-controls';
+
+            const status = document.createElement('span');
+            status.className = canCraft ? 'crafting-info' : 'crafting-info missing';
+            status.textContent = canCraft ? 'ГОТОВО К ПРОИЗВОДСТВУ' : `НЕДОСТАТОЧНО: ${missingText.join(', ')}`;
+            controls.appendChild(status);
+
             const button = document.createElement('button');
-            button.className = 'round-action-button';
-            button.textContent = `Произвести ${res.name} (${res.code}) | Требуется: ${neededText}`;
-            
+            button.textContent = `КРАФТИТЬ 1 ЕД.`;
+            button.style.backgroundColor = canCraft ? '#2ecc71' : '#7f8c8d';
             button.onclick = () => tryCrafting(res.code, recipe, false);
-            
-            let canCraft = true;
-            recipe.forEach(r => {
-                if ((gameData.inventory[r.code] || 0) < r.amount) {
-                    canCraft = false;
-                }
-            });
+            button.disabled = !canCraft;
 
-            if (!canCraft) {
-                button.disabled = true;
-                button.title = "Недостаточно ресурсов У1.";
-            }
-
-            actionsDiv.appendChild(button);
+            controls.appendChild(button);
+            itemContainer.appendChild(controls);
+            actionsDiv.appendChild(itemContainer);
         });
     }
     
@@ -796,27 +972,43 @@
             const recipe = CRAFTING_RECIPES_R4[res.code];
             if (!recipe) return;
 
-            const neededText = recipe.map(r => `${r.amount} ед. ${RESOURCE_LOOKUP[r.code].name} (${r.code})`).join(', ');
-            
-            const button = document.createElement('button');
-            button.className = 'round-action-button';
-            button.textContent = `СОЗДАТЬ: ${res.name} (${res.code}) | Требуется: ${neededText}`;
-            
-            button.onclick = () => tryCrafting(res.code, recipe, true); // True для У3
-            
             let canCraft = true;
+            let missingText = [];
+            
             recipe.forEach(r => {
-                if ((gameData.inventory[r.code] || 0) < r.amount) {
+                const have = gameData.inventory[r.code] || 0;
+                if (have < r.amount) {
                     canCraft = false;
+                    missingText.push(`${r.amount - have} ед. ${r.code}`);
                 }
             });
+            
+            const neededText = recipe.map(r => `${r.amount} ед. ${RESOURCE_LOOKUP[r.code].name} (${r.code})`).join(', ');
+            
+            const itemContainer = document.createElement('div');
+            itemContainer.className = 'crafting-item';
+            
+            const info = document.createElement('span');
+            info.innerHTML = `<strong>${res.name}</strong> (${res.code} - У3) | Требуется: ${neededText}`;
+            itemContainer.appendChild(info);
+            
+            const controls = document.createElement('div');
+            controls.className = 'action-controls';
 
-            if (!canCraft) {
-                button.disabled = true;
-                button.title = "Недостаточно ресурсов У2.";
-            }
+            const status = document.createElement('span');
+            status.className = canCraft ? 'crafting-info' : 'crafting-info missing';
+            status.textContent = canCraft ? 'ГОТОВО К ПОСТРОЙКЕ' : `НЕДОСТАТОЧНО У2: ${missingText.join(', ')}`;
+            controls.appendChild(status);
 
-            actionsDiv.appendChild(button);
+            const button = document.createElement('button');
+            button.textContent = `ПОСТРОИТЬ 1 ЕД.`;
+            button.style.backgroundColor = canCraft ? '#1abc9c' : '#7f8c8d';
+            button.onclick = () => tryCrafting(res.code, recipe, true); // True для У3
+            button.disabled = !canCraft;
+
+            controls.appendChild(button);
+            itemContainer.appendChild(controls);
+            actionsDiv.appendChild(itemContainer);
         });
     }
 
@@ -866,24 +1058,25 @@
             <p><strong>МЕТОДЫ УСТРАНЕНИЯ:</strong></p>
             
             ${hasResource ? `
-                <button class="round-action-button" onclick="resolveCrisisResource('${groupCode}')" style="background: #2ecc71;">
+                <button class="round-action-button-main" onclick="resolveCrisisResource('${groupCode}')" style="background: #2ecc71;">
                     Использовать ${RESOURCE_LOOKUP[resourceCode].name} (${resourceCode}) (СНИМАЕТ УГРОЗУ)
                 </button>
-                <p>— Требуется: 1 ед. ${RESOURCE_LOOKUP[resourceCode].name}.</p>
+                <p style="color: #00eeff;">— Требуется: 1 ед. ${RESOURCE_LOOKUP[resourceCode].name}.</p>
             ` : `
-                <button class="round-action-button" disabled style="background: #7f8c8d;">
-                    Не хватает: ${RESOURCE_LOOKUP[resourceCode].name} (${resourceCode}) (Ресурс У3)
+                <button class="round-action-button-main" disabled style="background: #e74c3c; color: #fff; opacity: 0.7;">
+                    НЕДОСТАТОЧНО ${RESOURCE_LOOKUP[resourceCode].name} (${resourceCode}) (Ресурс У3)
                 </button>
+                <p style="color: #ff4444;">— Не хватает критического ресурса У3.</p>
             `}
             
             <hr style="border-top: 1px dashed #e74c3c; margin: 20px 0;">
 
-            <h3>РУЧНОЙ ПРОТОКОЛ: ${task.question}</h3>
+            <h3>РУЧНОЙ ПРОТОКОЛ (Аварийное Решение): ${task.question}</h3>
             <input type="text" id="task-input-R5" placeholder="Введите ответ (1-2 слова)" style="width: 300px; padding: 8px; margin-right: 10px;">
-            <button id="task-button-R5" onclick="resolveCrisisTask('${groupCode}')" style="background: #f1c40f; color: #0f0a05;">
-                Выполнить Вручную
+            <button id="task-button-R5" onclick="resolveCrisisTask('${groupCode}')" class="round-action-button-main" style="background: #f1c40f; color: #0f0a05; width: auto;">
+                Выполнить Вручную (ОДНА ПОПЫТКА)
             </button>
-            <p>— Награда: Устранение угрозы. Штраф за провал: -${task.penalty.value} ${task.penalty.type.toUpperCase()}.</p>
+            <p style="font-size: 0.9em;">— Награда: Устранение угрозы. <span class="error">Штраф за провал: -${task.penalty.value} ${task.penalty.type.toUpperCase()}.</span></p>
         `;
         document.getElementById('end-round-button').disabled = true;
     }
@@ -962,40 +1155,41 @@
         challenge.cost.forEach(item => {
             if ((gameData.inventory[item.code] || 0) < item.amount) {
                 hasAllResources = false;
-                missingText.push(`${item.code} (Надо: ${item.amount}, Есть: ${gameData.inventory[item.code] || 0})`);
+                missingText.push(`${item.amount - (gameData.inventory[item.code] || 0)} ед. ${RESOURCE_LOOKUP[item.code].name} (${item.code})`);
             }
         });
         
         actionsDiv.innerHTML = `
             <h2>📡 ${challenge.name} (ПОСТРОЙКА)</h2>
-            <p><strong>ТРЕБОВАНИЯ:</strong> Для постройки необходимы компоненты от каждой группы (Уровень 2):</p>
+            <p><strong>ТРЕБОВАНИЯ (Все Группы, У2):</strong></p>
             <ul>
                 ${challenge.cost.map(item => `
-                    <li>${item.amount} ед. ${RESOURCE_LOOKUP[item.code].name} (${item.code}) [Группа ${item.group}]</li>
+                    <li style="color: ${hasAllResources ? '#2ecc71' : (gameData.inventory[item.code] >= item.amount ? '#ffcc00' : '#e74c3c')};">
+                        ${item.amount} ед. ${RESOURCE_LOOKUP[item.code].name} (${item.code}) [Есть: ${gameData.inventory[item.code] || 0}]
+                    </li>
                 `).join('')}
             </ul>
 
             <hr style="border-top: 1px dashed #5dade2; margin: 20px 0;">
 
-            ${hasAllResources ? `
-                <button class="round-action-button" onclick="resolveRound6Resource()" style="background: #2ecc71;" ${gameData.r6Resolved ? 'disabled' : ''}>
+            ${!gameData.r6Resolved ? (hasAllResources ? `
+                <button class="round-action-button-main" onclick="resolveRound6Resource()" style="background: #2ecc71;">
                     ПОСТРОИТЬ ТРАНСПОНДЕР (Потратить ресурсы и отправить сигнал)
                 </button>
-            ` : (gameData.r6Resolved ? 
-                `<button class="round-action-button" disabled style="background: #27ae60;">ТРАНСПОНДЕР УЖЕ ПОСТРОЕН</button>` :
-                `<button class="round-action-button" disabled style="background: #e74c3c;">
+            ` : 
+                `<button class="round-action-button-main" disabled style="background: #e74c3c; opacity: 0.7;">
                     НЕДОСТАТОЧНО РЕСУРСОВ! Не хватает: ${missingText.join('; ')}
-                </button>
-            `)}
+                </button>`
+            ) : `<button class="round-action-button-main" disabled style="background: #27ae60;">ТРАНСПОНДЕР УЖЕ ПОСТРОЕН И АКТИВИРОВАН</button>`}
             
             <hr style="border-top: 1px dashed #e74c3c; margin: 20px 0;">
 
             <h3>РУЧНОЙ ПРОТОКОЛ (Аварийный Расчет): ${challenge.task.question}</h3>
             <input type="text" id="task-input-R6" placeholder="Введите ответ (1-2 слова)" style="width: 300px; padding: 8px; margin-right: 10px;" ${gameData.r6Resolved ? 'disabled' : ''}>
-            <button id="task-button-R6" onclick="resolveRound6Task()" style="background: #f1c40f; color: #0f0a05;" ${gameData.r6Resolved ? 'disabled' : ''}>
+            <button id="task-button-R6" onclick="resolveRound6Task()" style="background: #f1c40f; color: #0f0a05; width: auto;" ${gameData.r6Resolved ? 'disabled' : ''}>
                 Выполнить Аварийный Расчет
             </button>
-            <p>— Награда: Успех в расчетах. Штраф за провал: -${challenge.task.penalty.value} ${challenge.task.penalty.type.toUpperCase()}.</p>
+            <p style="font-size: 0.9em;">— Награда: Успех в расчетах. <span class="error">Штраф за провал: -${challenge.task.penalty.value} ${challenge.task.penalty.type.toUpperCase()}.</span></p>
         `;
         document.getElementById('end-round-button').disabled = gameData.r6Resolved ? false : true;
     }
@@ -1062,12 +1256,23 @@
             document.getElementById('action-prompt').textContent = 'РАУНД 7: ФИНАЛЬНЫЙ ЭТАП. Сигнал отправлен. Спасательный аппарат прибывает. Начните эвакуацию.';
             
             const actionsDiv = document.getElementById('action-buttons');
+            const requiredPower = 10;
+            const requiredAir = 5;
+            const canEvacuate = gameData.resources.POWER >= requiredPower && gameData.resources.AIR >= requiredAir;
+            
             actionsDiv.innerHTML = `
                 <h2>🚀 ФИНАЛЬНЫЙ ПРОТОКОЛ: ЭВАКУАЦИЯ</h2>
-                <p>Спасательный аппарат находится на орбите. Требуется <strong>10 ед. Энергии</strong> и <strong>5 ед. Воздуха</strong> для запуска челнока к кораблю.</p>
+                <p>Спасательный аппарат находится на орбите. Требуется: 
+                    <span style="color: ${gameData.resources.POWER >= requiredPower ? '#2ecc71' : '#e74c3c'}">
+                        **10 ед. Энергии** (Есть: ${gameData.resources.POWER})
+                    </span> и 
+                    <span style="color: ${gameData.resources.AIR >= requiredAir ? '#2ecc71' : '#e74c3c'}">
+                        **5 ед. Воздуха** (Есть: ${gameData.resources.AIR})
+                    </span> для запуска челнока к кораблю.
+                </p>
                 
-                <button class="round-action-button" onclick="finalEvacuate()" style="background: #00b894; font-size: 1.2em;">
-                    НАЧАТЬ ЭВАКУАЦИЮ
+                <button class="round-action-button-main" onclick="finalEvacuate()" style="background: ${canEvacuate ? '#00b894' : '#7f8c8d'}; font-size: 1.2em;" ${canEvacuate ? '' : 'disabled'}>
+                    ${canEvacuate ? 'НАЧАТЬ ЭВАКУАЦИЮ' : 'НЕТ РЕСУРСОВ ДЛЯ ЗАПУСКА'}
                 </button>
             `;
         } else {
@@ -1078,7 +1283,6 @@
              document.getElementById('game-over-message').textContent = 'МИССИЯ ПРОВАЛЕНА. СИГНАЛ СПАСЕНИЯ НЕ ОТПРАВЛЕН.';
              document.getElementById('game-over-message').style.display = 'block';
         }
-
         logEvent('СИСТЕМА: Активирован Раунд 7. ФИНАЛЬНАЯ ФАЗА.', true);
     }
 
@@ -1101,7 +1305,6 @@
         } else {
             logEvent(`❌ ОТМЕНА ЭВАКУАЦИИ: Недостаточно ресурсов для запуска челнока. Нужно ${requiredPower} Энергии (есть ${gameData.resources.POWER}) и ${requiredAir} Воздуха (есть ${gameData.resources.AIR}).`, true);
             
-            // Если эвакуация не удалась, это считается поражением
             document.getElementById('game-over-message').textContent = 'КРИТИЧЕСКИЙ ОТКАЗ. ЭВАКУАЦИЯ НЕВОЗМОЖНА. МИССИЯ ПРОВАЛЕНА.';
             document.getElementById('game-over-message').style.display = 'block';
             document.getElementById('action-buttons').innerHTML = '';
@@ -1141,15 +1344,31 @@
                      gameData.resources.POWER -= 10;
                      logEvent('КРИТИЧЕСКИЙ ШТРАФ: -10 Энергии из-за нерешенного Шторма.', true);
                 }
-                 // Добавьте сюда другие штрафы, если кризисы не решены
+                 // Здесь можно добавить другие штрафы
             }
         }
 
-        // 4. Переход к следующему раунду
+        // 4. Добавление бонусов от У3 систем (если они есть)
+        for (const code in gameData.inventory) {
+            if (gameData.inventory[code] > 0) {
+                const res = RESOURCE_LOOKUP[code];
+                if (res && res.level === 3 && res.bonus) {
+                    if (res.bonus.type === 'POWER_BONUS') {
+                        gameData.resources.POWER += res.bonus.value * gameData.inventory[code];
+                    }
+                    if (res.bonus.type === 'HEALTH_BONUS') {
+                        gameData.resources.HEALTH += res.bonus.value * gameData.inventory[code];
+                    }
+                    // Добавьте логику для других бонусов (например, СРВ, БР - вводить в Р5)
+                }
+            }
+        }
+
+        // 5. Переход к следующему раунду
         gameData.round++;
         logEvent(`--- УСПЕШНЫЙ ПЕРЕХОД К РАУНДУ ${gameData.round}! ---`, true);
         
-        // 5. Сброс состояния раунда и запуск
+        // 6. Сброс состояния раунда и запуск
         gameData.taskCompleted = false;
         
         if (gameData.round === 2) {
@@ -1170,6 +1389,17 @@
     }
     
     function initGame() {
+        // Установка текущего времени и даты
+        function updateDateTime() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const timeStr = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('current-date').textContent = dateStr;
+            document.getElementById('current-time').textContent = timeStr;
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
         // Начало игры: отображаем только выбор группы
         document.getElementById('main-game-interface').style.display = 'none';
         document.getElementById('pre-game-selector').style.display = 'block';
